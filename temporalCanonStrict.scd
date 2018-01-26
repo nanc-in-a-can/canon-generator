@@ -1,55 +1,3 @@
-(
-Server.default.options.memSize= 512000*20;
-Server.default.options.numWireBufs= 512;
-s = Server.local;
-s.boot;
-);
-
-(
-(
-/*microtonal piano Synth!  the low keys are not quite there yet*/
-SynthDef(\piano,
-{ |freq=1.0, decayTime=0.5, amp=0.75, temp=100, out=10, done=2, pan=0, att=0.001, sus=0.1, rel=0.1, object=0.005, which=0|
-	var sig, env, strike, envAttack, noise, delayTime, deTune;
-
-
-		strike= Trig.ar(Impulse.ar((freq.asFloat.midicps)/temp),0.0001);
-envAttack= Decay2.ar(strike, 0.008, 0.03);
-noise= Mix(LFNoise2.ar([375,750,1500,3000], envAttack));
-
-	sig= Mix(Array.fill(4,{|i|
-		deTune= #[-0.05,0.01,0.04,-0.01].at(i);
-	delayTime= 1/((freq.asFloat.midicps)+deTune);
-
-	CombL.ar(
-	noise, delayTime, delayTime, decayTime
-			)
-
-	}));
-		sig= sig;
-		sig= SelectX.ar(which,[sig, CombC.ar(sig, 1, object, 0.3, 1)]);
-
-		env= EnvGen.kr(Env([0,1,1,0],[att,sus,rel]),doneAction: done);
-
-		Out.ar(out, Limiter.ar(Pan2.ar(Mix(sig),pan)*amp,0.1)*env)
-};
-).add;
-);
-
-
-(
-SynthDef(\reverb, {|in=10, out=0, gate=1|
-	var sig, env;
-	sig= FreeVerb2.ar(In.ar(in), In.ar(in+1), 0.2, 0.3, 0.2);
-	env= EnvGen.kr(Env.asr(0.0001,1,0.1),gate, doneAction:2);
-	Out.ar(out, sig*env)
-}).add
-);
-);
-
-
-
-(
 var line1, line2, line3, line4, tp, tempo1, tempo2, tempo3, tempo4, rhythm, timeSpan, cp, bcp1, bcp2, bcp3, bcp4, patt1, patt2, patt3, patt4, hiVal, onset, voice, melody1, melody2, melody3, melody4, cP1, cP2, cP3, cP4, voice_data, melody_data, write_t, arreglo_data;
 
 // number of beats (timepoints in the structure)
@@ -130,10 +78,17 @@ melody2= (melody2-12)++cP2++(melody2.reverse)++([melody2[0]]);
 melody3=      melody3++cP3++(melody3.reverse-12)++([melody3[0]-12]);
 melody4=  (melody4+8)++cP4++(melody4.reverse+12)++([melody4[0]+12]);
 
+
 ~melody1= melody1;
 ~melody2= melody2;
 ~melody3= melody3;
 ~melody4= melody4;
+
+
+// line1[0].postln;
+// line2[0].postln;
+// line3[0].postln;
+// line4[0].postln;
 
 // the patterns with their respective tempi;
 patt1= Pbind(\instrument, \piano, \pan, -1,
@@ -257,15 +212,3 @@ write_t.write(arreglo_data);
 write_t.close;
 */
 
-);
-
-(/*play Canon!!*/
-// s.record;
-~reverb= Synth(\reverb);
-Pdef(\four_v_temporalCanon_v2).play;
-);
-
-(/*stop Canon*/
-Pdef(\four_v_temporalCanon).stop;
-~reverb.set(\gate, 0);
-);
