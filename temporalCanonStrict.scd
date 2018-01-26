@@ -160,14 +160,47 @@ hiVal= [line1.sum, line2.sum, line3.sum, line4.sum].sort;
 
 voice_data= Array.fill(hiVal.size, {|i| if(hiVal[i]==line1.sum, {line1},{ if( hiVal[i]==line2.sum, {line2},{ if(hiVal[i]==line3.sum, {line3}, { line4 }) } ) }) });
 
-~voice_data= voice_data;
-
 melody_data= Array.fill(hiVal.size, {|i| if(hiVal[i]==line1.sum, {melody1},{ if( hiVal[i]==line2.sum, {melody2},{ if(hiVal[i]==line3.sum, {melody3}, { melody4 }) } ) }) });
 
-~melody_data= melody_data;
+// hiVal.size.postln;
+/*line2.sum.postln;
+line4.sum.postln;
+line1.sum.postln;
+line3.sum.postln;*/
+//We add the each voice in sorted from shortest to longest
+voice= Array.fill(hiVal.size, {|i|
+	if(hiVal[i]==line1.sum,
+		{"pat1".postln;patt1},
+		{if(hiVal[i]==line2.sum,
+			{"pat2".postln;patt2},
+			{ if(hiVal[i]==line3.sum,
+				{"pat3".postln;patt3},
+				{ "pat4".postln;patt4 }
+			)}
+		)}
+	)
+});
 
+//podemos sustituir los algoritmos anteriores por algo usando sort como funcion [2,1,3].sort({|a, b| a < b})
+//con esto podemos eventualmente arribar a una generalización del algoritmo para cualquier número de voces
+~sortedBySpeed = [
+	[line1, patt1, melody1],
+	[line2, patt2, melody2],
+	[line3, patt3, melody3],
+	[line4, patt4, melody4]
+].sort({|line_a, line_b| line_a[0].sum < line_b[0].sum });
 
-voice= Array.fill(hiVal.size, {|i| if(hiVal[i]==line1.sum, {patt1},{ if( hiVal[i]==line2.sum, {patt2},{ if(hiVal[i]==line3.sum, {patt3}, { patt4 }) } ) }) });
+~melody_data_b = ~sortedBySpeed.collect({|l_p| l_p[2]});
+{melody_data[0] === ~melody_data_b[0]}.().postln;//test
+{melody_data[1] === ~melody_data_b[1]}.().postln;//test
+{melody_data[2] === ~melody_data_b[2]}.().postln;//test
+{melody_data[3] === ~melody_data_b[3]}.().postln;//test
+
+~voice_data_b = ~sortedBySpeed.collect({|l_p| l_p[0]});
+{voice_data[0] === ~voice_data_b[0]}.().postln;//test
+
+~voice_b = ~sortedBySpeed.collect({|l_p| l_p[1]});
+{voice[0] === ~voice_b[0]}.().postln;//test
 
 onset= Array.fill(hiVal.size, {|i| if(hiVal[i]==line1.sum, {bcp1.sum},{ if( hiVal[i]==line2.sum, {bcp2.sum},{ if(hiVal[i]==line3.sum, {bcp3.sum}, { bcp4.sum }) } ) }) });
 
