@@ -109,7 +109,9 @@ bcp4= Array.fill(line4.size-(line4.size-(cp-1)), {|i| line4[i] });
 
 // melodic patterns for the lines;
 
+
 melody1= Array.fill(bcp1.size,{[45,46,50,52.5,53,55.2,57,58,60.3,62,63,65.5].wchoose([4,3,8,2,4,2,7,5,2,5,3,3].normalizeSum)});
+
 
 melody2= Array.fill(bcp2.size, {|i| melody1[i] });
 melody3= Array.fill(bcp3.size, {|i| melody1[i] });
@@ -170,12 +172,12 @@ line3.sum.postln;*/
 //We add the each voice in sorted from shortest to longest
 voice= Array.fill(hiVal.size, {|i|
 	if(hiVal[i]==line1.sum,
-		{"pat1".postln;patt1},
+		{patt1},
 		{if(hiVal[i]==line2.sum,
-			{"pat2".postln;patt2},
+			{patt2},
 			{ if(hiVal[i]==line3.sum,
-				{"pat3".postln;patt3},
-				{ "pat4".postln;patt4 }
+				{patt3},
+				{ patt4 }
 			)}
 		)}
 	)
@@ -184,41 +186,65 @@ voice= Array.fill(hiVal.size, {|i|
 //podemos sustituir los algoritmos anteriores por algo usando sort como funcion [2,1,3].sort({|a, b| a < b})
 //con esto podemos eventualmente arribar a una generalización del algoritmo para cualquier número de voces
 ~sortedBySpeed = [
-	[line1, patt1, melody1],
-	[line2, patt2, melody2],
-	[line3, patt3, melody3],
-	[line4, patt4, melody4]
+	[line1, melody1, bcp1.sum],
+	[line2, melody2, bcp2.sum],
+	[line3, melody3, bcp3.sum],
+	[line4, melody4, bcp4.sum]
 ].sort({|line_a, line_b| line_a[0].sum < line_b[0].sum });
 
-~melody_data_b = ~sortedBySpeed.collect({|l_p| l_p[2]});
-{melody_data[0] === ~melody_data_b[0]}.().postln;//test
-{melody_data[1] === ~melody_data_b[1]}.().postln;//test
-{melody_data[2] === ~melody_data_b[2]}.().postln;//test
-{melody_data[3] === ~melody_data_b[3]}.().postln;//test
-
+~melody_data_b = ~sortedBySpeed.collect({|l_p| l_p[1]});
+{melody_data == ~melody_data_b}.().postln;//test true
 ~voice_data_b = ~sortedBySpeed.collect({|l_p| l_p[0]});
-{voice_data[0] === ~voice_data_b[0]}.().postln;//test
+{voice_data == ~voice_data_b}.().postln;//test true
 
-~voice_b = ~sortedBySpeed.collect({|l_p| l_p[1]});
-{voice[0] === ~voice_b[0]}.().postln;//test
+//con esto podemos quitar la declaración de los patterns de allá arriba y reducirla a una función que los genere
+~makePatt = {|line_melody_pair, index|
+	var pan = (index/~sortedBySpeed.size*2 - 1) + (1/~sortedBySpeed.size);//distributes voices evenly across the stereo field, but it avoids the extreme positions (-1 and 1)
+	var line  = line_melody_pair[0];
+	var melody  = line_melody_pair[1];
+	Pbind(
+		\instrument, \piano,
+		\pan, pan,
+		\dur, Pseq(line,1),
+		\freq, Pseq(melody,inf),
+		\out, 10,
+		\amp, 1
+
+	);
+};
+
+~voice_b  = ~sortedBySpeed.collect(~makePatt);
+{voice == ~voice_b.postln}.().postln;//test false, porque no podemos probar la igualdad de un pbind, pero deberían de ser lo mismo, el paneo sin embargo es ligeramente distinto, pero debe de poder mejorarse de alguna manera
+
 
 onset= Array.fill(hiVal.size, {|i| if(hiVal[i]==line1.sum, {bcp1.sum},{ if( hiVal[i]==line2.sum, {bcp2.sum},{ if(hiVal[i]==line3.sum, {bcp3.sum}, { bcp4.sum }) } ) }) });
+
+~onsets = ~sortedBySpeed.reverse.inject([], {|acc, elem|
+	acc ++ [(~sortedBySpeed.reverse[0][2] - elem[2]).abs];
+});
+
+
 
 ~distances1= (onset[3]-onset[3]).abs;
 ~distances2= (onset[3]-onset[2]).abs;
 ~distances3= (onset[3]-onset[1]).abs;
 ~distances4= (onset[3]-onset[0]).abs;
 
+([~distances1, ~distances2, ~distances3, ~distances4] == ~onsets).postln;
+
+// [[1,2,3], [4,5,6]].lace([1,2,3].size + [4,5,6].size).postln;
+
+Pdef(\four_v_temporalCanon_v2, Ptpar(
+	[~onsets, ~voice_b.reverse].lace(~voice_b.size * 2)
+)).quant([0]);
+
+
 Pdef(\four_v_temporalCanon, Ptpar(
 	[
-		(onset[3]-onset[3]).abs,
-		voice[3],
-		(onset[3]-onset[2]).abs,
-		voice[2],
-		(onset[3]-onset[1]).abs,
-		voice[1],
-		(onset[3]-onset[0]).abs,
-		voice[0]
+		(onset[3]-onset[3]).abs, voice[3],
+		(onset[3]-onset[2]).abs, voice[2],
+		(onset[3]-onset[1]).abs, voice[1],
+		(onset[3]-onset[0]).abs, voice[0]
 ])).quant([0]);
 
 /*
@@ -236,7 +262,7 @@ write_t.close;
 (/*play Canon!!*/
 // s.record;
 ~reverb= Synth(\reverb);
-Pdef(\four_v_temporalCanon).play;
+Pdef(\four_v_temporalCanon_v2).play;
 );
 
 (/*stop Canon*/
