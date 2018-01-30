@@ -1,73 +1,72 @@
-(// GUI for 4 voice temporal Canon;
+(// GUI and visualization for 4 voice temporal Canon;
 
-(
-~y_values_V1= ~melody_data[3];
+( // Assigning the melodic values to the Y axis of the
+~y_values_V1= ~melody_data_b[0];
 
-~y_values_V2= ~melody_data[2];
+~y_values_V2= ~melody_data_b[1];
 
-~y_values_V3= ~melody_data[1];
+~y_values_V3= ~melody_data_b[2];
 
-~y_values_V4= ~melody_data[0];
+~y_values_V4= ~melody_data_b[3];
 
 );
 
 
-
-(
-	~x_values_V1= Array.newClear(~voice_data[3].size);
+( // assigning the duration values to the X axis (voice 1)
+	~x_values_V1= Array.newClear(~voice_data_b[0].size);
 
     ~oldNumber= ~distances1;
 
-		~voice_data[3].size.do{|j|
+		~voice_data_b[0].size.do{|j|
 
 	~x_values_V1.put(j,~oldNumber);
 
-	~number= ~oldNumber + ~voice_data[3][j];
+	~number= ~oldNumber + ~voice_data_b[0][j];
 
 	~oldNumber = ~number;
 };
 );
 
-(
-	~x_values_V2= Array.newClear(~voice_data[2].size);
+( // assigning the duration values to the X axis (voice 2)
+	~x_values_V2= Array.newClear(~voice_data_b[1].size);
 
     ~oldNumber= ~distances2;
 
-		~voice_data[2].size.do{|j|
+		~voice_data_b[1].size.do{|j|
 
 	~x_values_V2.put(j,~oldNumber);
 
-	~number= ~oldNumber + ~voice_data[2][j];
+	~number= ~oldNumber + ~voice_data_b[1][j];
 
 	~oldNumber = ~number;
 };
 );
 
-(
-	~x_values_V3= Array.newClear(~voice_data[1].size);
+( // assigning the duration values to the X axis (voice 3)
+	~x_values_V3= Array.newClear(~voice_data_b[2].size);
 
     ~oldNumber= ~distances3;
 
-		~voice_data[1].size.do{|j|
+		~voice_data_b[2].size.do{|j|
 
 	~x_values_V3.put(j,~oldNumber);
 
-	~number= ~oldNumber + ~voice_data[1][j];
+	~number= ~oldNumber + ~voice_data_b[2][j];
 
 	~oldNumber = ~number;
 };
 );
 
-(
-	~x_values_V4= Array.newClear(~voice_data[0].size);
+( // assigning the duration values to the X axis (voice 4)
+	~x_values_V4= Array.newClear(~voice_data_b[3].size);
 
     ~oldNumber= ~distances4;
 
-		~voice_data[0].size.do{|j|
+		~voice_data_b[3].size.do{|j|
 
 	~x_values_V4.put(j,~oldNumber);
 
-	~number= ~oldNumber + ~voice_data[0][j];
+	~number= ~oldNumber + ~voice_data_b[3][j];
 
 	~oldNumber = ~number;
 };
@@ -80,24 +79,31 @@ var boton_Start_stop, boton_RecStart_stop, timePointsText, timePointsField, conv
 
 w = Window("Canon temporal a 4 voces", Rect(5,150,1400,650), true, true, s, true).front;
 
+//translating tim values to space values;
 pieceDuration= ~x_values_V1[299].linlin(0,120,0,4500);
 
 
+// this pbind "scrolls" the screen in order to be always showing the present events of the canon
 ~scroller = Pbind(*[
 				play: { w.view.visibleOrigin = Point( ~t - 0.2 max: 0 * 30, 0) },
 				t:	Pseg([0, pieceDuration], pieceDuration),
 				dur:	0.05
 			]);
 
-
+// start button actions
 boton_Start_stop = Button.new(w, Rect(0, 600, 4300, 20));
         boton_Start_stop.states = ([["Start",Color.black, Color.green],["Stop",Color.black, Color.red]]);
 
 boton_Start_stop.action =  { case {boton_Start_stop.value == 1}
-	{~reverb= Synth(\reverb); Pdef(\four_v_temporalCanon).play; ~scroll=~scroller.play(AppClock); ~showMe.play(AppClock) /*fork { while { ~showMe.isClosed.not } { defer {  ~showMe.refresh}; ((~x_values_V1[299]/~x_values_V1[299].linlin(0,120,0,4500))).wait; } }*/};
+	{~reverb= Synth(\reverb); Pdef(\four_v_temporalCanon).play; ~scroll=~scroller.play(AppClock); /*AppClock.play(~showMe)*/
+
+	// the line that indicates the present moments is a routine embedded in ~showMe
+		fork { while { ~showMe.isClosed.not }
+			{ defer {  ~showMe.refresh};
+				(~x_values_V1[299]/~x_values_V1[299].linlin(0,120,0,4500)).wait; } }};
 
 	case {boton_Start_stop.value == 0}
-	{  Pdef(\four_v_temporalCanon).stop; ~reverb.set(\gate, 0); ~scroll.stop; } };
+	{  Pdef(\four_v_temporalCanon).stop; ~reverb.set(\gate, 0); ~scroll.stop; /*~shMe.stop, idear un modo de detener esta rutina*/} };
 
 boton_RecStart_stop = Button.new(w, Rect(0, 575, 4300, 20));
         boton_RecStart_stop.states = ([["Start & Record",Color.black, Color.yellow],["Stop",Color.black, Color.red]]);
@@ -106,7 +112,9 @@ boton_RecStart_stop.action =  { case {boton_RecStart_stop.value == 1}
 	{ s.record; ~reverb= Synth(\reverb); Pdef(\four_v_temporalCanon).play };
 
 	case {boton_RecStart_stop.value == 0}
-	{ Pdef(\four_v_temporalCanon).stop; ~reverb.set(\gate, 0); s.stopRecording } };
+	{ Pdef(\four_v_temporalCanon).stop; ~reverb.set(\gate, 0); s.stopRecording };
+	~showMe.clear
+};
 
 
 (
@@ -186,12 +194,12 @@ u= UserView(w, Rect(29,70,4500,450));
 
 
 (
-t = Slider(w, Rect(0, 650, 4500, 400));
-t.orientation = \horizontal;
+//t = Slider(w, Rect(0, 650, 4500, 400));
+//t.orientation = \horizontal;
 w.drawFunc = {
     Pen.translate(50, -250);
 
-/*
+
 	~showMe= u.drawFunc = Routine {
 
 	4400.do{|i|
@@ -205,22 +213,23 @@ w.drawFunc = {
 	};
 
 };
-	*/
+
 	// aqui te quedaste!!!
-~showMe = Pbind(*[
+/*~showMe = Pbind(*[
 				play: { u.drawFunc = Routine {
 			4000.do{
-
+.
 		Pen.line(
 		Point( ~t, 0),
 		Point( ~t,1280)
 		);
+
 		Pen.fillStroke;
 			};
 		};},
 				t:	Pseg([0, pieceDuration], pieceDuration),
 				dur:	0.05
-			]).trace;
+			]);*/
 
 	Pen.rotate(0.0pi);
 
