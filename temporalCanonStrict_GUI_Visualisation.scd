@@ -79,7 +79,7 @@ var boton_Start_stop, boton_RecStart_stop, timePointsText, timePointsField, conv
 
 w = Window("Canon temporal a 4 voces", Rect(5,150,1400,650), true, true, s, true).front;
 
-//translating tim values to space values;
+//translating time values to space values;
 pieceDuration= ~x_values_V1[299].linlin(0,120,0,4500);
 
 
@@ -100,7 +100,7 @@ boton_Start_stop.action =  { case {boton_Start_stop.value == 1}
 	// the line that indicates the present moments is a routine embedded in ~showMe
 		fork { while { ~showMe.isClosed.not }
 			{ defer {  ~showMe.refresh};
-				(~x_values_V1[299]/~x_values_V1[299].linlin(0,120,0,4500)).wait; } }};
+				(~x_values_V4[299]/~x_values_V4[299].linlin(0,120,0,4500)).wait; } }};
 
 	case {boton_Start_stop.value == 0}
 	{  Pdef(\four_v_temporalCanon).stop; ~reverb.set(\gate, 0); ~scroll.stop; /*~shMe.stop, idear un modo de detener esta rutina*/} };
@@ -199,16 +199,16 @@ u= UserView(w, Rect(29,70,4500,450));
 w.drawFunc = {
     Pen.translate(50, -250);
 
-
+// aquí se declara la rutina de la línea
 	~showMe= u.drawFunc = Routine {
 
-	4400.do{|i|
+	4600.do{|i|
 		Pen.line(
 		Point(i, 0),
 		Point(i,1280)
 		);
 		Pen.fillStroke;
-	100.wait;
+	1000.wait;
 
 	};
 
@@ -232,7 +232,7 @@ w.drawFunc = {
 			]);*/
 
 	Pen.rotate(0.0pi);
-
+	// here you assign a wedge to each of the coodinates that form the events (x and y axis)
 	~tp.do{|i|
         // set the Color
 		Pen.color = Color.green(0.5);
@@ -268,7 +268,7 @@ w.drawFunc = {
 
 
 	};
-
+// here you assign values to the lines between wedges
 	(~tp-1).do{|i|
 		Pen.strokeColor = Color.green(0.8);
 		if(i==0, {
