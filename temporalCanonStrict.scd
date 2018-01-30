@@ -31,8 +31,8 @@ melody_data= ~sortedBySpeed.collect({|l_p| l_p[1]});
 voice_data = ~sortedBySpeed.collect({|l_p| l_p[0]});
 
 //con esto podemos quitar la declaración de los patterns de allá arriba y reducirla a una función que los genere
-makePatt = {|line_melody_pair, index|
-	var pan = (index/sortedBySpeed.size*2 - 1) + (1/sortedBySpeed.size);//distributes voices evenly across the stereo field, but it avoids the extreme positions (-1 and 1)
+~makePatt = {|line_melody_pair, index|
+	var pan = (index/~sortedBySpeed.size*2 - 1) + (1/~sortedBySpeed.size);//distributes voices evenly across the stereo field, but it avoids the extreme positions (-1 and 1)
 	var line  = line_melody_pair[0];
 	var melody  = line_melody_pair[1];
 	Pbind(
