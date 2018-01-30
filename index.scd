@@ -5,6 +5,8 @@ s = Server.local;
 s.boot;
 (thisProcess.nowExecutingPath.dirname++"/sounds.scd").loadPaths;
 (thisProcess.nowExecutingPath.dirname++"/temporalCanonStrict.scd").load;
+(thisProcess.nowExecutingPath.dirname++"/melodyMaker.scd").load;
+~makeCanon.(~melodyMaker.randomSymmetric4voices.());
 );
 
 

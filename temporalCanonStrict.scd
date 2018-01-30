@@ -1,80 +1,30 @@
-var 
-    arreglo_data,
-    bcp1, 
-    bcp2, 
-    bcp3, 
-    bcp4, 
-    cp, 
-    cP1, 
-    cP2, 
-    cP3, 
-    cP4, 
-    hiVal, 
-    line1, 
-    line2, 
-    line3, 
-    line4, 
-    makePatt,
-    melody1, 
-    melody2, 
-    melody3, 
-    melody4, 
-    melody_data, 
-    onsets, 
-    patt1, 
-    patt2, 
-    patt3, 
-    patt4, 
-    rhythm, 
-    sortedBySpeed,
-    tempo1, 
-    tempo2, 
-    tempo3, 
-    tempo4, 
-    timeSpan, 
-    tp, 
-    voices, 
-    voice_data, 
-    write_t;
+~makeCanon = {
+
+var line1, line2, line3, line4, tp, tempo1, tempo2, tempo3, tempo4, rhythm, timeSpan, cp, bcp1, bcp2, bcp3, bcp4, patt1, patt2, patt3, patt4, hiVal, onset, voice, melody1, melody2, melody3, melody4, cP1, cP2, cP3, cP4, voice_data, melody_data, write_t, arreglo_data;
 
 // number of beats (timepoints in the structure)
 tp= 300; // -1 ;
 ~tp= tp;
 
-// the tempo and timespan
+~makeTempo = {|speed| 60/(speed/4)};
 
-tempo1= 60;  /*change the tempo here, declare the value of a 1/4 figure*/
-tempo1= tempo1/4;
-tempo1= (60/tempo1);
-~tempo1 = tempo1;
+tempo1= ~makeTempo.(60);  /*change the tempo here, declare the value of a 1/4 figure*/
+tempo2= ~makeTempo.(65);  /*change the tempo here, declare the value of a 1/4 figure*/
+tempo3= ~makeTempo.(57);  /*change the tempo here, declare the value of a 1/4 figure*/
+tempo4= ~makeTempo.(63);  /*change the tempo here, declare the value of a 1/4 figure*/
 
-tempo2= 65;  /*change the tempo here, declare the value of a 1/4 figure*/
-tempo2= tempo2/4;
-tempo2= (60/tempo2);
-~tempo2 = tempo2;
-
-tempo3= 57;  /*change the tempo here, declare the value of a 1/4 figure*/
-tempo3= tempo3/4;
-tempo3= (60/tempo3);
-~tempo3 = tempo3;
-
-tempo4= 63;  /*change the tempo here, declare the value of a 1/4 figure*/
-tempo4= tempo4/4;
-tempo4= (60/tempo4);
-~tempo4 = tempo4;
 
 timeSpan= [(1),(1/4),(1/6),  (1/8),(1/9),(1/10),(1/11),(1/12),(1/13),(1/14),(1/15),(1/16),(1/17),(1/18),(1/19),  (1/20),(1/24),(1/32)];
 
 // choose a position for each rhythmic value throughout a weighted randomised process
-rhythm= Array.fill(tp, { timeSpan.wchoose([1,5,4, 10,5,8,5,8,5,6,5,10,4,4,4, 8,8,10].normalizeSum) });
 
-line1= Array.fill(tp, {|i| rhythm[i]*tempo1});
-// line1.postln; asi se imprimen las duraciones;
+// choose a position for each rhythmic value throughout a weighted randomised process
+rhythm = tp.collect({ timeSpan.wchoose([1,5,4, 10,5,8,5,8,5,6,5,10,4,4,4, 8,8,10].normalizeSum) });
 
-line2= Array.fill(tp, {|i| rhythm[i]*tempo2});
-line3= Array.fill(tp, {|i| rhythm[i]*tempo3});
-line4= Array.fill(tp, {|i| rhythm[i]*tempo4});
-
+line1= rhythm.collect(_*tempo1);
+line2= rhythm.collect(_*tempo2);
+line3= rhythm.collect(_*tempo3);
+line4= rhythm.collect(_*tempo4);
 
 ~line1= line1;
 ~line2= line2;
@@ -86,34 +36,31 @@ line4= Array.fill(tp, {|i| rhythm[i]*tempo4});
 // 300-(300/3)   ;
 cp= (tp/2); // aquí podrías cambiar el valor;
 
+~makeBcp = {|line| line.copyRange(0, (line.size - cp - 2).asInteger)};
 // the segment of patterns before the convergence point;
-bcp1= Array.fill(line1.size-(line1.size-(cp-1)), {|i| line1[i] });
-bcp2= Array.fill(line2.size-(line2.size-(cp-1)), {|i| line2[i] });
-bcp3= Array.fill(line3.size-(line3.size-(cp-1)), {|i| line3[i] });
-bcp4= Array.fill(line4.size-(line4.size-(cp-1)), {|i| line4[i] });
+bcp1 = ~makeBcp.(line1);
+//(Array.fill(line1.size-(line1.size-(cp-1)), {|i| line1[i] }) == bcp1).postln;//verificamos funcionalidad anterior
+bcp2 = ~makeBcp.(line2);
+bcp3 = ~makeBcp.(line3);
+bcp4 = ~makeBcp.(line4);
 
 // melodic patterns for the lines;
 
 
-melody1= Array.fill(bcp1.size,{[45,46,50,52.5,53,55.2,57,58,60.3,62,63,65.5].wchoose([4,3,8,2,4,2,7,5,2,5,3,3].normalizeSum)});
 
+melody1= bcp1.collect({[45,46,50,52.5,53,55.2,57,58,60.3,62,63,65.5].wchoose([4,3,8,2,4,2,7,5,2,5,3,3].normalizeSum)});
 
-melody2= Array.fill(bcp2.size, {|i| melody1[i] });
-melody3= Array.fill(bcp3.size, {|i| melody1[i] });
-melody4= Array.fill(bcp4.size, {|i| melody1[i] });
 
 // pitch values for the CP to emphasis it;
 cP1= [70];
-cP2= [74];
-cP3= [77];
-cP4= [65];
 
 // full melodic pattern;
 
-melody1= (melody1+12)++cP1++(melody1.reverse+8)++([melody1[0]+8]);
-melody2= (melody2-12)++cP2++(melody2.reverse)++([melody2[0]]);
-melody3=      melody3++cP3++(melody3.reverse-12)++([melody3[0]-12]);
-melody4=  (melody4+8)++cP4++(melody4.reverse+12)++([melody4[0]+12]);
+melody1 =  (melody1+12)++cP1++(melody1.reverse)++([melody1[0]]);
+melody2 =  melody1 - 12;
+melody3 =  melody1 + 12;
+melody4 =  melody1 + 8;
+
 
 
 ~melody1= melody1;
@@ -121,16 +68,18 @@ melody4=  (melody4+8)++cP4++(melody4.reverse+12)++([melody4[0]+12]);
 ~melody3= melody3;
 ~melody4= melody4;
 
-sortedBySpeed = [
+
+//con esto podemos eventualmente arribar a una generalización del algoritmo para cualquier número de voces
+~sortedBySpeed = [
 	[line1, melody1, bcp1.sum],
 	[line2, melody2, bcp2.sum],
 	[line3, melody3, bcp3.sum],
 	[line4, melody4, bcp4.sum]
 ].sort({|line_a, line_b| line_a[0].sum < line_b[0].sum });
 
-melody_data = sortedBySpeed.collect({|l_p| l_p[1]});
+melody_data= ~sortedBySpeed.collect({|l_p| l_p[1]});
 
-voice_data = sortedBySpeed.collect({|l_p| l_p[0]});
+voice_data = ~sortedBySpeed.collect({|l_p| l_p[0]});
 
 //con esto podemos quitar la declaración de los patterns de allá arriba y reducirla a una función que los genere
 makePatt = {|line_melody_pair, index|
@@ -148,22 +97,20 @@ makePatt = {|line_melody_pair, index|
 	);
 };
 
-voices = sortedBySpeed.collect(~makePatt);
+voice  = ~sortedBySpeed.collect(~makePatt);
 
-onsets = sortedBySpeed.reverse.inject([], {|acc, elem|
-	acc ++ [(sortedBySpeed.reverse[0][2] - elem[2]).abs];
+~onsets = ~sortedBySpeed.reverse.inject([], {|acc, elem|
+	acc ++ [(~sortedBySpeed.reverse[0][2] - elem[2]).abs];
 });
 
-//exports
-~melody_data = melody_data;
-~voice_data = voice_data;
-~onsets = onsets;
 ~distances1= ~onsets[0];
 ~distances2= ~onsets[1];
 ~distances3= ~onsets[2];
 ~distances4= ~onsets[3];
+
+
 Pdef(\four_v_temporalCanon_v2, Ptpar(
-	[~onsets, voices.reverse].lace(voices.size * 2)
+	[~onsets, voice.reverse].lace(voice.size * 2)
 )).quant([0]);
 
 /*
@@ -176,3 +123,4 @@ write_t.write(arreglo_data);
 write_t.close;
 */
 
+}
