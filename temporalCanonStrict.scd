@@ -26,19 +26,19 @@ var
     voice_data;
 
 
-
+    //creates voices [(melody: [(note, dur)], bcp)]
 	voices = data.voices
     	.collect({|voice|
-    		data.melody.collect({|event|
+    		data.melody.collect({|event|//for each melody set the correct durations and transposition
     			(dur: event.dur*makeTempo.(voice.tempo), note: event.note+voice.transp)
     	    })
     	})
-    	.collect({|voice|
+    	.collect({|voice|//get the durations of all notes Before the Convergence Point
     		var bcp = makeBcp.(150, voice.collect(_.dur));
     		(melody: voice, bcp: bcp)
     	});
 
-	sortedBySpeed = voices.collect({|voice| (
+	sortedBySpeed = voices.collect({|voice| (//sort voices from shortes to longest
 		durs: voice.melody.collect(_.dur),
 		notes: voice.melody.collect(_.note),
 		bcp: voice.bcp.sum,
