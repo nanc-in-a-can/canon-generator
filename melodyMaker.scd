@@ -1,29 +1,29 @@
 (
 ~melodyMaker = (
 	randomSymmetric4voices: {
-        var tp, 
+        var tp,
             tempo1,
-            tempo2, 
-            tempo3, 
-            tempo4, 
-            timeSpan, 
-            rhythm, 
-            line1, 
-            line2, 
-            line3, 
-            line4, 
-            cp, 
-            bcp1, 
-            bcp2, 
-            bcp3, 
-            bcp4, 
+            tempo2,
+            tempo3,
+            tempo4,
+            timeSpan,
+            rhythm,
+            line1,
+            line2,
+            line3,
+            line4,
+            cp,
+            bcp1,
+            bcp2,
+            bcp3,
+            bcp4,
             melody,
-            melody1, 
-            melody2, 
-            melody3, 
-            melody4, 
-            cP1, 
-            makeTempo, 
+            melody1,
+            melody2,
+            melody3,
+            melody4,
+            cP1,
+            makeTempo,
             makeBcp;
         // number of beats (timepoints in the structure)
         tp= 300; // -1 ;
@@ -41,7 +41,7 @@
         // choose a position for each rhythmic value throughout a weighted randomised process
         rhythm = tp.collect({ timeSpan.wchoose([1,5,4, 10,5,8,5,8,5,6,5,10,4,4,4, 8,8,10].normalizeSum) });
 
-
+		// rhythm.size.postln;
         cp= (tp/2); // aquí podrías cambiar el valor;
 
         makeBcp = {|line| line.copyRange(0, (line.size - cp - 2).asInteger)};
@@ -50,11 +50,6 @@
         // melodic patterns for the lines;
 
 
-        ~tempo1= makeTempo.(60);  /*change the tempo here, declare the value of a 1/4 figure*/
-        ~tempo2= makeTempo.(65);  /*change the tempo here, declare the value of a 1/4 figure*/
-        ~tempo3= makeTempo.(57);  /*change the tempo here, declare the value of a 1/4 figure*/
-        ~tempo4= makeTempo.(63);
-
         line1= rhythm.collect(_*tempo1);
         line2= rhythm.collect(_*tempo2);
         line3= rhythm.collect(_*tempo3);
@@ -62,8 +57,15 @@
 
         cP1= [70];
 
-        melody= makeBcp.(line1).collect({[45,46,50,52.5,53,55.2,57,58,60.3,62,63,65.5].wchoose([4,3,8,2,4,2,7,5,2,5,3,3].normalizeSum)});
+        melody= makeBcp.(line1).collect({[45,46,50,52.5,53,55.2,57,58,60.3,62,63,65.5].wchoose([4,3,8,2,4,2,7,5,2,5,3,3].normalizeSum)}) -12;
         melody1 = (melody+12)++cP1++(melody.reverse)++([melody[0]]);
+
+		~melody = [melody1, rhythm]
+		 .lace(melody1.size*2)
+		 .reshape(melody1.size, 2)
+       	 .collect({|note_dur| (note: note_dur[0], dur: note_dur[1])})
+		// .postln
+		;
 
         (
             tp: tp,
@@ -78,9 +80,18 @@
             melody1:  melody1,
             melody2:  melody1 - 12,
             melody3:  melody1 + 12,
-            melody4:  melody1 + 8
+            melody4:  melody1 + 8,
+			melody: ~melody,
+			voices: [
+				(tempo: 60, transp: 0),
+				(tempo: 65, transp: -12),
+				(tempo: 57, transp: 12),
+				(tempo: 63, transp: 8)
+			]
         )
 
 	}
-)
+);
+
+//~melodyMaker.randomSymmetric4voices.();
 )
