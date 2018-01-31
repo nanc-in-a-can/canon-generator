@@ -19,38 +19,33 @@ var
         );
     },
     sortedBySpeed,
-    melody_data,
     onsets,
     voices,
-	patterns,
-    voice_data;
-
+	patterns;
 
     //creates voices [(melody: [(note, dur)], bcp)]
 	voices = data.voices
     	.collect({|voice|
-    		data.melody.collect({|event|//for each melody set the correct durations and transposition
+            //for each melody set the correct durations and transposition
+            data.melody.collect({|event|
     			(dur: event.dur*makeTempo.(voice.tempo), note: event.note+voice.transp)
     	    })
     	})
-    	.collect({|voice|//get the durations of all notes Before the Convergence Point
+        //get the durations of all notes Before the Convergence Point
+        .collect({|voice|
     		var bcp = makeBcp.(150, voice.collect(_.dur));
     		(melody: voice, bcp: bcp)
     	});
 
-	sortedBySpeed = voices.collect({|voice| (//sort voices from shortes to longest
+    //sort voices from shortes to longest
+    sortedBySpeed = voices.collect({|voice| (
 		durs: voice.melody.collect(_.dur),
 		notes: voice.melody.collect(_.note),
 		bcp: voice.bcp.sum,
 	)})
         .sort({|voice| voice.durs.sum < voice.durs.sum });
 
-	melody_data= sortedBySpeed.collect({|voice| voice.notes});
-
-    voice_data = sortedBySpeed.collect({|voice| voice.durs});
-
 	patterns  = sortedBySpeed.collect(makePatt.(sortedBySpeed, _, _));
-
 	onsets = sortedBySpeed.reverse.inject([], {|acc, elem|
 		acc ++ [(sortedBySpeed.reverse[0].bcp - elem.bcp).abs];
 	});
@@ -61,25 +56,25 @@ var
         [onsets, patterns.reverse].lace(patterns.size * 2)
     )).quant([0]);
 
-    ~melody_data = melody_data;
-    ~voice_data = voice_data;
-    ~tp= melody_data[0].size;
-    ~bcp1= sortedBySpeed[0].bcp;
-    ~bcp2= sortedBySpeed[1].bcp;
-    ~bcp3= sortedBySpeed[2].bcp;
-    ~bcp4= sortedBySpeed[3].bcp;
-    ~line1= sortedBySpeed[0].durs;
-    ~line2= sortedBySpeed[1].durs;
-    ~line3= sortedBySpeed[2].durs;
-    ~line4= sortedBySpeed[3].durs;
-    ~melody1= sortedBySpeed[0].notes;
-    ~melody2= sortedBySpeed[1].notes;
-    ~melody3= sortedBySpeed[2].notes;
-    ~melody4= sortedBySpeed[3].notes;
-	~distances1= onsets[0];
-	~distances2= onsets[1];
-	~distances3= onsets[2];
-	~distances4= onsets[3];
+    ~melody_data = sortedBySpeed.collect({|voice| voice.notes});
+    ~voice_data = sortedBySpeed.collect({|voice| voice.durs});
+    ~tp = ~melody_data[0].size;
+    ~bcp1 = sortedBySpeed[0].bcp;
+    ~bcp2 = sortedBySpeed[1].bcp;
+    ~bcp3 = sortedBySpeed[2].bcp;
+    ~bcp4 = sortedBySpeed[3].bcp;
+    ~line1 = sortedBySpeed[0].durs;
+    ~line2 = sortedBySpeed[1].durs;
+    ~line3 = sortedBySpeed[2].durs;
+    ~line4 = sortedBySpeed[3].durs;
+    ~melody1 = sortedBySpeed[0].notes;
+    ~melody2 = sortedBySpeed[1].notes;
+    ~melody3 = sortedBySpeed[2].notes;
+    ~melody4 = sortedBySpeed[3].notes;
+	~distances1 = onsets[0];
+	~distances2 = onsets[1];
+	~distances3 = onsets[2];
+	~distances4 = onsets[3];
     ~tempo1 = data.voices[0].tempo;
     ~tempo2 = data.voices[1].tempo;
     ~tempo3 = data.voices[2].tempo;
