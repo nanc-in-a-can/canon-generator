@@ -28,21 +28,22 @@ var
 
 
 	voices = data.voices
-	.collect({|voice|
-		data.melody.collect({|event|
-			(dur: event.dur*makeTempo.(voice.tempo), note: event.note+voice.transp)
-	    })
-	})
-	.collect({|voice|
-		var bcp = makeBcp.(150, voice.collect(_.dur));
-		(melody: voice, bcp: bcp)
-	});
+    	.collect({|voice|
+    		data.melody.collect({|event|
+    			(dur: event.dur*makeTempo.(voice.tempo), note: event.note+voice.transp)
+    	    })
+    	})
+    	.collect({|voice|
+    		var bcp = makeBcp.(150, voice.collect(_.dur));
+    		(melody: voice, bcp: bcp)
+    	});
 
 	sortedBySpeed = voices.collect({|voice| (
 		durs: voice.melody.collect(_.dur),
 		notes: voice.melody.collect(_.note),
 		bcp: voice.bcp.sum,
-	)}).sort({|voice| voice.durs.sum < voice.durs.sum });
+	)})
+        .sort({|voice| voice.durs.sum < voice.durs.sum });
 
 	melody_data= sortedBySpeed.collect({|voice| voice.notes});
 
