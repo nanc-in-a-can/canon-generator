@@ -62,7 +62,7 @@ var
 
     ~melody_data = melody_data;
     ~voice_data = voice_data;
-    ~tp= data.tp;
+    ~tp= melody_data[0].size;
     ~bcp1= sortedBySpeed[0].bcp;
     ~bcp2= sortedBySpeed[1].bcp;
     ~bcp3= sortedBySpeed[2].bcp;
@@ -79,6 +79,10 @@ var
 	~distances2= onsets[1];
 	~distances3= onsets[2];
 	~distances4= onsets[3];
+    ~tempo1 = data.voices[0].tempo;
+    ~tempo2 = data.voices[1].tempo;
+    ~tempo3 = data.voices[2].tempo;
+    ~tempo4 = data.voices[3].tempo;
 
 
 };
