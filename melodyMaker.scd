@@ -35,5 +35,5 @@
 	}
 );
 
-~melodyMaker.randomSymmetric4voices.();
+//~melodyMaker.randomSymmetric4voices.();
 )
