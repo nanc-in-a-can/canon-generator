@@ -80,7 +80,7 @@ var boton_Start_stop, boton_RecStart_stop, timePointsText, timePointsField, conv
 
 w = Window("Canon temporal a 4 voces", Rect(5,150,1400,650), true, true, s, true).front;
 
-pieceDuration= ~x_values_V1[299].linlin(0,120,0,4500);
+pieceDuration= ~x_values_V1[~x_values_V1.size -1].linlin(0,120,0,4500);
 
 
 ~scroller = Pbind(*[
