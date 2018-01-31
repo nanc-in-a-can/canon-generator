@@ -2,11 +2,11 @@
 //data must be an Event object with the following keys
 //(
 // tp: Int,
-// melody: [(dur, note)]// Array of Event objects with note and duration
-// voices: [(tempo, transp)]//Array of Event objects with tempo and transposition for each voice that will be generated
+// melody: [(dur: Float, note: midiNote)]// Array of Event objects with note and duration
+// voices: [(tempo: Float, transp: Int)]//Array of Event objects with tempo and transposition for each voice that will be generated
 //)
 
-~makeCanon = {|data| 
+~makeCanon = {|data|
 
 var
     makeBcp = {|cp, line| line.copyRange(0, (line.size - cp - 2).asInteger)},
@@ -59,14 +59,14 @@ var
 
     //Pbinds
     patterns = sortedBySpeed.collect(makePatt.(sortedBySpeed, _, _)),
-    
+
 
     //voice onset times
     onsets = sortedBySpeed.reverse.inject([], {|acc, elem|
         acc ++ [(sortedBySpeed.reverse[0].bcp - elem.bcp).abs];
     });
 
-    
+
     //Globals
     Pdef(\four_v_temporalCanon_v2, Ptpar(
         [onsets, patterns.reverse].lace(patterns.size * 2)
