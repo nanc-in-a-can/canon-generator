@@ -62,6 +62,9 @@ voice_data = ~sortedBySpeed.collect({|l_p| l_p[0]});
 		[~onsets, voice.reverse].lace(voice.size * 2)
 	)).quant([0]);
 
+	~melody_data = melody_data;
+	~voice_data = voice_data;
+	~tp = tp;
 /*
  write to a pdf file the canon's data
 write_t = File("~/convergence_canon_data.txt".standardizePath,"w");
