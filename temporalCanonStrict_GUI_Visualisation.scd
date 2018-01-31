@@ -94,19 +94,19 @@ boton_Start_stop = Button.new(w, Rect(0, 600, 4300, 20));
         boton_Start_stop.states = ([["Start",Color.black, Color.green],["Stop",Color.black, Color.red]]);
 
 boton_Start_stop.action =  { case {boton_Start_stop.value == 1}
-	{~reverb= Synth(\reverb); Pdef(\four_v_temporalCanon).play; ~scroll=~scroller.play(AppClock); ~showMe.play(AppClock) /*fork { while { ~showMe.isClosed.not } { defer {  ~showMe.refresh}; ((~x_values_V1[299]/~x_values_V1[299].linlin(0,120,0,4500))).wait; } }*/};
+	{~reverb= Synth(\reverb); Pdef(\four_v_temporalCanon_v2).play; ~scroll=~scroller.play(AppClock); ~showMe.play(AppClock) /*fork { while { ~showMe.isClosed.not } { defer {  ~showMe.refresh}; ((~x_values_V1[299]/~x_values_V1[299].linlin(0,120,0,4500))).wait; } }*/};
 
 	case {boton_Start_stop.value == 0}
-	{  Pdef(\four_v_temporalCanon).stop; ~reverb.set(\gate, 0); ~scroll.stop; } };
+	{  Pdef(\four_v_temporalCanon_v2).stop; ~reverb.set(\gate, 0); ~scroll.stop; } };
 
 boton_RecStart_stop = Button.new(w, Rect(0, 575, 4300, 20));
         boton_RecStart_stop.states = ([["Start & Record",Color.black, Color.yellow],["Stop",Color.black, Color.red]]);
 
 boton_RecStart_stop.action =  { case {boton_RecStart_stop.value == 1}
-	{ s.record; ~reverb= Synth(\reverb); Pdef(\four_v_temporalCanon).play };
+	{ s.record; ~reverb= Synth(\reverb); Pdef(\four_v_temporalCanon_v2).play };
 
 	case {boton_RecStart_stop.value == 0}
-	{ Pdef(\four_v_temporalCanon).stop; ~reverb.set(\gate, 0); s.stopRecording } };
+	{ Pdef(\four_v_temporalCanon_v2).stop; ~reverb.set(\gate, 0); s.stopRecording } };
 
 
 (

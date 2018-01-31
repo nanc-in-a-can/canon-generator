@@ -65,6 +65,19 @@ voice_data = ~sortedBySpeed.collect({|l_p| l_p[0]});
 	~melody_data = melody_data;
 	~voice_data = voice_data;
 	~tp = tp;
+    ~tp= data.tp;
+    ~bcp1= data.bcp1;
+    ~bcp2= data.bcp2;
+    ~bcp3= data.bcp3;
+    ~bcp4= data.bcp4;
+    ~line1= data.line1;
+    ~line2= data.line2;
+    ~line3= data.line3;
+    ~line4= data.line4;
+    ~melody1= data.melody1;
+    ~melody2= data.melody2;
+    ~melody3= data.melody3;
+    ~melody4= data.melody4;
 /*
  write to a pdf file the canon's data
 write_t = File("~/convergence_canon_data.txt".standardizePath,"w");

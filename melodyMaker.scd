@@ -50,6 +50,11 @@
         // melodic patterns for the lines;
 
 
+        ~tempo1= makeTempo.(60);  /*change the tempo here, declare the value of a 1/4 figure*/
+        ~tempo2= makeTempo.(65);  /*change the tempo here, declare the value of a 1/4 figure*/
+        ~tempo3= makeTempo.(57);  /*change the tempo here, declare the value of a 1/4 figure*/
+        ~tempo4= makeTempo.(63);
+
         line1= rhythm.collect(_*tempo1);
         line2= rhythm.collect(_*tempo2);
         line3= rhythm.collect(_*tempo3);
