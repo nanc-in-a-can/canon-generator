@@ -3,7 +3,11 @@
 
 var
     makeBcp = {|cp, line| line.copyRange(0, (line.size - cp - 2).asInteger)},
+
+
     makeTempo = {|speed| 60/(speed/4)},
+
+
     makePatt = {|sortedVoices, voice, index|
         var pan = (index/sortedBySpeed.size*2 - 1) + (1/sortedBySpeed.size);//distributes voices evenly across the stereo field, but it avoids the extreme positions (-1 and 1)
         var line  = voice.durs;
@@ -18,40 +22,45 @@ var
 
         );
     },
-    sortedBySpeed,
-    onsets,
-    voices,
-	patterns;
+
 
     //creates voices [(melody: [(note, dur)], bcp)]
-	voices = data.voices
-    	.collect({|voice|
+    voices = (data.voices
+        .collect({|voice|
             //for each melody set the correct durations and transposition
             data.melody.collect({|event|
-    			(dur: event.dur*makeTempo.(voice.tempo), note: event.note+voice.transp)
-    	    })
-    	})
+                (dur: event.dur*makeTempo.(voice.tempo), note: event.note+voice.transp)
+            })
+        })
         //get the durations of all notes Before the Convergence Point
         .collect({|voice|
-    		var bcp = makeBcp.(150, voice.collect(_.dur));
-    		(melody: voice, bcp: bcp)
-    	});
-
-    //sort voices from shortes to longest
-    sortedBySpeed = voices.collect({|voice| (
-		durs: voice.melody.collect(_.dur),
-		notes: voice.melody.collect(_.note),
-		bcp: voice.bcp.sum,
-	)})
-        .sort({|voice| voice.durs.sum < voice.durs.sum });
-
-	patterns  = sortedBySpeed.collect(makePatt.(sortedBySpeed, _, _));
-	onsets = sortedBySpeed.reverse.inject([], {|acc, elem|
-		acc ++ [(sortedBySpeed.reverse[0].bcp - elem.bcp).abs];
-	});
+            var bcp = makeBcp.(150, voice.collect(_.dur));
+            (melody: voice, bcp: bcp)
+        })
+    ),
 
 
+    //sorted voices from shortes to longest
+    sortedBySpeed = sortedBySpeed = (voices.collect({|voice| (
+        durs: voice.melody.collect(_.dur),
+        notes: voice.melody.collect(_.note),
+        bcp: voice.bcp.sum,
+    )})
+        .sort({|voice| voice.durs.sum < voice.durs.sum })
+    ),
 
+
+    //Pbinds
+    patterns = sortedBySpeed.collect(makePatt.(sortedBySpeed, _, _)),
+    
+
+    //voice onset times
+    onsets = sortedBySpeed.reverse.inject([], {|acc, elem|
+        acc ++ [(sortedBySpeed.reverse[0].bcp - elem.bcp).abs];
+    });
+
+    
+    //Globals
     Pdef(\four_v_temporalCanon_v2, Ptpar(
         [onsets, patterns.reverse].lace(patterns.size * 2)
     )).quant([0]);
