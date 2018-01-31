@@ -1,5 +1,12 @@
 (
-~makeCanon = {|data|
+//data must be an Event object with the following keys
+//(
+// tp: Int,
+// melody: [(dur, note)]// Array of Event objects with note and duration
+// voices: [(tempo, transp)]//Array of Event objects with tempo and transposition for each voice that will be generated
+//)
+
+~makeCanon = {|data| 
 
 var
     makeBcp = {|cp, line| line.copyRange(0, (line.size - cp - 2).asInteger)},
