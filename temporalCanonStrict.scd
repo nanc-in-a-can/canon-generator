@@ -49,7 +49,7 @@ var
 
     //sorted voices from shortes to longest
 	//[(durs: [Float], notes: [midiNote], bcp: [Float])]
-    sortedBySpeed = sortedBySpeed = (voices.collect({|voice| (
+    sortedBySpeed = (voices.collect({|voice| (
         durs: voice.melody.collect(_.dur),
         notes: voice.melody.collect(_.note),
         bcp: voice.bcp.sum,
