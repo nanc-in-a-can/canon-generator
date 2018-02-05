@@ -88,10 +88,10 @@
         ~melody2 = sortedBySpeed[1].notes;
         ~melody3 = sortedBySpeed[2].notes;
         ~melody4 = sortedBySpeed[3].notes;
-    	~distances1 = onsets[0];
-    	~distances2 = onsets[1];
-    	~distances3 = onsets[2];
-    	~distances4 = onsets[3];
+    	~distances1 = onsets[3];
+    	~distances2 = onsets[2];
+    	~distances3 = onsets[1];
+    	~distances4 = onsets[0];
         ~tempo1 = data.voices[0].tempo;
         ~tempo2 = data.voices[1].tempo;
         ~tempo3 = data.voices[2].tempo;
