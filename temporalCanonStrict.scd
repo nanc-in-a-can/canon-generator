@@ -1,7 +1,7 @@
 (
 //data must be an Event object with the following keys
 //(
-// tp: Int,
+// cp: Int,//Note number on melody on which the convergence point should happen.
 // melody: [(dur: Float, note: midiNote)]// Array of Event objects with note and duration
 // voices: [(tempo: Float, transp: Int)]//Array of Event objects with tempo and transposition for each voice that will be generated
 //)
@@ -9,7 +9,7 @@
 ~makeCanon = {|data|
 
     var
-        makeBcp = {|cp, line| line.copyRange(0, (line.size - cp - 2).asInteger)},
+	makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
 
 
         makeTempo = {|speed| 60/(speed/4)},
@@ -41,7 +41,7 @@
             })
             //get the durations of all notes Before the Convergence Point
             .collect({|voice|
-                var bcp = makeBcp.(150, voice.collect(_.dur));
+                var bcp = makeBcp.(data.cp, voice.collect(_.dur));
                 (melody: voice, bcp: bcp)
             })
         ),
@@ -54,7 +54,7 @@
             notes: voice.melody.collect(_.note),
             bcp: voice.bcp.sum,
         )})
-            .sort({|voice| voice.durs.sum < voice.durs.sum })
+            .sort({|voice1, voice2| voice1.durs.sum < voice2.durs.sum })
         ),
 
 
@@ -89,10 +89,10 @@
         ~melody2 = sortedBySpeed[1].notes;
         ~melody3 = sortedBySpeed[2].notes;
         ~melody4 = sortedBySpeed[3].notes;
-    	~distances1 = onsets[0];
-    	~distances2 = onsets[1];
-    	~distances3 = onsets[2];
-    	~distances4 = onsets[3];
+    	~distances1 = onsets[3];
+    	~distances2 = onsets[2];
+    	~distances3 = onsets[1];
+    	~distances4 = onsets[0];
         ~tempo1 = data.voices[0].tempo;
         ~tempo2 = data.voices[1].tempo;
         ~tempo3 = data.voices[2].tempo;
@@ -101,12 +101,15 @@
 
     };
     //
-    // ~makeCanon.(~melodyMaker.randomSymmetric4voices.());
+// ~makeCanon.(~melodyMaker.randomSymmetric4voices.());
     // (/*play Canon!!*/
     // // s.record;
     // ~reverb= Synth(\reverb);
     // Pdef(\four_v_temporalCanon_v2).play;
     // );
 
+
+
 )
+
 
