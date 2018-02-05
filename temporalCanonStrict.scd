@@ -9,7 +9,7 @@
 ~makeCanon = {|data|
 
     var
-	makeBcp = {|cp, line| line.copyRange(0, (cp - 1).asInteger)},
+	makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
 
 
         makeTempo = {|speed| 60/(speed/4)},

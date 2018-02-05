@@ -33,9 +33,10 @@
         )
 
 	},
-	simple4NoteMelody: {
+	simple4NoteMelody: {|this_, convergence_point| /*for some reason SC automatically passes the Event object as the first parameter, but the function just needs to receive the convergence point as the first parameter when being called. E.g.: ~melodyMaker.simple4NoteMelody(2)*/
+
 		(
-            cp: 2,
+            cp: convergence_point,
 	        melody: [(dur: 1, note: 60), (dur: 1, note: 61), (dur: 1, note: 62), (dur: 1, note: 63)],
 			voices: [
 				(tempo: 60, transp: 0),
@@ -48,4 +49,5 @@
 );
 
 // ~melodyMaker.randomSymmetric4voices.();
+// ~melodyMaker.simple4NoteMelody(2)
 )
