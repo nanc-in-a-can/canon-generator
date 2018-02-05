@@ -73,23 +73,24 @@
 );
 );
 
-//probando
-
 
 (
 var boton_Start_stop, boton_RecStart_stop, timePointsText, timePointsField, convergencePointText, convergencePointField, tempoText, voice_1, voice1_tempo, voice_2, voice2_tempo, voice_3, voice3_tempo, voice_4, voice4_tempo, pieceDuration;
 
-w = Window("Canon temporal a 4 voces", Rect(5,150,1400,650), true, true, s, true).front;
+var width= 1400, height= 650, theta=0, duracion= 4500;
+
+w = Window("Canon temporal a 4 voces", Rect(5,50,width,height), true, true, s, true).front;
+u= UserView(w, Rect(0,0,duracion /*duración (X values)*/,height));
 
 //translating time values to space values;
-pieceDuration= ~x_values_V1[~x_values_V1.size -1].linlin(0,120,0,4500);
+pieceDuration= ~x_values_V2[~x_values_V2.size -1].linlin(0,120,0,duracion);
 
 
 // this pbind "scrolls" the screen in order to be always showing the present events of the canon
 ~scroller = Pbind(*[
 				play: { w.view.visibleOrigin = Point( ~t - 0.2 max: 0 * 30, 0) },
 				t:	Pseg([0, pieceDuration], pieceDuration),
-				dur:	0.05
+	dur:	(~x_values_V2[~x_values_V2.size -1]/4500)
 			]);
 
 // start button actions
@@ -97,15 +98,17 @@ boton_Start_stop = Button.new(w, Rect(0, 600, 4300, 20));
         boton_Start_stop.states = ([["Start",Color.black, Color.green],["Stop",Color.black, Color.red]]);
 
 boton_Start_stop.action =  { case {boton_Start_stop.value == 1}
-	{~reverb= Synth(\reverb); Pdef(\four_v_temporalCanon_v2).play; ~scroll=~scroller.play(AppClock); /*AppClock.play(~showMe)*/
-
-	// the line that indicates the present moments is a routine embedded in ~showMe
-		fork { while { ~showMe.isClosed.not }
-			{ defer {  ~showMe.refresh};
-				(~x_values_V4[299]/~x_values_V4[299].linlin(0,120,0,4500)).wait; } }};
+	{~reverb= Synth(\reverb); Pdef(\four_v_temporalCanon_v2).play; ~scroll=~scroller.play(AppClock);
+		// aquí va la chingadera esa de la raya
+		u.animate= true;
+	};
 
 	case {boton_Start_stop.value == 0}
-	{  Pdef(\four_v_temporalCanon_v2).stop; ~reverb.set(\gate, 0); ~scroll.stop; /*~shMe.stop, idear un modo de detener esta rutina*/} };
+	{  Pdef(\four_v_temporalCanon_v2).stop; ~reverb.set(\gate, 0); ~scroll.stop;
+		// detener la rayita estupida
+		u.animate= false; theta=0;
+
+} };
 
 boton_RecStart_stop = Button.new(w, Rect(0, 575, 4300, 20));
         boton_RecStart_stop.states = ([["Start & Record",Color.black, Color.yellow],["Stop",Color.black, Color.red]]);
@@ -115,7 +118,7 @@ boton_RecStart_stop.action =  { case {boton_RecStart_stop.value == 1}
 
 	case {boton_RecStart_stop.value == 0}
 	{ Pdef(\four_v_temporalCanon_v2).stop; ~reverb.set(\gate, 0); s.stopRecording };
-	~showMe.clear
+
 };
 
 
@@ -192,46 +195,29 @@ voice4_tempo.action = {arg numb; numb.value.postln; ~tempo4 = numb.value };
 );
 w.front;
 
-u= UserView(w, Rect(29,70,4500,450));
-
 
 (
-//t = Slider(w, Rect(0, 650, 4500, 400));
-//t.orientation = \horizontal;
 w.drawFunc = {
     Pen.translate(50, -250);
 
-// aquí se declara la rutina de la línea
-	~showMe= u.drawFunc = Routine {
+//aquí se define la U y su función
 
-	4600.do{|i|
-		Pen.line(
-		Point(i, 0),
-		Point(i,1280)
-		);
-		Pen.fillStroke;
-	1000.wait;
+	u.drawFunc= {
+		u.frameRate= (~x_values_V2[~x_values_V2.size -1]/4500)*60;
+		Pen.translate(20, 80);		//offset drawing to the start of the drawing
+		Pen.strokeColor= Color.black;				//always fill with white color
+		Pen.fillColor= Color.black;
+
+		Pen.line(Point(0+theta,0), Point(0+theta,height*0.75));
+	theta= theta + 1;
+	theta.postln;
+	Pen.stroke;
+
 
 	};
 
-};
 
-	// aqui te quedaste!!!
-/*~showMe = Pbind(*[
-				play: { u.drawFunc = Routine {
-			4000.do{
-.
-		Pen.line(
-		Point( ~t, 0),
-		Point( ~t,1280)
-		);
 
-		Pen.fillStroke;
-			};
-		};},
-				t:	Pseg([0, pieceDuration], pieceDuration),
-				dur:	0.05
-			]);*/
 
 	Pen.rotate(0.0pi);
 	// here you assign a wedge to each of the coodinates that form the events (x and y axis)

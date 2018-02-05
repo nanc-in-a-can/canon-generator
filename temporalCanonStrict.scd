@@ -74,6 +74,7 @@
         )).quant([0]);
 
         ~melody_data = sortedBySpeed.collect({|voice| voice.notes});
+	/*voice data debería generar durs ordenadas de más lenta a más rápida? entonces hay una discrepancia. Con el canon que generé ene sta sesión d etrabajo voice_data[2].sum me da el canon más grande, necesito entender como conseguir la voz más lenta para poder sincronizar la visualización con el sonido*/
         ~voice_data = sortedBySpeed.collect({|voice| voice.durs});
         ~tp = ~melody_data[0].size;
         ~bcp1 = sortedBySpeed[0].bcp;
