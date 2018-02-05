@@ -9,7 +9,7 @@
 ~makeCanon = {|data|
 
     var
-        makeBcp = {|cp, line| line.copyRange(0, (line.size - cp - 2).asInteger)},
+        makeBcp = {|cp, line| line.copyRange(0, (line.size - cp - 1).asInteger.postln)},
 
 
         makeTempo = {|speed| 60/(speed/4)},
@@ -41,7 +41,7 @@
             })
             //get the durations of all notes Before the Convergence Point
             .collect({|voice|
-                var bcp = makeBcp.(150, voice.collect(_.dur));
+                var bcp = makeBcp.(1, voice.collect(_.dur));
                 (melody: voice, bcp: bcp)
             })
         ),
@@ -52,7 +52,7 @@
         sortedBySpeed = (voices.collect({|voice| (
             durs: voice.melody.collect(_.dur),
             notes: voice.melody.collect(_.note),
-            bcp: voice.bcp.sum,
+            bcp: voice.bcp.postln.sum,
         )})
             .sort({|voice1, voice2| voice1.durs.sum < voice2.durs.sum })
         ),
@@ -100,7 +100,7 @@
 
     };
     //
-~makeCanon.(~melodyMaker.randomSymmetric4voices.());
+// ~makeCanon.(~melodyMaker.randomSymmetric4voices.());
     // (/*play Canon!!*/
     // // s.record;
     // ~reverb= Synth(\reverb);
