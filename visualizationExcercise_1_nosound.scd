@@ -4,6 +4,18 @@
 // durs
 ~line= Array.fill(30, { [1/4, 1/8, 1/16, 1/32, 1/5,1/3,1/6,1/7,1/9].choose });
 
+(
+~pattern= Pbind(
+                \instrument, \piano,
+                \pan, 0,
+                \dur, Pseq(~line,1),
+                \freq, Pseq(~y_values_V1,inf),
+                \out, 10,
+                \amp, 1
+
+            );
+);
+
 // dur values turned into x values
 ( // assigning the duration values to the X axis (voice 1)
 	~x_values_V1= Array.newClear(~line.size);
@@ -30,13 +42,14 @@
 
 	//--variables
 var theta= 0; // counter
+var line;
 
 w.drawFunc = { // draw the points of the canon;
 
 		20.do{|i|
         // set the Color
 		Pen.color = Color.green(0.5);
-		Pen.addWedge(~x_values_V1[i].linlin(0,2.5,5,640)@(~y_values_V1[i].linlin(20,120,0,480)), 4, 0pi, 2pi);
+		Pen.addWedge(~x_values_V1[i].linlin(0,2.8,10,640)@(~y_values_V1[i].linlin(20,120,0,480)), 4, 0pi, 2pi);
         Pen.perform([ \fill].choose);
 
 
@@ -45,12 +58,16 @@ w.drawFunc = { // draw the points of the canon;
 
 	//--line that represents present time
 	u.drawFunc= {
+	u.frameRate= 100;
+	line= ~line.asStream;
+	(u.frame%(line*1000)).postln;
 	//	Pen.translate(width*0.5, height*0.5);		//offset drawing to the centre
 		Pen.strokeColor= Color.red;				//always fill with white color
 	Pen.line(Point(0+theta,0), Point(0+theta,480));
 	theta= theta + 1;
-	theta.postln;
-	Pen.stroke
+//	theta.postln;
+	Pen.stroke;
+
 
 	};
 

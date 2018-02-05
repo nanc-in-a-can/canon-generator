@@ -80,6 +80,8 @@ var boton_Start_stop, boton_RecStart_stop, timePointsText, timePointsField, conv
 var width= 1400, height= 650, theta=0, duracion= 4500;
 
 w = Window("Canon temporal a 4 voces", Rect(5,50,width,height), true, true, s, true).front;
+
+// aquí va todo lo que necesite animación
 u= UserView(w, Rect(0,0,duracion /*duración (X values)*/,height));
 
 //translating time values to space values;
@@ -203,9 +205,9 @@ w.drawFunc = {
 //aquí se define la U y su función
 
 	u.drawFunc= {
-		u.frameRate= (~x_values_V2[~x_values_V2.size -1]/4500)*60;
+		u.frameRate= (~x_values_V2[~x_values_V2.size -1]/4500)*60*31;
 		Pen.translate(20, 80);		//offset drawing to the start of the drawing
-		Pen.strokeColor= Color.black;				//always fill with white color
+		Pen.strokeColor= Color.black;
 		Pen.fillColor= Color.black;
 
 		Pen.line(Point(0+theta,0), Point(0+theta,height*0.75));
