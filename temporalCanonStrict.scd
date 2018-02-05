@@ -1,7 +1,7 @@
 (
 //data must be an Event object with the following keys
 //(
-// tp: Int,
+// cp: Int,//Note number on melody on which the convergence point should happen.
 // melody: [(dur: Float, note: midiNote)]// Array of Event objects with note and duration
 // voices: [(tempo: Float, transp: Int)]//Array of Event objects with tempo and transposition for each voice that will be generated
 //)
