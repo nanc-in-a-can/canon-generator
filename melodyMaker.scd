@@ -13,7 +13,7 @@
                 (section1+12)++cP1++(section1.reverse)++([section1[0]])
 
             },
-            melody = makeMelody.((tp - cp - 2).asInteger),
+            melody = makeMelody.((tp - cp - 1).asInteger),
             rhythmicProportions = 1/[1, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24, 32],
             rhythm = melody.collect({ rhythmicProportions.wchoose([1,5,4,10,5,8,5,8,5,6,5,10,4,4,4,8,8,10].normalizeSum) }),
     		fullMelody = [melody, rhythm]
