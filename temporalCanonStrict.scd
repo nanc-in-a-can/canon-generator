@@ -52,7 +52,7 @@
         sortedBySpeed = (voices.collect({|voice| (
             durs: voice.melody.collect(_.dur),
             notes: voice.melody.collect(_.note),
-            bcp: voice.bcp.postln.sum,
+            bcp: voice.bcp.sum,
         )})
             .sort({|voice1, voice2| voice1.durs.sum < voice2.durs.sum })
         ),
