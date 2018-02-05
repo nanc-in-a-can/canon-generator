@@ -7,7 +7,7 @@ s.boot;
 (thisProcess.nowExecutingPath.dirname++"/temporalCanonStrict.scd").load;//exports ~makeCanon, that when called export many other globals :/, also \four_v_temporalCanon_v2
 (thisProcess.nowExecutingPath.dirname++"/melodyMaker.scd").load;// exports ~melodyMaker
 // ~makeCanon.(~melodyMaker.randomSymmetric4voices);
-~makeCanon.(~melodyMaker.simple4NoteMelody(1));
+~makeCanon.(~melodyMaker.simple4NoteMelody(3));
 );
 
 
