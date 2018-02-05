@@ -8,8 +8,8 @@ s.boot;
 (thisProcess.nowExecutingPath.dirname++"/melodyMaker.scd").load;// exports ~melodyMaker
 // ~makeCanon.(~melodyMaker.randomSymmetric4voices.());
 ~makeCanon.((
-            tp: 4,
-	melody: [(dur: 1, note: 60), (dur: 1, note: 61), (dur: 1, note: 62), (dur: 1, note: 63)],
+            cp: 2,
+	        melody: [(dur: 1, note: 60), (dur: 1, note: 61), (dur: 1, note: 62), (dur: 1, note: 63)],
 			voices: [
 				(tempo: 60, transp: 0),
 				(tempo: 65, transp: -12),

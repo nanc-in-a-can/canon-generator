@@ -9,7 +9,7 @@
 ~makeCanon = {|data|
 
     var
-        makeBcp = {|cp, line| line.copyRange(0, (line.size - cp - 1).asInteger.postln)},
+	makeBcp = {|cp, line| line.copyRange(0, (cp - 1).asInteger)},
 
 
         makeTempo = {|speed| 60/(speed/4)},
@@ -41,7 +41,7 @@
             })
             //get the durations of all notes Before the Convergence Point
             .collect({|voice|
-                var bcp = makeBcp.(3, voice.collect(_.dur));
+                var bcp = makeBcp.(data.cp, voice.collect(_.dur));
                 (melody: voice, bcp: bcp)
             })
         ),

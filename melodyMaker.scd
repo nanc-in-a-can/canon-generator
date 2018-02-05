@@ -21,10 +21,8 @@
     		  .reshape(melody.size, 2)
     		  .collect({|note_dur| (note: note_dur[0], dur: note_dur[1])});
 
-		// ~fullMelody = fullMelody;
-
         (
-            tp: tp,
+            cp: cp,
 			melody: fullMelody,//[(dur, note)]
 			voices: [
 				(tempo: 60, transp: 0),
