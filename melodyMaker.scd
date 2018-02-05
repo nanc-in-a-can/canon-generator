@@ -4,7 +4,7 @@
         var
             tp = 300,
             cp = (tp/2),
-            cP1 = [70],
+            cP1 = [200],
             makeMelody = {|bcp_length|
                 var section1 = bcp_length.collect({
                     [45,46,50,52.5,53,55.2,57,58,60.3,62,63,65.5]
@@ -21,6 +21,8 @@
     		  .reshape(melody.size, 2)
     		  .collect({|note_dur| (note: note_dur[0], dur: note_dur[1])});
 
+		// ~fullMelody = fullMelody;
+
         (
             tp: tp,
 			melody: fullMelody,//[(dur, note)]
@@ -35,5 +37,5 @@
 	}
 );
 
-//~melodyMaker.randomSymmetric4voices.();
+// ~melodyMaker.randomSymmetric4voices.();
 )

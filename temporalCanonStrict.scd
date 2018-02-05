@@ -54,7 +54,7 @@
             notes: voice.melody.collect(_.note),
             bcp: voice.bcp.sum,
         )})
-            .sort({|voice| voice.durs.sum < voice.durs.sum })
+            .sort({|voice1, voice2| voice1.durs.sum < voice2.durs.sum })
         ),
 
 
@@ -100,12 +100,15 @@
 
     };
     //
-    // ~makeCanon.(~melodyMaker.randomSymmetric4voices.());
+~makeCanon.(~melodyMaker.randomSymmetric4voices.());
     // (/*play Canon!!*/
     // // s.record;
     // ~reverb= Synth(\reverb);
     // Pdef(\four_v_temporalCanon_v2).play;
     // );
 
+
+
 )
+
 
