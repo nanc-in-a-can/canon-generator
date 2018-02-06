@@ -75,24 +75,25 @@
 
 
 (
-var boton_Start_stop, boton_RecStart_stop, timePointsText, timePointsField, convergencePointText, convergencePointField, tempoText, voice_1, voice1_tempo, voice_2, voice2_tempo, voice_3, voice3_tempo, voice_4, voice4_tempo, pieceDuration;
+var boton_Start_stop, boton_RecStart_stop, timePointsText, timePointsField, convergencePointText, convergencePointField, tempoText, voice_1, voice1_tempo, voice_2, voice2_tempo, voice_3, voice3_tempo, voice_4, voice4_tempo;
 
-var width= 1400, height= 650, theta=0, duracion= 4500;
+var width= 1400, height= 650, theta=0, mapX= 4500, spaceDur, timeDur;
 
 w = Window("Canon temporal a 4 voces", Rect(5,50,width,height), true, true, s, true).front;
 
 // aquí va todo lo que necesite animación
-u= UserView(w, Rect(0,0,duracion /*duración (X values)*/,height));
+u= UserView(w, Rect(0,0,mapX /*pixeles máximos de espacio por recorrer*/,height));
 
 //translating time values to space values;
-pieceDuration= ~x_values_V2[~x_values_V2.size -1].linlin(0,120,0,duracion);
+spaceDur= ~x_values_V4[~x_values_V4.size -1].linlin(0,120,0,mapX);
+ timeDur= ~x_values_V4[~x_values_V4.size -1];
 
 
-// this pbind "scrolls" the screen in order to be always showing the present events of the canon
+// this pbind "scrolls" the screen in order to be always showing the present events of the canon. It goes from the start of the piece to the end of the mapped space 4500 (mapX)
 ~scroller = Pbind(*[
 				play: { w.view.visibleOrigin = Point( ~t - 0.2 max: 0 * 30, 0) },
-				t:	Pseg([0, pieceDuration], pieceDuration),
-	dur:	(~x_values_V2[~x_values_V2.size -1]/4500)
+				t:	Pseg([0, spaceDur], spaceDur), // este dur está roto
+	dur:	timeDur // este dur esta roto
 			]);
 
 // start button actions
@@ -100,7 +101,7 @@ boton_Start_stop = Button.new(w, Rect(0, 600, 4300, 20));
         boton_Start_stop.states = ([["Start",Color.black, Color.green],["Stop",Color.black, Color.red]]);
 
 boton_Start_stop.action =  { case {boton_Start_stop.value == 1}
-	{~reverb= Synth(\reverb); Pdef(\four_v_temporalCanon_v2).play; ~scroll=~scroller.play(AppClock);
+	{~reverb= Synth(\reverb); Pdef(\four_v_temporalCanon_v2).play; /*~scroll=~scroller.play(AppClock);*/
 		// aquí va la chingadera esa de la raya
 		u.animate= true;
 	};
@@ -205,8 +206,11 @@ w.drawFunc = {
 //aquí se define la U y su función
 
 	u.drawFunc= {
-		u.frameRate= (~x_values_V2[~x_values_V2.size -1]/4500)*60*31;
-		Pen.translate(20, 80);		//offset drawing to the start of the drawing
+		u.frameRate= (spaceDur/timeDur); // un Frames per second;
+		/*Este valor es el que determina la velocidad de la raya, de acuerdo a mis cálculos debe ser espacio por recorrer / tiempo en el que debe de recorrerse. En el caso de nuestro ejemplo, 473.684 pixeles por recorrer dividido entre 12.631 segundos de duración de la voz más lenta. La línea tarda en recorrer ese espacio 15 segundos*/
+
+
+		Pen.translate(50, 80);		//offset drawing to the start of the drawing
 		Pen.strokeColor= Color.black;
 		Pen.fillColor= Color.black;
 
