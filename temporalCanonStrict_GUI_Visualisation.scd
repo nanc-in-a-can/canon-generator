@@ -73,11 +73,13 @@
 );
 );
 
-
 (
 var boton_Start_stop, boton_RecStart_stop, timePointsText, timePointsField, convergencePointText, convergencePointField, tempoText, voice_1, voice1_tempo, voice_2, voice2_tempo, voice_3, voice3_tempo, voice_4, voice4_tempo;
 
 var width= 1400, height= 650, theta=0, mapX= 4500, spaceDur, timeDur, elapsedTime = 0;
+
+Pdef(\four_v_temporalCanon_v2).stop;
+Pdef(\four_v_temporalCanon_v2).reset;
 
 w = Window("Canon temporal a 4 voces", Rect(5,50,width,height), true, true, s, true).front;
 
@@ -86,7 +88,8 @@ u= UserView(w, Rect(0,0,mapX /*pixeles máximos de espacio por recorrer*/,height
 
 //translating time values to space values;
 spaceDur= ~x_values_V4[~x_values_V4.size -1].linlin(0,120,0,mapX);
- timeDur= ~x_values_V4[~x_values_V4.size -1];
+ timeDur= ~x_values_V4[~x_values_V4.size -1].postln;
+
 
 
 // this pbind "scrolls" the screen in order to be always showing the present events of the canon. It goes from the start of the piece to the end of the mapped space 4500 (mapX)
@@ -201,25 +204,37 @@ w.front;
 
 (
 w.drawFunc = {
+	var
+	  percTime = 0,
+	  percSpace = 0,
+	  elapsedTime = 0,
+	  initialTime = SystemClock.seconds;
+
+
     Pen.translate(50, -250);
 
 //aquí se define la U y su función
 
 	u.drawFunc= {
-		"space"+spaceDur.postln;
-		"time"+timeDur.postln;
-		u.frameRate= spaceDur/timeDur; // un Frames per second;
+		// "space"+spaceDur.postln;
+		// "time"+timeDur.postln;
+		u.frameRate= 60; // un Frames per second;
 		/*Este valor es el que determina la velocidad de la raya, de acuerdo a mis cálculos debe ser espacio por recorrer / tiempo en el que debe de recorrerse. En el caso de nuestro ejemplo, 473.684 pixeles por recorrer dividido entre 12.631 segundos de duración de la voz más lenta. La línea tarda en recorrer ese espacio 15 segundos*/
 
-		elapsedTime = elapsedTime + 1;
+
+		percTime = elapsedTime/timeDur;
+		percSpace = spaceDur * percTime;
+		elapsedTime = (SystemClock.seconds - initialTime) - (s.latency + 0.01);//0.01 para compensar la latencia de la gui
+
+
 		// mapXelapsedTime.postln;
-		Pen.translate(50, 80);		//offset drawing to the start of the drawing
+		Pen.translate(0, 80);		//offset drawing to the start of the drawing
 		Pen.strokeColor= Color.black;
 		Pen.fillColor= Color.black;
 
-		Pen.line(Point(0+theta,0), Point(0+theta,height*0.75));
-	theta= theta + 1;
-		("theta"+theta).postln;
+		Pen.line(Point(percSpace,0), Point(percSpace,height*0.75));
+
+
 	Pen.stroke;
 
 
