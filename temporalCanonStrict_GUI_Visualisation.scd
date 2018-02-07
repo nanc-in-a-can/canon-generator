@@ -77,7 +77,7 @@
 (
 var boton_Start_stop, boton_RecStart_stop, timePointsText, timePointsField, convergencePointText, convergencePointField, tempoText, voice_1, voice1_tempo, voice_2, voice2_tempo, voice_3, voice3_tempo, voice_4, voice4_tempo;
 
-var width= 1400, height= 650, theta=0, mapX= 4500, spaceDur, timeDur;
+var width= 1400, height= 650, theta=0, mapX= 4500, spaceDur, timeDur, elapsedTime = 0;
 
 w = Window("Canon temporal a 4 voces", Rect(5,50,width,height), true, true, s, true).front;
 
@@ -206,17 +206,20 @@ w.drawFunc = {
 //aquí se define la U y su función
 
 	u.drawFunc= {
-		u.frameRate= (spaceDur/timeDur); // un Frames per second;
+		"space"+spaceDur.postln;
+		"time"+timeDur.postln;
+		u.frameRate= spaceDur/timeDur; // un Frames per second;
 		/*Este valor es el que determina la velocidad de la raya, de acuerdo a mis cálculos debe ser espacio por recorrer / tiempo en el que debe de recorrerse. En el caso de nuestro ejemplo, 473.684 pixeles por recorrer dividido entre 12.631 segundos de duración de la voz más lenta. La línea tarda en recorrer ese espacio 15 segundos*/
 
-
+		elapsedTime = elapsedTime + 1;
+		// mapXelapsedTime.postln;
 		Pen.translate(50, 80);		//offset drawing to the start of the drawing
 		Pen.strokeColor= Color.black;
 		Pen.fillColor= Color.black;
 
 		Pen.line(Point(0+theta,0), Point(0+theta,height*0.75));
 	theta= theta + 1;
-	theta.postln;
+		("theta"+theta).postln;
 	Pen.stroke;
 
 
