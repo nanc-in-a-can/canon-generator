@@ -6,6 +6,27 @@ s.boot;
 // durs
 ~line= Array.fill(30, { [1/4, 1/8, 1/16, 1/32, 1/5,1/3,1/6,1/7,1/9].choose })*2;
 
+(//another definition of ~x_values_V1
+
+~getXValues = {|durations|
+	durations.inject((durs: List [], val: 0), {|acc, dur|
+		acc.durs.add(acc.val);
+		acc.val = dur+acc.val;
+		acc;
+	}).durs;
+};
+
+//~x_values_V1= ~getXValues.(~line);
+// ~y_values_V1 = ~makeCanon.(~melodyMaker.simple4NoteMelody(2))[0].notes.asArray.postln;
+// ~y_values_V1 = [48, 49, 50, 51];
+~line = ~makeCanon.(~melodyMaker.simple4NoteMelody(2))[0].durs;
+~x_values_V1 = ~getXValues.(~line);
+);
+
+//~makeCanon.(~melodyMaker.simple4NoteMelody(2))[0]
+
+
+
 (
 // default netadress for the pbind to send messages;
 ~netAddr_0 = NetAddr("127.0.0.1", 57120);
@@ -43,19 +64,6 @@ s.boot;
 );
 
 
-(//another definition of ~x_values_V1
-
-~getXValues = {|durations|
-	durations.inject((durs: List [], val: 0), {|acc, dur|
-		acc.durs.add(acc.val);
-		acc.val = dur+acc.val;
-		acc;
-	}).durs;
-};
-
-~x_values_V1= ~getXValues.(~line);
-
-);
 
 //Example of a visualization
 (
@@ -83,7 +91,7 @@ var drawPoints = {
 // ~x_values_V1[0].linlin(0,12,10,840)
 
 w.drawFunc = { // draw the points of the canon;
-	drawPoints.(~x_values_V1, ~y_values_V1);
+	drawPoints.(~x_values_V1, ~y_values_V1.postln);
 };
 
 
