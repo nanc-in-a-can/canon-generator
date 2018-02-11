@@ -42,6 +42,21 @@ s.boot;
 };
 );
 
+
+(//another definition of ~x_values_V1
+
+~getXValues = {|durations|
+	durations.inject((durs: List [], val: 0), {|acc, dur|
+		acc.durs.add(acc.val);
+		acc.val = dur+acc.val;
+		acc;
+	}).durs;
+};
+
+~x_values_V1= ~getXValues.(~line);
+
+);
+
 //Example of a visualization
 (
 	//--window setup
@@ -51,36 +66,47 @@ s.boot;
 
 	//--variables
 var line;
+var xCoord = Array.fill(4, {~x_values_V1[0].linlin(0,12,10,840)}), yCoord =Array.fill(4, {~y_values_V1[0].linlin(20,120,0,480)});
+var drawPoints = {
+	|xVals, yVals|
 
-w.drawFunc = { // draw the points of the canon;
+	xVals.size.do{|i|
 
-		30.do{|i|
-        // set the Color
-		Pen.color = Color.green(0.5);
-// here the coordinates are expressed as an underlying map
-		Pen.addWedge(~x_values_V1[i].linlin(0,12,10,840)@(~y_values_V1[i].linlin(20,120,0,480)), 4, 0pi, 2pi);
+		Pen.color = Color.green(0.5);// set the Color
+		// here the coordinates are expressed as an underlying map
+		Pen.addWedge(xVals[i].linlin(0,12,10,840)@(yVals[i].linlin(20,120,0,480)), 4, 0pi, 2pi);
         Pen.perform([ \fill].choose);
 
-
 	};
+
 };
+// ~x_values_V1[0].linlin(0,12,10,840)
+
+w.drawFunc = { // draw the points of the canon;
+	drawPoints.(~x_values_V1, ~y_values_V1);
+};
+
 
 	//in U the present moment of the events will be emphasised visually in the map
 	u.drawFunc= {
+
+
+	var selectMoment = {|index, line|
+
+		Pen.fillColor= Color(0.3,0.1,0.7);				//always fill with purple color
+
+		// receive the data from the Pbind in realtime assigning global variables
+		OSCdef(\test, {|msg, time, addr, recvPort| msg.postln;
+			yCoord[index]=msg[1].linlin(20,120,0,480);
+			xCoord[index]= line[msg[2]].linlin(0,12,10,840);
+		},
+		'/event', n);
+		Pen.addWedge(Point(xCoord[index].postln, yCoord[index].postln), 6, 0pi,2pi);
+		Pen.fill;
+	};
+
 	u.frameRate= 60;
-	line= ~x_values_V1;
-
-	Pen.fillColor= Color(0.3,0.1,0.7);				//always fill with purple color
-
-	// receive the data from the Pbind in realtime assigning global variables
-	OSCdef(\test, {|msg, time, addr, recvPort| msg.postln;
-		~pruebaY=msg[1].linlin(20,120,0,480);
-		~pruebaX= line[msg[2]].linlin(0,12,10,840)},
-	'/event', n);
-
-	Pen.addWedge(Point(~pruebaX,~pruebaY), 6, 0pi,2pi);
-	Pen.fill;
-
+	selectMoment.(0, ~x_values_V1);
 
 	};
 
@@ -93,3 +119,4 @@ w.drawFunc = { // draw the points of the canon;
 ~pattern.play;
 )
 
+Array.fill(4, {0})
