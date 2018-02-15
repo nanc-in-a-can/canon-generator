@@ -65,7 +65,20 @@
         //voice onset times
         onsets = sortedBySpeed.reverse.inject([], {|acc, elem|
             acc ++ [(sortedBySpeed.reverse[0].bcp - elem.bcp).abs];
-        });
+        }),
+
+
+	canon = sortedBySpeed.collect({|voice, i|
+		(
+			durs: voice.durs,
+			notes: voice.notes,
+			bcp: voice.bcp,
+			onset: (sortedBySpeed[sortedBySpeed.size - 1].bcp - voice.bcp).abs
+			// onset: onsets[i]
+		)
+	});
+
+
 
 
         //Globals
@@ -97,11 +110,12 @@
         ~tempo2 = data.voices[1].tempo;
         ~tempo3 = data.voices[2].tempo;
         ~tempo4 = data.voices[3].tempo;
-
+	    canon;
 
     };
     //
-// ~makeCanon.(~melodyMaker.randomSymmetric4voices.());
+// ~makeCanon.(~melodyMaker.simple4NoteMelody(2));
+
     // (/*play Canon!!*/
     // // s.record;
     // ~reverb= Synth(\reverb);
