@@ -1,6 +1,4 @@
 
-s.boot;
-
 
 
 (
@@ -74,7 +72,7 @@ var drawPoints = {
 
 
 		// here the coordinates are expressed as an underlying map
-		Pen.addWedge((xVals[i] + onset).linlin(0,(durTotal),10,940)@(yVals[i].linlin(20,120,0,480)), 4, 0pi, 2pi);
+		Pen.addWedge((xVals[i] + onset).linlin(0,(durTotal),10,940)@(yVals[i].linlin(20,120,480,0)), 4, 0pi, 2pi);
         Pen.perform(\fill);
 
 
@@ -82,8 +80,8 @@ var drawPoints = {
 
 	(xVals.size-1).do{|i|
 	Pen.line(
-		Point((xVals[i] + onset).linlin(0,(durTotal),10,940),yVals[i].linlin(20,120,0,480)),
-		Point((xVals[i+1] + onset).linlin(0,(durTotal),10,940),yVals[i+1].linlin(20,120,0,480))
+		Point((xVals[i] + onset).linlin(0,(durTotal),10,940),yVals[i].linlin(20,120,480,0)),
+		Point((xVals[i+1] + onset).linlin(0,(durTotal),10,940),yVals[i+1].linlin(20,120,480,0))
 	);
 		Pen.strokeColor= if( yVals[0]==(canon[0].notes[0]), {colors[0]}, {if(yVals[0]==canon[1].notes[0], {colors[1]}, if( yVals[0]==canon[2].notes[0], {colors[2]},{colors[3]}))});
 
@@ -130,7 +128,7 @@ u.drawFunc= {
 		// receive the data from the Pbind in realtime assigning global variables
 		OSCdef("test"++index, {|msg, time, addr, recvPort| msg.postln;
 			// if(msg[2] !== 1, {
-				yCoord[index]=msg[1].linlin(20,120,0,480);
+				yCoord[index]=msg[1].linlin(20,120,480,0);
 			xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,940);
 
 		// })
@@ -141,7 +139,7 @@ u.drawFunc= {
 
 	};
 
-	u.frameRate= 60;
+	u.frameRate= 30;
 	canon.do({|line, i| selectMoment.(i, [0]++getXValues.(line.durs), line.onset)})
 };
 
