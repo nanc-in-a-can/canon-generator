@@ -38,7 +38,7 @@ var getXValues = {|durations|
 
 //~x_values_V1= ~getXValues.(~line);
 var canon = ~makeCanon.((
-            cp: 30,
+            cp: 32,
             melody: [
 		(dur: 0.21, note: 60), (dur: 0.35, note: 61), (dur: 0.45, note: 62), (dur: 0.17, note: 63), (dur: 0.24, note: 59),
 		(dur: 0.21, note: 60), (dur: 0.35, note: 62), (dur: 0.45 - 0.20, note: 62), (dur: 0.17 - 0.01, note: 65), (dur: 0.24 - 0.02, note: 52),
@@ -62,6 +62,11 @@ var xCoord =[0,0,0,0];
 var yCoord = [0,0,0,0];
 var colors = [Color.green(0.8), Color.red(0.8), Color.blue(0.8), Color.yellow(0.9)];
 var durTotal = line.sum + 3;
+var stringCP = "posición del PC - Hardcoded";
+var stringVcs = "Número de voces - Hardcoded";
+var stringTempos = "tempos por voz - Hardcoded";
+var stringMelodia = "que melodía se escogió - Hardcoded";
+
 
 var drawPoints = {
 	|xVals, yVals, onset|
@@ -87,8 +92,13 @@ var drawPoints = {
 
 
 			Pen.stroke;
-	}
+	};
 
+	Pen.stringAtPoint("Temporal Canon Generator -"++" Alejandro Franco  &&   Diego Villaseñor", Point(10,20),color: Color.white);
+	Pen.stringAtPoint(stringCP, Point(10,35),color: Color.white);
+	Pen.stringAtPoint(stringVcs, Point(10,50),color: Color.white);
+	Pen.stringAtPoint(stringTempos, Point(10,65),color: Color.white);
+	Pen.stringAtPoint(stringMelodia, Point(10,80),color: Color.white);
 
 
 
@@ -139,7 +149,7 @@ u.drawFunc= {
 
 	};
 
-	u.frameRate= 30;
+	u.frameRate= 28;
 	canon.do({|line, i| selectMoment.(i, [0]++getXValues.(line.durs), line.onset)})
 };
 
