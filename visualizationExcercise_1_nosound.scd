@@ -117,43 +117,45 @@ var patterns = canon.collect({|line, index|
 		\series, Pseries(0,1,inf),
 		/*messages to change the point positions in the map below*/
 		\coordinates, Pfunc({|event|
-				//~netAddr_0.sendMsg(("/event"++index), event[\freq], event[\series], event[\dur])
+			~netAddr_0.sendBundle(0.1, [("/event"++index), event[\freq], event[\series], event[\dur]])
 		})
 	)
 });
 
+var canonWithXValues = canon.collect({|line| (xValues: [0]++getXValues.(line.durs), onset: line.onset)});
 
 //
-// w.drawFunc = { // draw the points of the canon;
-// 	canon.do({|line| drawPoints.(getXValues.(line.durs), line.notes, line.onset)});
-// };
+w.drawFunc = { // draw the points of the canon;
+	canon.do({|line| drawPoints.(getXValues.(line.durs), line.notes, line.onset)});
+	};
+
+
+
+//in U the present moment of the events will be emphasised visually in the map
+u.drawFunc= {
+
+	var selectMoment = {|index, line, onset|
+
 //
-//
-// //in U the present moment of the events will be emphasised visually in the map
-// u.drawFunc= {
-//
-// 	var selectMoment = {|index, line, onset|
-//
-//
-// 		Pen.fillColor= Color(0.8,0.3,0.9);				//always fill with purple color
+		Pen.fillColor= Color(0.8,0.3,0.9);				//always fill with purple color
 //
 // 		// receive the data from the Pbind in realtime assigning global variables
-// 		OSCdef("test"++index, {|msg, time, addr, recvPort| msg.postln;
-// 			// if(msg[2] !== 1, {
-// 			yCoord[index]=msg[1].linlin(20,120,480,0);
-// 			xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,940);
+		OSCdef("test"++index, {|msg, time, addr, recvPort|
+			// msg.postln;
+			if(msg[1] !== \rest, {
+				yCoord[index]=msg[1].linlin(20,120,480,0);
+				xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,940);
+			})
+		},
+		("/event"++index), n);
+		Pen.addWedge(Point(xCoord[index], yCoord[index]), 5, 0pi,2pi);
+		Pen.fill;
 //
-// 			// })
-// 			},
-// 		("/event"++index), n);
-// 		Pen.addWedge(Point(xCoord[index], yCoord[index]), 5, 0pi,2pi);
-// 		Pen.fill;
+		};
 //
-// 	};
-//
-// 	u.frameRate= 28;
-// 	canon.do({|line, i| selectMoment.(i, [0]++getXValues.(line.durs), line.onset)})
-// };
+	u.frameRate= 28;
+	canonWithXValues.do({|line, i| selectMoment.(i, line.xValues, line.onset)})
+	};
 
 
 //--window management
@@ -165,3 +167,4 @@ CmdPeriod.doOnce({if(w.isClosed.not, {w.close; patterns.do(_.stop)})});
 
 patterns.do(_.play)
 )
+// 

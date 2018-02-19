@@ -2,7 +2,7 @@
 Server.default.options.memSize= 512000*20;
 Server.default.options.numWireBufs= 512;
 s = Server.local;
-s.latency = 0;
+s.latency = 0.3;
 s.boot;
 (thisProcess.nowExecutingPath.dirname++"/sounds.scd").loadPaths;// exports \piano, \reverb
 (thisProcess.nowExecutingPath.dirname++"/temporalCanonStrict.scd").load;//exports ~makeCanon, that when called export many other globals :/, also \four_v_temporalCanon_v2
