@@ -37,7 +37,7 @@ var getXValues = {|durations|
 };
 
 //~x_values_V1= ~getXValues.(~line);
-var canon = ~makeCanon.((
+/*var canon = ~makeCanon.((
             cp: 32,
             melody: [
 		(dur: 0.21, note: 60), (dur: 0.35, note: 61), (dur: 0.45, note: 62), (dur: 0.17, note: 63), (dur: 0.24, note: 59),
@@ -54,7 +54,8 @@ var canon = ~makeCanon.((
                 (tempo: 100, transp: 12),
                 (tempo: 83, transp: 8)
             ]
-        ));
+        ));*/
+var canon = ~makeCanon.(~melodyMaker.randomSymmetric4voices);
 var y_values_V1 = canon[0].notes;
 var line = canon[0].durs;
 var x_values_V1 = getXValues.(line);
@@ -116,42 +117,43 @@ var patterns = canon.collect({|line, index|
 		\series, Pseries(0,1,inf),
 		/*messages to change the point positions in the map below*/
 		\coordinates, Pfunc({|event|
-				~netAddr_0.sendMsg(("/event"++index), event[\freq], event[\series], event[\dur])
+				//~netAddr_0.sendMsg(("/event"++index), event[\freq], event[\series], event[\dur])
 		})
 	)
 });
 
 
-w.drawFunc = { // draw the points of the canon;
-canon.do({|line| drawPoints.(getXValues.(line.durs), line.notes, line.onset)});
-};
-
-
-//in U the present moment of the events will be emphasised visually in the map
-u.drawFunc= {
-
-	var selectMoment = {|index, line, onset|
-
-
-		Pen.fillColor= Color(0.8,0.3,0.9);				//always fill with purple color
-
-		// receive the data from the Pbind in realtime assigning global variables
-		OSCdef("test"++index, {|msg, time, addr, recvPort| msg.postln;
-			// if(msg[2] !== 1, {
-				yCoord[index]=msg[1].linlin(20,120,480,0);
-			xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,940);
-
-		// })
-		},
-		("/event"++index), n);
-		Pen.addWedge(Point(xCoord[index], yCoord[index]), 5, 0pi,2pi);
-		Pen.fill;
-
-	};
-
-	u.frameRate= 28;
-	canon.do({|line, i| selectMoment.(i, [0]++getXValues.(line.durs), line.onset)})
-};
+//
+// w.drawFunc = { // draw the points of the canon;
+// 	canon.do({|line| drawPoints.(getXValues.(line.durs), line.notes, line.onset)});
+// };
+//
+//
+// //in U the present moment of the events will be emphasised visually in the map
+// u.drawFunc= {
+//
+// 	var selectMoment = {|index, line, onset|
+//
+//
+// 		Pen.fillColor= Color(0.8,0.3,0.9);				//always fill with purple color
+//
+// 		// receive the data from the Pbind in realtime assigning global variables
+// 		OSCdef("test"++index, {|msg, time, addr, recvPort| msg.postln;
+// 			// if(msg[2] !== 1, {
+// 			yCoord[index]=msg[1].linlin(20,120,480,0);
+// 			xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,940);
+//
+// 			// })
+// 			},
+// 		("/event"++index), n);
+// 		Pen.addWedge(Point(xCoord[index], yCoord[index]), 5, 0pi,2pi);
+// 		Pen.fill;
+//
+// 	};
+//
+// 	u.frameRate= 28;
+// 	canon.do({|line, i| selectMoment.(i, [0]++getXValues.(line.durs), line.onset)})
+// };
 
 
 //--window management
