@@ -24,7 +24,8 @@
 //--window setup
 var width= 940, height= 480;
 var w= Window("prueba", Rect(99, 99, width, height), false, scroll: true);
-var u= UserView(w, Rect(0, 0, width, height));
+var u= UserView(w, Rect(0, 0, width*15, height));
+var v= UserView(w, Rect(0, 0, width*20, height));
 
 	//--variables
 
@@ -62,7 +63,8 @@ var x_values_V1 = getXValues.(line);
 var xCoord =[0,0,0,0];
 var yCoord = [0,0,0,0];
 var colors = [Color.green(0.8), Color.red(0.8), Color.blue(0.8), Color.yellow(0.9)];
-var durTotal = line.sum + 3;
+var durTotal = (line.sum + 40)*1.5; // aquí va el total de duración de la pieza;
+var durSize = width*10; // aqui va width pero expandido;
 var stringCP = "posición del PC - Hardcoded";
 var stringVcs = "Número de voces - Hardcoded";
 var stringTempos = "tempos por voz - Hardcoded";
@@ -78,7 +80,7 @@ var drawPoints = {
 
 
 		// here the coordinates are expressed as an underlying map
-		Pen.addWedge((xVals[i] + onset).linlin(0,(durTotal),10,940)@(yVals[i].linlin(20,120,480,0)), 4, 0pi, 2pi);
+		Pen.addWedge((xVals[i] + onset).linlin(0,(durTotal),10,durSize)@(yVals[i].linlin(20,120,480,0)), 4, 0pi, 2pi);
         Pen.perform(\fill);
 
 
@@ -86,8 +88,8 @@ var drawPoints = {
 
 	(xVals.size-1).do{|i|
 	Pen.line(
-		Point((xVals[i] + onset).linlin(0,(durTotal),10,940),yVals[i].linlin(20,120,480,0)),
-		Point((xVals[i+1] + onset).linlin(0,(durTotal),10,940),yVals[i+1].linlin(20,120,480,0))
+		Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize),yVals[i].linlin(20,120,480,0)),
+		Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize),yVals[i+1].linlin(20,120,480,0))
 	);
 		Pen.strokeColor= if( yVals[0]==(canon[0].notes[0]), {colors[0]}, {if(yVals[0]==canon[1].notes[0], {colors[1]}, if( yVals[0]==canon[2].notes[0], {colors[2]},{colors[3]}))});
 
@@ -130,7 +132,6 @@ w.drawFunc = { // draw the points of the canon;
 	};
 
 
-
 //in U the present moment of the events will be emphasised visually in the map
 u.drawFunc= {
 
@@ -144,7 +145,7 @@ u.drawFunc= {
 			// msg.postln;
 			if(msg[1] !== \rest, {
 				yCoord[index]=msg[1].linlin(20,120,480,0);
-				xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,940);
+				xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,durSize);
 			})
 		},
 		("/event"++index), n);
@@ -158,7 +159,25 @@ u.drawFunc= {
 	};
 
 
+
+(// aquí se tiene que actualizar continuamente el scroller, en teoría pero la neta no tengo puta idea de como hacer eso;
+v.action = {
+
+			~scroller = Pbind(*[
+				play: { v.view.visibleOrigin = Point( ~t - 0.2 max: 0 * 50, 0) },
+				t:	Pseg([0, durSize], durSize),
+				dur:	0.05
+	]);
+
+
+};
+);
+
+
+
+
 //--window management
+//~scroller.play(AppClock);
 u.clearOnRefresh= true;
 w.background= Color.gray(0.05);
 w.front;
