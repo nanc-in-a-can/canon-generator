@@ -73,8 +73,8 @@
 			durs: voice.durs,
 			notes: voice.notes,
 			bcp: voice.bcp,
-			onset: (sortedBySpeed[sortedBySpeed.size - 1].bcp - voice.bcp).abs
-			// onset: onsets[i]
+			onset: (sortedBySpeed[sortedBySpeed.size - 1].bcp - voice.bcp).abs,
+			cp: data.cp
 		)
 	});
 
@@ -86,35 +86,11 @@
             [onsets, patterns.reverse].lace(patterns.size * 2)
         )).quant([0]);
 
-        ~melody_data = sortedBySpeed.collect({|voice| voice.notes});
-	/*voice data debería generar durs ordenadas de más lenta a más rápida? entonces hay una discrepancia. Con el canon que generé ene sta sesión d etrabajo voice_data[2].sum me da el canon más grande, necesito entender como conseguir la voz más lenta para poder sincronizar la visualización con el sonido*/
-        ~voice_data = sortedBySpeed.collect({|voice| voice.durs});
-        ~tp = ~melody_data[0].size;
-        ~bcp1 = sortedBySpeed[0].bcp;
-        ~bcp2 = sortedBySpeed[1].bcp;
-        ~bcp3 = sortedBySpeed[2].bcp;
-        ~bcp4 = sortedBySpeed[3].bcp;
-        ~line1 = sortedBySpeed[0].durs;
-        ~line2 = sortedBySpeed[1].durs;
-        ~line3 = sortedBySpeed[2].durs;
-        ~line4 = sortedBySpeed[3].durs;
-        ~melody1 = sortedBySpeed[0].notes;
-        ~melody2 = sortedBySpeed[1].notes;
-        ~melody3 = sortedBySpeed[2].notes;
-        ~melody4 = sortedBySpeed[3].notes;
-    	~distances1 = onsets[3];
-    	~distances2 = onsets[2];
-    	~distances3 = onsets[1];
-    	~distances4 = onsets[0];
-        ~tempo1 = data.voices[0].tempo;
-        ~tempo2 = data.voices[1].tempo;
-        ~tempo3 = data.voices[2].tempo;
-        ~tempo4 = data.voices[3].tempo;
-	    canon;
+	     (canon: canon, data: data);
 
     };
     //
-// ~makeCanon.(~melodyMaker.simple4NoteMelody(2));
+    // ~makeCanon.(~melodyMaker.simple4NoteMelody(2));
 
     // (/*play Canon!!*/
     // // s.record;

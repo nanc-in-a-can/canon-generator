@@ -1,24 +1,3 @@
-
-
-
-(
-// default netadress for the pbind to send messages;
-~netAddr_0 = NetAddr("127.0.0.1", 57120);
-
-);
-
-
-(//another definition of ~x_values_V1
-
-
-);
-
-//~makeCanon.(~melodyMaker.simple4NoteMelody(2))[0]
-
-
-
-
-
 //Example of a visualization
 (
 //--window setup
@@ -55,7 +34,9 @@ var getXValues = {|durations|
                 (tempo: 83, transp: 8)
             ]
         ));*/
-var canon = ~makeCanon.(~melodyMaker.randomSymmetric4voices);
+var madeCanon =  ~makeCanon.(~melodyMaker.randomSymmetric4voices);
+var canon = madeCanon.canon;
+var data = madeCanon.data.postln;
 var y_values_V1 = canon[0].notes;
 var line = canon[0].durs;
 var x_values_V1 = getXValues.(line);
@@ -63,10 +44,10 @@ var xCoord =[0,0,0,0];
 var yCoord = [0,0,0,0];
 var colors = [Color.green(0.8), Color.red(0.8), Color.blue(0.8), Color.yellow(0.9)];
 var durTotal = line.sum + 3;
-var stringCP = "posición del PC - Hardcoded";
-var stringVcs = "Número de voces - Hardcoded";
-var stringTempos = "tempos por voz - Hardcoded";
-var stringMelodia = "que melodía se escogió - Hardcoded";
+var stringCP = "CP position:"+canon[0].cp;
+var stringVcs = "Voices:"+canon.size;
+var stringTempos = "Tempos:"+data.voices.collect(_.tempo).sort();
+var stringMelodia = "Melody:"+data.melody.collect(_.note).midinote.collect(_.replace(" ", ""));
 
 
 var drawPoints = {
@@ -117,7 +98,7 @@ var patterns = canon.collect({|line, index|
 		\series, Pseries(0,1,inf),
 		/*messages to change the point positions in the map below*/
 		\coordinates, Pfunc({|event|
-			~netAddr_0.sendBundle(0.1, [("/event"++index), event[\freq], event[\series], event[\dur]])
+			NetAddr("127.0.0.1", 57120).sendBundle(0.005, [("/event"++index), event[\freq], event[\series], event[\dur]])
 		})
 	)
 });
@@ -167,4 +148,3 @@ CmdPeriod.doOnce({if(w.isClosed.not, {w.close; patterns.do(_.stop)})});
 
 patterns.do(_.play)
 )
-// 
