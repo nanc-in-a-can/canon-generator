@@ -20,21 +20,22 @@ var getXValues = {|durations|
 
 var chooseMelody = [~melodyMaker.chido_melody, ~melodyMaker.simple4NoteMelody(2), ~melodyMaker.randomSymmetric4voices];
 var madeCanon =  ~makeCanon.((
-	cp: 315,
+	cp: 600,
 	melody: ~makeMelody.(
-		(16..40).pyramid.reciprocal.postln,
-		((16..40).pyramidg.collect({|arr, i| arr+i})*12).flatten.cpsmidi
+		(16..40).pyramid.reciprocal.reverse.mirror.postln,
+		((16..40).pyramidg.collect({|arr, i| arr+i})*12).flatten.reverse.mirror.cpsmidi
 	),
 	voices: [
 		(tempo: 120*7/12, transp: 0),
-        (tempo: 120*11/12, transp: 0),
-        (tempo: 120*13/12, transp: 0),
-        (tempo: 120*17/12, transp: 0),
-		(tempo: 120*19/12, transp: 0),
-		// (tempo: 120*23/12, transp: 0)
+        (tempo: 120*11/12, transp: 1),
+        (tempo: 120*13/12, transp: 2),
+        (tempo: 120*17/12, transp: 3),
+		(tempo: 120*19/12, transp: 4),
+	    (tempo: 120*23/12, transp: 5)
 	]
 ));
 
+//var madeCanon = ~makeCanon.(chooseMelody[0]);
 var canon = madeCanon.canon;
 var data = madeCanon.data.postln;
 var y_values_V1 = canon[0].notes;
@@ -42,11 +43,15 @@ var line = canon[0].durs;
 var x_values_V1 = getXValues.(line);
 var xCoord = canon.size.collect({0});
 var yCoord = canon.size.collect({0});
+
 var colors = [Color.green(0.8), Color.red(0.8), Color.blue(0.8), Color.yellow(0.9)];
-var durTotal = [canon[0].durs.sum,canon[1].durs.sum,canon[2].durs.sum,canon[3].durs.sum].sort[3]; // aquí va el total de duración de la pieza;
+
+
+var durTotal = Array.fill(canon.size, {|i|  canon[i].durs.sum  }).sort[canon.size-1];
+// aquí va el total de duración de la pieza;
 var durSize = durTotal*40; // aqui va width pero expandido;
-var maxY= [canon[0].notes.maxItem,canon[1].notes.maxItem,canon[2].notes.maxItem,canon[3].notes.maxItem].sort[3]+5;
-var minY= [canon[0].notes.minItem,canon[1].notes.minItem,canon[2].notes.minItem,canon[3].notes.minItem].sort[0]-10;
+var maxY= Array.fill(canon.size, {|i|  canon[i].notes.maxItem }).sort[canon.size-1]+5;
+var minY= Array.fill(canon.size, {|i|  canon[i].notes.minItem}).sort[0]-10;
 var stringCP = "CP position:"+canon[0].cp;
 var stringVcs = "Voices:"+canon.size;
 var stringTempos = "Tempos:"+data.voices.collect(_.tempo).sort();
@@ -107,7 +112,7 @@ var drawPoints = {
 
 };
 
-var patterns = canon.collect({|line, index|
+/*var patterns = canon.collect({|line, index|
 	Pbind(
 		\instrument, \piano,
 		\pan, 0,
@@ -119,12 +124,35 @@ var patterns = canon.collect({|line, index|
 		\series, Pseries(0,1,inf),
 		/*messages to change the point positions in the map below*/
 		\coordinates, Pfunc({|event|
-			NetAddr("127.0.0.1", 57120).sendBundle(0.005, [("/event"++index), event[\freq], event[\series], event[\dur]])
+			NetAddr("127.0.0.1", 57120).sendBundle(s.latency, [("/event"++index), event[\freq], event[\series], event[\dur]])
 		})
 	)
-});
+});*/
 
 var canonWithXValues = canon.collect({|line| (xValues: [0]++getXValues.(line.durs), onset: line.onset)});
+
+(canon.size.do{|j|
+//	canon[j].postln;
+	Tdef(\canon++j.asSymbol,
+	{
+			(canon[j].durs.size).do{| i |
+				if( i == 0, {canon[j].onset.wait}, {
+
+				yCoord[j]= canon[j].notes[i-1].linlin(minY,maxY,480,0);
+				xCoord[j]= (canonWithXValues[j].xValues[i] + canon[j].onset).linlin(0,(durTotal),10,durSize);
+
+
+			Synth(\piano, [\out, 0, \freq, canon[j].notes[i-1].postln]);
+
+					canon[j].durs[i-1].postln.wait;})
+
+		}
+
+	}).play(AppClock);
+}
+);
+
+
 
 //
 w.drawFunc = { // draw the points of the canon;
@@ -132,8 +160,39 @@ w.drawFunc = { // draw the points of the canon;
 	};
 
 
+				u.drawFunc= {
+
+	var selectMoment = {|index, line, onset|
+
+//
+		Pen.fillColor= Color(0.8,0.3,0.9);				//always fill with purple color
+//
+// 		// receive the data from the Pbind in realtime assigning global variables
+		//OSCdef("test"++index, {|msg, time, addr, recvPort|
+			// msg.postln;
+			//if(msg[1] !== \rest, {
+//				yCoord[j]= canon[j].notes[i].linlin(minY,maxY,480,0);
+//				xCoord[j]= (line[i] + onset).linlin(0,(durTotal),10,durSize);
+			//})
+		//},
+//		("/event"++index), n);
+						("aqui" + xCoord).postln;
+		//if( index == 0, {}, {
+			Pen.addWedge(Point(xCoord[index], yCoord[index]), 5, 0pi,2pi);
+		Pen.fill;
+		//});
+
+//
+		};
+//
+
+	canonWithXValues.do({|line, k| selectMoment.(k, [0] ++line.xValues, line.onset)})
+	};
+
+
+
 //in U the present moment of the events will be emphasised visually in the map
-u.drawFunc= {
+/*u.drawFunc= {
 
 	var selectMoment = {|index, line, onset|
 
@@ -156,7 +215,7 @@ u.drawFunc= {
 //
 	u.frameRate= 28;
 	canonWithXValues.do({|line, i| selectMoment.(i, line.xValues, line.onset)})
-	};
+	};*/
 
 
 
@@ -165,11 +224,12 @@ u.drawFunc= {
 u.clearOnRefresh= true;
 w.background= Color.gray(0.05);
 w.front;
+u.frameRate= 60;
 u.animate= true;
 
-CmdPeriod.doOnce({if(w.isClosed.not, {w.close; patterns.do(_.stop)})});
+CmdPeriod.doOnce({if(w.isClosed.not, {w.close; /*patterns.do(_.stop)*/})});
 
-patterns.do(_.play)
+//patterns.do(_.play)
 )
 
 (1..3).pyramidg.collect({|arr, i| arr+i})
