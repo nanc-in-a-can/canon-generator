@@ -19,14 +19,29 @@ var getXValues = {|durations|
 
 
 var chooseMelody = [~melodyMaker.chido_melody, ~melodyMaker.simple4NoteMelody(2), ~melodyMaker.randomSymmetric4voices];
-var madeCanon =  ~makeCanon.(chooseMelody[2]);
+var madeCanon =  ~makeCanon.((
+	cp: 315,
+	melody: ~makeMelody.(
+		(16..40).pyramid.reciprocal.postln,
+		((16..40).pyramidg.collect({|arr, i| arr+i})*12).flatten.cpsmidi
+	),
+	voices: [
+		(tempo: 120*7/12, transp: 0),
+        (tempo: 120*11/12, transp: 0),
+        (tempo: 120*13/12, transp: 0),
+        (tempo: 120*17/12, transp: 0),
+		(tempo: 120*19/12, transp: 0),
+		// (tempo: 120*23/12, transp: 0)
+	]
+));
+
 var canon = madeCanon.canon;
 var data = madeCanon.data.postln;
 var y_values_V1 = canon[0].notes;
 var line = canon[0].durs;
 var x_values_V1 = getXValues.(line);
-var xCoord =[0,0,0,0];
-var yCoord = [0,0,0,0];
+var xCoord = canon.size.collect({0});
+var yCoord = canon.size.collect({0});
 var colors = [Color.green(0.8), Color.red(0.8), Color.blue(0.8), Color.yellow(0.9)];
 var durTotal = [canon[0].durs.sum,canon[1].durs.sum,canon[2].durs.sum,canon[3].durs.sum].sort[3]; // aquí va el total de duración de la pieza;
 var durSize = durTotal*40; // aqui va width pero expandido;
@@ -156,3 +171,5 @@ CmdPeriod.doOnce({if(w.isClosed.not, {w.close; patterns.do(_.stop)})});
 
 patterns.do(_.play)
 )
+
+(1..3).pyramidg.collect({|arr, i| arr+i})

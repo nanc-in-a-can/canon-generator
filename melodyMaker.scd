@@ -46,6 +46,23 @@
 			]
         )
 	},
+
+	pyramidal: {
+		(
+			cp: 410,
+			melody: ~makeMelody.(
+				(4..32).pyramid.reciprocal.postln,
+				((4..32)*36).cpsmidi.pyramid
+			),
+			voices: [
+				(tempo: 120, transp: 0),
+				(tempo: 240, transp: 0),
+				(tempo: 360, transp: 0),
+				(tempo: 480, transp: 0)
+			]
+		)
+	},
+
 	chido_melody:  {
 
 	(

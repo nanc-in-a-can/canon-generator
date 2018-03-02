@@ -40,3 +40,27 @@ Pdef(\four_v_temporalCanon_v2).play;
 Pdef(\four_v_temporalCanon).stop;
 ~reverb.set(\gate, 0);
 );
+
+
+(
+//~makeMelody ::[Float] -> [Float] -> [(dur, note)]
+~makeMelody = {|durs_arr, notes_arr|
+	[durs_arr.size, notes_arr.size].minItem.collect({|i|
+		(dur: durs_arr[i], note: notes_arr[i])
+	})
+}
+)
+
+~makeCanon.((
+	cp: 10,
+	melody: ~makeMelody.(
+		[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].pyramid.reciprocal.postln,
+		((1..10)*36).cpsmidi.pyramid
+	),
+	voices: [
+		(tempo: 90, transp: 0),
+        (tempo: 95, transp: -12),
+        (tempo: 100, transp: 12),
+        (tempo: 83, transp: 8)
+	]
+))
