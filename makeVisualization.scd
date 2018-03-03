@@ -1,6 +1,5 @@
 //Example of a visualization
 (
-
 ~makeVisualization = {|madeCanon|
 
 	//--window setup
@@ -159,8 +158,8 @@
 };
 
 
-var chooseMelody = [~melodyMaker.chido_melody, ~melodyMaker.simple4NoteMelody(2), ~melodyMaker.randomSymmetric4voices];
-var madeCanon =  ~makeCanon.((
+/*~chooseMelody = [~melodyMaker.chido_melody, ~melodyMaker.simple4NoteMelody(2), ~melodyMaker.randomSymmetric4voices];
+~madeCanon =  ~makeCanon.((
 	cp: 600,
 	melody: ~makeMelody.(
 		(16..40).pyramid.reciprocal.reverse.mirror.postln,
@@ -176,8 +175,7 @@ var madeCanon =  ~makeCanon.((
 	]
 ));
 
-
-~makeVisualization.(madeCanon)
+~makeVisualization.(~madeCanon)*/
 
 )
 
