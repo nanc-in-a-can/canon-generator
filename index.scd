@@ -5,7 +5,7 @@ s = Server.local;
 s.latency = 0.05;
 s.boot;
 (thisProcess.nowExecutingPath.dirname++"/sounds.scd").loadPaths;// exports \piano, \reverb
-(thisProcess.nowExecutingPath.dirname++"/makeCanon.scd").load;//exports ~makeCanon, that when called export many other globals :/, also \four_v_temporalCanon_v2
+(thisProcess.nowExecutingPath.dirname++"/makeCanon.scd").load;//exports ~makeCanon
 (thisProcess.nowExecutingPath.dirname++"/makeMelody.scd").load;//exports ~makeMelody
 (thisProcess.nowExecutingPath.dirname++"/melodyMaker.scd").load;// exports ~melodyMaker
 (thisProcess.nowExecutingPath.dirname++"/makeVisualization.scd").load;//exports ~makeVisualization
