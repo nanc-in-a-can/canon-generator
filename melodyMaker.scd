@@ -47,42 +47,44 @@
         )
 	},
 
-	pyramidal: {
+	pyramidalMelody: {
 		(
-			cp: 410,
-			melody: ~makeMelody.(
-				(4..32).pyramid.reciprocal.postln,
-				((4..32)*36).cpsmidi.pyramid
-			),
-			voices: [
-				(tempo: 120, transp: 0),
-				(tempo: 240, transp: 0),
-				(tempo: 360, transp: 0),
-				(tempo: 480, transp: 0)
-			]
-		)
+        	cp: 600,
+        	melody: ~makeMelody.(
+        		(16..40).pyramid.reciprocal.reverse.mirror.postln,
+        		((16..40).pyramidg.collect({|arr, i| arr+i})*12).flatten.reverse.mirror.cpsmidi
+        	),
+        	voices: [
+        		(tempo: 120*7/12, transp: 0),
+                (tempo: 120*11/12, transp: 1),
+                (tempo: 120*13/12, transp: 2),
+                (tempo: 120*17/12, transp: 3),
+        		(tempo: 120*19/12, transp: 4),
+        	    (tempo: 120*23/12, transp: 5)
+        	]
+        )
 	},
 
 	chido_melody:  {
-
-	(
-            cp: 32,
-            melody: [
-		(dur: 0.21, note: 60), (dur: 0.35, note: 61), (dur: 0.45, note: 62), (dur: 0.17, note: 63), (dur: 0.24, note: 59),
-		(dur: 0.21, note: 60), (dur: 0.35, note: 62), (dur: 0.45 - 0.20, note: 62), (dur: 0.17 - 0.01, note: 65), (dur: 0.24 - 0.02, note: 52),
-		(dur: 0.21, note: 60), (dur: 0.35, note: 63), (dur: 0.45 - 0.22, note: 62), (dur: 0.17 - 0.02, note: 66), (dur: 0.24 - 0.03, note: 53),
-		(dur: 0.21, note: 60), (dur: 0.35, note: 64), (dur: 0.45 - 0.24, note: 62), (dur: 0.17 - 0.03, note: 67), (dur: 0.24 - 0.02, note: 54),
-		(dur: 0.21, note: 60), (dur: 0.35, note: 65), (dur: 0.45 - 0.26, note: 62), (dur: 0.17 - 0.04, note: 68), (dur: 0.24 - 0.01, note: 55),
-		(dur: 0.21, note: 60), (dur: 0.35, note: 66), (dur: 0.45 - 0.28, note: 62), (dur: 0.17 - 0.05, note: 69), (dur: 0.24 - 0.02, note: 56),
-		(dur: 0.21, note: 60), (dur: 0.35, note: 67), (dur: 0.45 - 0.31, note: 62), (dur: 0.17 - 0.06, note: 71), (dur: 4, note: 57)
-	],
-            voices: [
-                (tempo: 90, transp: 0),
-                (tempo: 95, transp: -12),
-                (tempo: 100, transp: 12),
-                (tempo: 83, transp: 8)
-            ]
-	) }
+    	(
+                cp: 32,
+                melody: [
+    		(dur: 0.21, note: 60), (dur: 0.35, note: 61), (dur: 0.45, note: 62), (dur: 0.17, note: 63), (dur: 0.24, note: 59),
+    		(dur: 0.21, note: 60), (dur: 0.35, note: 62), (dur: 0.45 - 0.20, note: 62), (dur: 0.17 - 0.01, note: 65), (dur: 0.24 - 0.02, note: 52),
+    		(dur: 0.21, note: 60), (dur: 0.35, note: 63), (dur: 0.45 - 0.22, note: 62), (dur: 0.17 - 0.02, note: 66), (dur: 0.24 - 0.03, note: 53),
+    		(dur: 0.21, note: 60), (dur: 0.35, note: 64), (dur: 0.45 - 0.24, note: 62), (dur: 0.17 - 0.03, note: 67), (dur: 0.24 - 0.02, note: 54),
+    		(dur: 0.21, note: 60), (dur: 0.35, note: 65), (dur: 0.45 - 0.26, note: 62), (dur: 0.17 - 0.04, note: 68), (dur: 0.24 - 0.01, note: 55),
+    		(dur: 0.21, note: 60), (dur: 0.35, note: 66), (dur: 0.45 - 0.28, note: 62), (dur: 0.17 - 0.05, note: 69), (dur: 0.24 - 0.02, note: 56),
+    		(dur: 0.21, note: 60), (dur: 0.35, note: 67), (dur: 0.45 - 0.31, note: 62), (dur: 0.17 - 0.06, note: 71), (dur: 4, note: 57)
+    	],
+                voices: [
+                    (tempo: 90, transp: 0),
+                    (tempo: 95, transp: -12),
+                    (tempo: 100, transp: 12),
+                    (tempo: 83, transp: 8)
+                ]
+    	)
+    }
 );
 
 // ~melodyMaker.chido_melody.();

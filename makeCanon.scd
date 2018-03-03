@@ -67,39 +67,21 @@
             acc ++ [(sortedBySpeed.reverse[0].bcp - elem.bcp).abs];
         }),
 
+    	canon = sortedBySpeed.collect({|voice, i|
+    		(
+    			durs: voice.durs,
+    			notes: voice.notes,
+    			bcp: voice.bcp,
+    			onset: (sortedBySpeed[sortedBySpeed.size - 1].bcp - voice.bcp).abs,
+    			cp: data.cp
+    		)
+    	});
 
-	canon = sortedBySpeed.collect({|voice, i|
-		(
-			durs: voice.durs,
-			notes: voice.notes,
-			bcp: voice.bcp,
-			onset: (sortedBySpeed[sortedBySpeed.size - 1].bcp - voice.bcp).abs,
-			cp: data.cp
-		)
-	});
-
-
-
-
-        //Globals
-        Pdef(\four_v_temporalCanon_v2, Ptpar(
-            [onsets, patterns.reverse].lace(patterns.size * 2)
-        )).quant([0]);
-
-	     (canon: canon, data: data);
+	   (canon: canon, data: data);
 
     };
-    //
+
     // ~makeCanon.(~melodyMaker.simple4NoteMelody(2));
-
-    // (/*play Canon!!*/
-    // // s.record;
-    // ~reverb= Synth(\reverb);
-    // Pdef(\four_v_temporalCanon_v2).play;
-    // );
-
-
-
 )
 
 
