@@ -32,7 +32,6 @@
 	// aquí va el total de duración de la pieza;
 	var durSize = durTotal*40; // aqui va width pero expandido;
 	var numberOfScreens = durSize/width;
-	var durationOfEachScreen = durTotal/numberOfScreens;
 	var scroller = Pbind(*[
 		play: { w.view.visibleOrigin = Point( if((~t*width) > (width/2), {~t*width - (width/2)}, {0}), 0) },
 		t:	Pseg([0,1*numberOfScreens], durTotal),
