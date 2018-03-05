@@ -164,18 +164,5 @@
 	scroller.play(AppClock);
 };
 
-~makeVisualization.(~makeCanon.(~melodyMaker.pyramidalMelody));
+//~makeVisualization.(~makeCanon.(~melodyMaker.pyramidalMelody));
 )
-// ~chooseMelody = [~melodyMaker.chido_melody, ~melodyMaker.simple4NoteMelody(2), ~melodyMaker.randomSymmetric4voices];
-/*(a:5).ran
-98.34//durTotal
-3933//durSize
-3933/940//# de pantallas
-98.34/(3933/940)//duracionporpantalla
-95.625088277803*3
-(
-//tempo b/m
-//bpmToSecs :: Tempo -> Duration
-~bpmToSecs = {|tempo| 60/tempo};
-~bpmToSecs.(70).postln
-)*/
