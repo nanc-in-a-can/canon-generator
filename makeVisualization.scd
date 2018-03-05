@@ -5,7 +5,7 @@
 	//--window setup
 	var width= 940, height= 480;
 	var w= Window("Nanc in a Can - Canon generator", Rect(99, 99, width, height), false, scroll: true);
-	var u= UserView(w, Rect(0, 0, width*20, height));
+	var u= UserView(w, Rect(0, 0, width*220, height));
 
 	//--variables
 
@@ -31,6 +31,13 @@
 	var durTotal = Array.fill(canon.size, {|i|  canon[i].durs.sum  }).sort[canon.size-1];
 	// aquí va el total de duración de la pieza;
 	var durSize = durTotal*40; // aqui va width pero expandido;
+	var numberOfScreens = durSize/width;
+	var durationOfEachScreen = durTotal/numberOfScreens;
+	var scroller = Pbind(*[
+		play: { w.view.visibleOrigin = Point( if((~t*width) > (width/2), {~t*width - (width/2)}, {0}), 0) },
+		t:	Pseg([0,1*numberOfScreens], durTotal),
+		dur: 1/60
+	]);
 	var maxY= Array.fill(canon.size, {|i|  canon[i].notes.maxItem }).sort[canon.size-1]+5;
 	var minY= Array.fill(canon.size, {|i|  canon[i].notes.minItem}).sort[0]-10;
 	var stringCP = "CP position:"+canon[0].cp;
@@ -144,8 +151,6 @@
 		canonWithXValues.do({|line, i| selectMoment.(i, line.xValues, line.onset)})
 		};
 
-
-
 	//--window management
 	u.clearOnRefresh= true;
 	w.background= Color.gray(0.05);
@@ -154,28 +159,23 @@
 
 	CmdPeriod.doOnce({if(w.isClosed.not, {w.close; patterns.do(_.stop)})});
 
-	patterns.do(_.play)
+	patterns.do(_.play);
+
+	scroller.play(AppClock);
 };
 
-
-/*~chooseMelody = [~melodyMaker.chido_melody, ~melodyMaker.simple4NoteMelody(2), ~melodyMaker.randomSymmetric4voices];
-~madeCanon =  ~makeCanon.((
-	cp: 600,
-	melody: ~makeMelody.(
-		(16..40).pyramid.reciprocal.reverse.mirror.postln,
-		((16..40).pyramidg.collect({|arr, i| arr+i})*12).flatten.reverse.mirror.cpsmidi
-	),
-	voices: [
-		(tempo: 120*7/12, transp: 0),
-        (tempo: 120*11/12, transp: 1),
-        (tempo: 120*13/12, transp: 2),
-        (tempo: 120*17/12, transp: 3),
-		(tempo: 120*19/12, transp: 4),
-	    (tempo: 120*23/12, transp: 5)
-	]
-));
-
-~makeVisualization.(~madeCanon)*/
-
+~makeVisualization.(~makeCanon.(~melodyMaker.pyramidalMelody));
 )
-
+// ~chooseMelody = [~melodyMaker.chido_melody, ~melodyMaker.simple4NoteMelody(2), ~melodyMaker.randomSymmetric4voices];
+/*(a:5).ran
+98.34//durTotal
+3933//durSize
+3933/940//# de pantallas
+98.34/(3933/940)//duracionporpantalla
+95.625088277803*3
+(
+//tempo b/m
+//bpmToSecs :: Tempo -> Duration
+~bpmToSecs = {|tempo| 60/tempo};
+~bpmToSecs.(70).postln
+)*/
