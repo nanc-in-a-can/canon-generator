@@ -25,8 +25,9 @@
 	var xCoord = canon.size.collect({0});
 	var yCoord = canon.size.collect({0});
 
-	var colors = [Color.green(0.8), Color.red(0.8), Color.blue(0.8), Color.yellow(0.9)];
-
+	var colores= [Color.green(0.8), Color.red(0.8), Color.blue(0.8), Color.yellow(0.8), Color.new255(160, 32, 240),Color.new255(205, 70, 20),Color.new255(255, 192, 203),Color.new255(150, 150, 150),Color.new255(209, 166, 102),Color.new255(173, 216, 230)]; // hardcoded colours: green, red, blue, yellow, purple, orange, pink, grey, brown, light blue;
+	var colorExtra= (0..(canon.size)).collect({|n, i| [colores[i%10].vary].wrapAt(i)});
+	var colors= colores++colorExtra;
 
 	var durTotal = Array.fill(canon.size, {|i|  canon[i].durs.sum  }).sort[canon.size-1];
 	// aquí va el total de duración de la pieza;
@@ -50,7 +51,7 @@
 
 		xVals.size.do{|i|
 
-			Pen.color = if( yVals[0]==(canon[0].notes[0]), {colors[0]}, {if(yVals[0]==canon[1].notes[0], {colors[1]}, if( yVals[0]==canon[2].notes[0], {colors[2]},{colors[3]}))});// set the Color
+		canon.size.do{|j|  if(onset==canon[j].onset,{Pen.color= colors[j]})};
 
 
 			// here the coordinates are expressed as an underlying map
@@ -66,8 +67,8 @@
 			Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize),yVals[i].linlin(minY,maxY,480,0)),
 			Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize),yVals[i+1].linlin(minY,maxY,480,0))
 		);
-			Pen.strokeColor= if( yVals[0]==(canon[0].notes[0]), {colors[0]}, {if(yVals[0]==canon[1].notes[0], {colors[1]}, if( yVals[0]==canon[2].notes[0], {colors[2]},{colors[3]}))});
 
+		canon.size.do{|j|  if(onset==canon[j].onset,{Pen.strokeColor= colors[j]})};
 
 				Pen.stroke;
 		};
@@ -76,11 +77,11 @@
 	//  here a line marks the CP;
 			Pen.width= 0.3;
 
-					Pen.stringAtPoint("Point of Convergence",Point((canon[0].bcp + canon[0].onset + 0.2).linlin(0,(durTotal),10,durSize),maxY.linlin(minY,maxY,480,0)),color: Color(0.8,0.3,0.9));
+					Pen.stringAtPoint("Point of Convergence",Point((canon[0].bcp + canon[0].onset + 0.2).linlin(0,(durTotal),10,durSize),maxY.linlin(minY,maxY,480,0)),color: Color.gray);
 
 			Pen.line(Point((canon[0].bcp + canon[0].onset).linlin(0,(durTotal),10,durSize),minY.linlin(minY,maxY,480,0)),Point((canon[0].bcp + canon[0].onset).linlin(0,(durTotal),10,durSize),maxY.linlin(minY,maxY,480,0)));
 
-			Pen.strokeColor= Color(0.8,0.3,0.9);
+			Pen.strokeColor= Color.gray;
 
 
 				Pen.stroke;
@@ -130,7 +131,7 @@
 		var selectMoment = {|index, line, onset|
 
 	//
-			Pen.fillColor= Color(0.8,0.3,0.9);				//always fill with purple color
+		Pen.fillColor= colors[index].blend(Color.white, 0.4);				//always fill with purple color
 	//
 	// 		// receive the data from the Pbind in realtime assigning global variables
 			OSCdef("test"++index, {|msg, time, addr, recvPort|
