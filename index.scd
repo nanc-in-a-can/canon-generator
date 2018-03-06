@@ -9,6 +9,9 @@ s.boot;
 (thisProcess.nowExecutingPath.dirname++"/makeMelody.scd").load;//exports ~makeMelody
 (thisProcess.nowExecutingPath.dirname++"/melodyMaker.scd").load;// exports ~melodyMaker
 (thisProcess.nowExecutingPath.dirname++"/makeVisualization.scd").load;//exports ~makeVisualization
+
+//(thisProcess.nowExecutingPath.dirname++"/makeGUI.scd").load;//generates GUI to use with presets
+
  //~makeCanon.(~melodyMaker.randomSymmetric4voices);
  //~makeCanon.(~melodyMaker.pyramidalMelody);
 // ~makeCanon.(~melodyMaker.simple4NoteMelody(3));
