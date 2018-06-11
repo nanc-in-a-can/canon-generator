@@ -68,13 +68,25 @@ var getPercOf = {|part, total|
 	part/total*100
 };
 
-var processDurationsForVoice = {|totalDur, durs, voiceTempos|
+var getFromPercentage = {|perc, total|
+    perc*total/100
+};
 
+var processDurationsForVoice = {|totalDur, durs, voiceTempos|
+	// ("totalDur" + totalDur ).postln;
 	durs.inject((elapsed: 0, durs: List []), {|acc, dur|
-		var currentTempo = findCurrentTempo.(getPercOf.(acc.elapsed, totalDur) ,voiceTempos).t;
+		var currentTempo = findCurrentTempo.(getPercOf.(acc.elapsed, totalDur) ,voiceTempos);
+		var nextTempo = findCurrentTempo.(getPercOf.(acc.elapsed + dur, totalDur) ,voiceTempos) ? currentTempo;
+		var nextElapsed = getPercOf.(acc.elapsed+dur, totalDur);
+        var durationAfterTempoChange_ = acc.elapsed+dur - getFromPercentage.(currentTempo.until, totalDur);
+		var durationAfterTempoChange = if(durationAfterTempoChange_ > 0, {durationAfterTempoChange_}, {0});
+		var durationBeforeTempoChange = dur - durationAfterTempoChange;
+		var duration = (durationBeforeTempoChange*currentTempo.t) + (durationAfterTempoChange*nextTempo.t);
+		// "durations".postln;
+		// [dur*currentTempo.t, duration, durationBeforeTempoChange, durationAfterTempoChange].postln;
 		(
 			elapsed: acc.elapsed+(dur),
-			durs: acc.durs.add(dur*currentTempo)
+			durs: acc.durs.add(duration)
 		)
 	});
 };
@@ -92,12 +104,34 @@ var processDurations = {|rotations, dur_arr|
 };
 
 //TEST
-r = rotate.([(t:1, perc:25), (t:2, perc:25), (t:3, perc:25), (t:4, perc:25)]); //rotations
-"Order of tempos".postln;
-r.collect(_.collect(_.t)).do(_.postln);
+~r = rotate.([(t:1, perc:25), (t:2, perc:25), (t:3, perc:25), (t:4, perc:25)]); //rotations
 
-~test = processDurations.(
-	r,
+~test1 = processDurations.(
+    ~r,
+    [//each line is a 25% of the duration
+        3,
+        1,1,1,
+        1,2,
+        2,1
+    ]
+).collect(_.durs).collect(_.asArray);
+("TEST 1 Passes:" + (~test1.collect(_.sum) == [ 30, 30, 30, 30 ])).postln; // Durations of each part should be equal
+/*
+"Order of tempos".postln;
+~r.collect(_.collect(_.t)).do(_.postln);
+
+"Durations arrays for each voice:".postln;
+~test.do(_.postln);
+
+"Durations of each part shoulde be equal".postln;
+~test.collect(_.sum).postln;
+*/
+
+//TEST 2 Works with percentages that do not divide evenly the durations
+~r2 = rotate.([(t:1, perc:10), (t:2, perc:32), (t:3, perc:28), (t:4, perc:30)]); //rotations
+
+~test2 = processDurations.(
+	~r2,
 	[//each line is a 25% of the duration
 		3,
 		1,1,1,
@@ -105,11 +139,45 @@ r.collect(_.collect(_.t)).do(_.postln);
 		2,1
 	]
 ).collect(_.durs).collect(_.asArray);
+("TEST 2 Passes:" + (~test2.collect(_.sum) == [ 33.36, 33.36, 33.36, 33.36 ])).postln; // Durations of each part should be equal
+/*
+"Order of tempos".postln;
+~r2.collect(_.collect(_.t)).do(_.postln);
 
 "Durations arrays for each voice:".postln;
-~test.do(_.postln);
+~test2.do(_.postln);
 
 "Durations of each part shoulde be equal".postln;
-~test.collect(_.sum).postln;
+~test2.collect(_.sum).postln;
+*/
+)
 
+
+(
+// getPercOf :: Number -> Number -> Percentage
+var getPercOf = {|part, total|
+    part/total*100
+};
+// getPercOf :: Percentage -> Number -> Number
+var getFromPercentage = {|perc, total|
+    perc*total/100
+};
+var total = 10;
+var elapsed = 8;
+var dur = 1;
+var currentTempo = (until: 92, t: 2); //percentage
+var nextTempo = (until: 94, t: 1); //percentage
+var nextElapsed = getPercOf.(elapsed+dur, total);
+var currentElapsed = getPercOf.(elapsed, total).postln;
+var durationAfterTempoChange = if(nextElapsed > currentTempo.until,
+    {elapsed+dur - getFromPercentage.(currentTempo.until, total)},
+    {0}
+);
+var durationBeforeTempoChange = dur - durationAfterTempoChange;
+var duration = durationBeforeTempoChange*currentTempo.t + durationAfterTempoChange*nextTempo.t;
+[durationAfterTempoChange, durationBeforeTempoChange].postln;
+(
+    durs: [1,2,3, duration]
+)
+.postln;
 )
