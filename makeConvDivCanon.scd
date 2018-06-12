@@ -6,7 +6,7 @@
 // tempos: [(t: Float, percentage: Int)], //Array of Event objects with tempo proportion (t) and the percentage of time it should occupy in the melody. The user is responsible for the percentage that will add up in the end. It might be above 100 or below it depending on the sum of the "perc"s passed in.
 //)
 ~makeConvDivCanon = {|data|
-    var tests;// vid infra
+var
     /**
 
     setUntil :: [(percentage: Number)] -> [(percentage: Number, until: Number)]
@@ -19,8 +19,7 @@
     The user is responsible for the percentage that will add up in the end. It might be above 100 or below it depending on the sum of the "perc"s passed in.
 
     */
-
-    var setUntil = {|voice|
+	setUntil = {|voice|
     	voice.inject((percPassed:0, tempos: List []), {|acc, tempo|
     		var until = acc.percPassed+tempo.percentage;
     		(
@@ -32,7 +31,7 @@
     			))
     		)
     	}).tempos
-    };
+    },
 
     /**
     rotate :: [a] -> [[a]]
@@ -49,7 +48,7 @@
     Notice also that fo clairty we are ommiting the "perc" property in the example above.
     */
 
-    var rotate = {|arr|
+	rotate = {|arr|
     	(0..arr.size - 1)
     	  .inject(List [], {|acc, i|
     	     if(i=== 0 ,
@@ -57,70 +56,68 @@
     			{acc.add(acc[i-1].rotate)}
     		)
     	}).collect(setUntil)
-    };
+    },
 
 
-    var findFirst = {|pred, arr|
+    findFirst = {|pred, arr|
     	arr.inject(nil, {|acc, el|
     		if(acc === nil,
     			{if(pred.(el), {el}, {nil})},
     			{acc});
     	});
-    };
+    },
 
-    var findCurrentTempo = {|percElapsed, tempos|
+    findCurrentTempo = {|percElapsed, tempos|
     	findFirst.({|tempo| tempo.until > percElapsed}, tempos)
-    };
+    },
 
-    var getPercOf = {|part, total|
+    getPercOf = {|part, total|
     	part/total*100
-    };
+    },
 
-    var getFromPercentage = {|perc, total|
+    getFromPercentage = {|perc, total|
         perc*total/100
-    };
+    },
 
-    var processDurationsForVoice = {|totalDur, durs, voiceTempos|
-    	// ("totalDur" + totalDur ).postln;
+    processDurationsForVoice = {|totalDur, durs, voiceTempos|
     	durs.inject((elapsed: 0, durs: List []), {|acc, dur|
-    		var currentTempo = findCurrentTempo.(getPercOf.(acc.elapsed, totalDur) ,voiceTempos);
-    		var nextTempo = findCurrentTempo.(getPercOf.(acc.elapsed + dur, totalDur) ,voiceTempos) ? currentTempo;
-    		var nextElapsed = getPercOf.(acc.elapsed+dur, totalDur);
-            var durationAfterTempoChange_ = acc.elapsed+dur - getFromPercentage.(currentTempo.until, totalDur);
-    		var durationAfterTempoChange = if(durationAfterTempoChange_ > 0, {durationAfterTempoChange_}, {0});
-    		var durationBeforeTempoChange = dur - durationAfterTempoChange;
-    		var duration = (durationBeforeTempoChange*currentTempo.t) + (durationAfterTempoChange*nextTempo.t);
-    		// "durations".postln;
-    		// [dur*currentTempo.t, duration, durationBeforeTempoChange, durationAfterTempoChange].postln;
+    		var 
+                currentTempo = findCurrentTempo.(getPercOf.(acc.elapsed, totalDur) ,voiceTempos),
+                nextTempo = findCurrentTempo.(getPercOf.(acc.elapsed + dur, totalDur) ,voiceTempos) ? currentTempo,
+                nextElapsed = getPercOf.(acc.elapsed+dur, totalDur),
+                durationAfterTempoChange_ = acc.elapsed+dur - getFromPercentage.(currentTempo.until, totalDur),
+                durationAfterTempoChange = if(durationAfterTempoChange_ > 0, {durationAfterTempoChange_}, {0}),
+                durationBeforeTempoChange = dur - durationAfterTempoChange,
+                duration = (durationBeforeTempoChange*currentTempo.t) + (durationAfterTempoChange*nextTempo.t);
     		(
     			elapsed: acc.elapsed+(dur),
     			durs: acc.durs.add(duration)
     		)
     	});
-    };
+    },
 
-    var getTotalDur = {|voice, durs|
+    getTotalDur = {|voice, durs|
     	voice.collect({|tempo|
     		durs.sum*tempo.percentage/100*tempo.t
     	})
-    };
+    },
 
 
-    var processDurations = {|rotations, dur_arr|
+    processDurations = {|rotations, dur_arr|
     	var totalDur = dur_arr.sum;
     	rotations.collect(processDurationsForVoice.(totalDur,dur_arr, _))
-    };
+    },
 
 	//initAndLast :: [a] -> (init:[a], last: a)
-	var initAndLast = {|arr| (init: arr[..arr.size -2], last: arr[arr.size - 1])};
-	var durations_ = initAndLast.(data.melody.collect(_.dur));
-	var notes = data.melody.collect(_.note);
-	var rotations = rotate.(data.tempos);
-	var toSeconds = {|tempo, propotion| 60*propotion/tempo};
-	var durations = processDurations.(rotations, durations_.init)
+	initAndLast = {|arr| (init: arr[..arr.size -2], last: arr[arr.size - 1])},
+	durations_ = initAndLast.(data.melody.collect(_.dur)),
+	notes = data.melody.collect(_.note),
+	rotations = rotate.(data.tempos),
+	toSeconds = {|tempo, propotion| 60*propotion/tempo},
+	durations = processDurations.(rotations, durations_.init)
 	    .collect(_.durs)
-	    .collect(_.collect(toSeconds.(data.baseTempo, _)));
-	var canon = durations.collect({|voiceDurs, i|
+	    .collect(_.collect(toSeconds.(data.baseTempo, _))),
+	canon = durations.collect({|voiceDurs, i|
 		(
 			notes: data.transps[i]+notes,
 			durs: voiceDurs++[durations_.last],
@@ -128,7 +125,7 @@
 			bcp: 0,
 			cp: 0
 		)
-	});
+	}),
 
     tests = {
         var r1, r2;// rotations for each test
@@ -186,7 +183,7 @@
 	(
 		canon: canon,
 		data: (
-			voices: [ ( 'transp': 0, 'tempo': 60 ), ( 'transp': -12, 'tempo': 65 ), ( 'transp': 12, 'tempo': 57 ), ( 'transp': 8, 'tempo': 63 ) ]
+			voices: [ ( 'transp': 0, 'tempo': 60 ), ( 'transp': -12, 'tempo': 65 ), ( 'transp': 12, 'tempo': 57 ), ( 'transp': 8, 'tempo': 63 ) ] // TODO ARREGLAR ESTO!!!!!!!!!!!!!!!!!!!!!
 		)
 	);
 };
