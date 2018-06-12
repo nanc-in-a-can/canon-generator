@@ -13,7 +13,15 @@ s.boot;
 //(thisProcess.nowExecutingPath.dirname++"/makeGUI.scd").load;//generates GUI to use with presets
 
  //~makeCanon.(~melodyMaker.randomSymmetric4voices);
- //~makeCanon.(~melodyMaker.pyramidalMelody);
-// ~makeCanon.(~melodyMaker.simple4NoteMelody(3));
-~makeVisualization.(~makeCanon.(~melodyMaker.pyramidalMelody));
+// ~makeCanon.(~melodyMaker.pyramidalMelody);
+// ~makeCanon.(~melodyMaker.simple4NoteMelody(3)).data.voices;
+// ~makeVisualization.(~makeCanon.(~melodyMaker.pyramidalMelody));
+~canon = ~makeConvDivCanon.((
+	baseTempo: 1000,
+	transps: [1, 2, 3],
+	tempos: [(t: 3, percentage: 30), (t: 5, percentage: 50), (t: 2, percentage: 20)],
+	melody: [(dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62)]
+));
+~makeVisualization.(~canon);
+
 )
