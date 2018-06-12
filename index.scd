@@ -6,6 +6,7 @@ s.latency = 0.05;
 s.boot;
 (thisProcess.nowExecutingPath.dirname++"/sounds.scd").loadPaths;// exports \piano, \reverb
 (thisProcess.nowExecutingPath.dirname++"/makeCanon.scd").load;//exports ~makeCanon
+(thisProcess.nowExecutingPath.dirname++"/makeConvDivCanon.scd").load;//exports ~makeConvDivCanon
 (thisProcess.nowExecutingPath.dirname++"/makeMelody.scd").load;//exports ~makeMelody
 (thisProcess.nowExecutingPath.dirname++"/melodyMaker.scd").load;// exports ~melodyMaker
 (thisProcess.nowExecutingPath.dirname++"/makeVisualization.scd").load;//exports ~makeVisualization
