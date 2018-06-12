@@ -2,6 +2,7 @@
 //data must be an Event object with the following keys
 //(
 // baseTempo: Float,
+// transps: [Int], // Array of transpositions, should equal in size the tempos array
 // melody: [(dur: Float, note: midiNote)], // Array of Event objects with note and duration
 // tempos: [(t: Float, percentage: Int)], //Array of Event objects with tempo proportion (t) and the percentage of time it should occupy in the melody. The user is responsible for the percentage that will add up in the end. It might be above 100 or below it depending on the sum of the "perc"s passed in.
 //)
@@ -81,7 +82,7 @@ var
 
     processDurationsForVoice = {|totalDur, durs, voiceTempos|
     	durs.inject((elapsed: 0, durs: List []), {|acc, dur|
-    		var 
+    		var
                 currentTempo = findCurrentTempo.(getPercOf.(acc.elapsed, totalDur) ,voiceTempos),
                 nextTempo = findCurrentTempo.(getPercOf.(acc.elapsed + dur, totalDur) ,voiceTempos) ? currentTempo,
                 nextElapsed = getPercOf.(acc.elapsed+dur, totalDur),
