@@ -47,11 +47,12 @@
 
 
 	var drawPoints = {
-		|xVals, yVals, onset|
+		|xVals, yVals, onset, canonIndex|
 
 		xVals.size.do{|i|
 
-		canon.size.do{|j|  if(onset==canon[j].onset,{Pen.color= colors[j]})};
+			Pen.color= colors[canonIndex];
+			Pen.strokeColor= colors[canonIndex];
 
 
 			// here the coordinates are expressed as an underlying map
@@ -67,8 +68,6 @@
 			Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize),yVals[i].linlin(minY,maxY,480,0)),
 			Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize),yVals[i+1].linlin(minY,maxY,480,0))
 		);
-
-		canon.size.do{|j|  if(onset==canon[j].onset,{Pen.strokeColor= colors[j]})};
 
 				Pen.stroke;
 		};
@@ -121,7 +120,7 @@
 
 	//
 	w.drawFunc = { // draw the points of the canon;
-		canon.do({|line| drawPoints.(getXValues.(line.durs), line.notes, line.onset)});
+		canon.do({|line, canonIndex| drawPoints.(getXValues.(line.durs), line.notes, line.onset, canonIndex)});
 		};
 
 
@@ -164,5 +163,6 @@
 	scroller.play(AppClock);
 };
 
-//~makeVisualization.(~makeCanon.(~melodyMaker.pyramidalMelody));
+// ~makeVisualization.(~makeCanon.(~melodyMaker.simple4NoteMelody(3)));
+// ~makeVisualization.(~canon);
 )
