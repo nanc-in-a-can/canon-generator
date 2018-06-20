@@ -1,30 +1,35 @@
-// symbol -> float -> string -> [float]
+// float -> string -> [[float], [float]]
 
-// answers tempos that will be equivalent to either arbitrary tempos or to the proportional tempos;
-
-// always answers whole notes, quarter = 60 bpm the function answers 15, half = 60 bpm the function answers 30, etc.
-
-~funcTempo= { | tempo, proportions="1"|
-
-	var tempoPerFigure= tempo;
-
-	var props= tempoPerFigure*proportions.split($:).asFloat;
-
-	if(proportions != "1"  && tempo.isArray, {"inconsistent tempos declared, tempos may be weird".warn});
-
-	if( tempo.isArray && tempo.size == 1, {"inconsistent tempos declared, tempos may be weird".warn});
+// answers tempos that will be equivalent to either arbitrary tempos or to the proportional tempos in the first array, the second array contains transposition values added in the argument transp (midi), if transp == nil then the transp values are taken from the tempo;
 
 
-	if( proportions == 1, {tempoPerFigure},
-		{props});
+~tempoFunc= { | tempo, proportions="1", transp|
+
+	var baseTempo= tempo;
+
+	var propsTe= baseTempo*proportions.split($:).asFloat;
+
+	var tempoToTransp= if(transp== nil, {if( proportions == 1, { baseTempo.cpsmidi}, {propsTe.cpsmidi})}, {transp});
+
+	if(proportions != "1"  && baseTempo.isArray, {"inconsistent tempos declared, tempos may be weird".warn});
+
+	if( baseTempo.isArray && baseTempo.size == 1, {"inconsistent tempos declared, tempos may be weird".warn});
+
+
+	if( proportions == 1, {[baseTempo, tempoToTransp]},
+		{[propsTe, tempoToTransp]});
+
 
 }
 
 
 // try me
-//~funcTempo.(tempo: [ 180, 240, 300, 360 ]);
-//~funcTempo.(tempo: 60, proportions: "3:4:5:6");
+//~tempoFunc.(tempo: [ 180, 240, 300, 360 ]);
+//~tempoFunc.(tempo: 60, proportions: "3:4:5:6");
+//~tempoFunc.(tempo: 60, proportions: "3:4:5:6", transp: [12, 24, -12, -15]);
 
 
-// falta establecer: funcion para transponer de manera arbitraria, con intervalos tipo "2:3:7" o traduciendo tempo a freq;
+
+
+
 
