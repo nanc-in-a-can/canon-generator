@@ -152,7 +152,7 @@
 					(stringCoord[index] - stringCoord[canon.size-1]).asString
 
 				}),
-				Point(xCoord[index]-20, (height-70)+((index+1)*11)), Font(Font.availableFonts[12], 13), colors[index].blend(Color.white, 0.4));
+				Point(xCoord[index]-20, (height-(canon.size*15))+((index+1)*11)), Font(Font.availableFonts[12], 13), colors[index].blend(Color.white, 0.4));
 			Pen.stroke;
 	//
 			};

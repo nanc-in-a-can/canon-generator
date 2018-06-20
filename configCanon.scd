@@ -26,4 +26,8 @@
 ~makeVisualization.(~makeCanon.(~melodyMaker.randomSymmetric4voices));
 
 
+~reverb= Synth(\reverb);
+~makeVisualization.(~makeCanon.(~melodyMaker.pyramidalMelody));
+
+
 // working area to customize melodies;
