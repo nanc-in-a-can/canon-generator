@@ -39,10 +39,10 @@
             cp: convergence_point,
 	        melody: [(dur: 1, note: 60), (dur: 1, note: 61), (dur: 1, note: 62), (dur: 1, note: 63)],
 			voices: [
-				(tempo: 60, transp: 0),
+				(tempo: 70, transp: 0),
 				(tempo: 65, transp: -12),
 				(tempo: 57, transp: 12),
-				(tempo: 63, transp: 8)
+				(tempo: 43, transp: 8)
 			]
         )
 	},
@@ -52,7 +52,7 @@
         	cp: 600,
         	melody: ~makeMelody.(
         		(16..40).pyramid.reciprocal.reverse.mirror.postln,
-        		((16..40).pyramidg.collect({|arr, i| arr+i})*12).flatten.reverse.mirror.cpsmidi
+				((16..40).pyramidg.collect({|arr, i| arr+i})*12).flatten.reverse.mirror.cpsmidi
         	),
         	voices: [
         		(tempo: 120*7/12, transp: 0),
@@ -81,7 +81,26 @@
                     (tempo: 90, transp: 0),
                     (tempo: 95, transp: -12),
                     (tempo: 100, transp: 12),
-                    (tempo: 83, transp: 8)
+                    (tempo: 83, transp: 8),
+				(tempo: 110, transp: 24),
+                    (tempo: 105, transp: 19),
+                    (tempo: 113, transp: 10),
+                    (tempo: 87, transp: 24),
+				(tempo: 80, transp: -24),
+                    (tempo: 87, transp: -15),
+                    (tempo: 117, transp: 36),
+                    (tempo: 75, transp: -10),
+				(tempo: 70, transp: -36),
+                    (tempo: 77, transp: -12),
+                    (tempo: 120, transp: 12),
+                    (tempo: 80, transp: 8),
+				(tempo: 115, transp: 36),
+                    (tempo: 97, transp: 5),
+                    (tempo: 125, transp: 33),
+                    (tempo: 65, transp: -36),
+
+
+
                 ]
     	)
     }

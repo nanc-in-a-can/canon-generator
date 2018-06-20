@@ -20,11 +20,11 @@
             var line  = voice.durs;
             var melody  = voice.notes;
             Pbind(
-                \instrument, \piano,
+                \instrument, \pianola,
                 \pan, pan,
                 \dur, Pseq(line,1),
                 \freq, Pseq(melody,inf),
-                \out, 10,
+			\out, [0, ~reverbBus.index],
                 \amp, 1
 
             );

@@ -1,10 +1,10 @@
 //Example of a visualization
 (
-~makeVisualization = {|madeCanon|
+~makeVisualization = {|madeCanon, autoScrollSwitch=true|
 
 	//--window setup
-	var width= 940, height= 480;
-	var w= Window("Nanc in a Can - Canon generator", Rect(99, 99, width, height), false, scroll: true);
+	var width= 940, height= 580;
+	var w= Window("Nanc in a Can - Canon generator", Rect(99, 99, width, height), true, scroll: true);
 	var u= UserView(w, Rect(0, 0, width*220, height));
 
 	//--variables
@@ -24,6 +24,7 @@
 	var x_values_V1 = getXValues.(line);
 	var xCoord = canon.size.collect({0});
 	var yCoord = canon.size.collect({0});
+	var stringCoord = canon.size.collect({0});
 
 	var colores= [Color.green(0.8), Color.red(0.8), Color.blue(0.8), Color.yellow(0.8), Color.new255(160, 32, 240),Color.new255(205, 70, 20),Color.new255(255, 192, 203),Color.new255(150, 150, 150),Color.new255(209, 166, 102),Color.new255(173, 216, 230)]; // hardcoded colours: green, red, blue, yellow, purple, orange, pink, grey, brown, light blue;
 	var colorExtra= (0..(canon.size)).collect({|n, i| [colores[i%10].vary].wrapAt(i)});
@@ -101,12 +102,12 @@
 
 	var patterns = canon.collect({|line, index|
 		Pbind(
-			\instrument, \piano,
-			\pan, 0,
-			\dur, Pseq([line.onset.postln] ++ line.durs,1),
+			\instrument, \pianola,
+			\dur, Pseq([line.onset.postln] ++ line.durs, 1),
 			\freq, Pseq([\rest]++line.notes,inf),
-			\out, 0,
+			\out, [0, ~reverbBus.index],
 			\amp, 1,
+			\pan, 0,
 			/*this series will provide an Index for later processes*/
 			\series, Pseries(0,1,inf),
 			/*messages to change the point positions in the map below*/
@@ -138,11 +139,21 @@
 				if(msg[1] !== \rest, {
 					yCoord[index]=msg[1].linlin(minY,maxY,480,0);
 					xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,durSize);
+					stringCoord[index]= (line[msg[2]] + onset);
 				})
 			},
 			("/event"++index), n);
 			Pen.addWedge(Point(xCoord[index], yCoord[index]), 5, 0pi,2pi);
 			Pen.fill;
+			Pen.stringAtPoint(
+				if( index== (canon.size-1),{":          Ecoic distances compared with this voice"}, {
+
+					":          " ++
+					(stringCoord[index] - stringCoord[canon.size-1]).asString
+
+				}),
+				Point(xCoord[index]-20, (height-70)+((index+1)*11)), Font(Font.availableFonts[12], 13), colors[index].blend(Color.white, 0.4));
+			Pen.stroke;
 	//
 			};
 	//
@@ -160,7 +171,7 @@
 
 	patterns.do(_.play);
 
-	scroller.play(AppClock);
+	if( autoScrollSwitch == true, {scroller.play(AppClock)});
 };
 
 // ~makeVisualization.(~makeCanon.(~melodyMaker.simple4NoteMelody(3)));
