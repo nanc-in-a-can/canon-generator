@@ -57,20 +57,21 @@
 
 
 			// here the coordinates are expressed as an underlying map
-			Pen.addWedge((xVals[i] + onset).linlin(0,(durTotal),10,durSize)@(yVals[i].linlin(minY,maxY,480,0)), 4, 0pi, 2pi);
+			if(yVals[i] != \rest, {
+				Pen.addWedge((xVals[i] + onset).linlin(0,(durTotal),10,durSize)@(yVals[i].linlin(minY,maxY,480,0)), 4, 0pi, 2pi);
+			});
 	        Pen.perform(\fill);
 
 
 		};
 
 		(xVals.size-1).do{|i|
-			Pen.width= 1;
-		Pen.line(
-			Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize),yVals[i].linlin(minY,maxY,480,0)),
-			Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize),yVals[i+1].linlin(minY,maxY,480,0))
-		);
-
-				Pen.stroke;
+			// Pen.width= 1;
+			// Pen.line(
+				// Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize),yVals[i].linlin(minY,maxY,480,0)),
+				// Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize),yVals[i+1].linlin(minY,maxY,480,0))
+			// );
+			// Pen.stroke;
 		};
 
 		1.do{
@@ -178,7 +179,7 @@
 // ~makeVisualization.(~canon);
 ~withChords = ~makeCanon.((
 	cp: 2,
-	melody: [(dur: 1/4, note: 50), (dur: 1/2, note: [62,73]), (dur: 2/3, note: [71,72,73])],
+	melody: [(dur: 1/4, note: 50), (dur: 1/2, note: \rest), (dur: 2/3, note: 60)],
 	voices: [(tempo: 55, transp: 4), (tempo: 51, transp: 1)]
 ));
 ~mySound = {|line, index|
