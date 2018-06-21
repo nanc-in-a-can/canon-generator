@@ -61,18 +61,23 @@
 				Pen.addWedge((xVals[i] + onset).linlin(0,(durTotal),10,durSize)@(yVals[i].linlin(minY,maxY,480,0)), 4, 0pi, 2pi);
 			});
 	        Pen.perform(\fill);
-
-
 		};
 
 		(xVals.size-1).do{|i|
-			// Pen.width= 1;
-			// Pen.line(
-				// Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize),yVals[i].linlin(minY,maxY,480,0)),
-				// Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize),yVals[i+1].linlin(minY,maxY,480,0))
-			// );
-			// Pen.stroke;
+			var hasNoRests = (yVals[i] != \rest) && (yVals[i+1] != \rest);
+			if(hasNoRests,
+				{
+					Pen.width= 1;
+					Pen.line(
+					Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize),yVals[i].linlin(minY,maxY,480,0)),
+					Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize),yVals[i+1].linlin(minY,maxY,480,0))
+					);
+					Pen.stroke;
+				}
+			)
 		};
+
+
 
 		1.do{
 	//  here a line marks the CP;
@@ -178,8 +183,8 @@
 // ~makeVisualization.(~makeCanon.(~melodyMaker.simple4NoteMelody(3)));
 // ~makeVisualization.(~canon);
 ~withChords = ~makeCanon.((
-	cp: 2,
-	melody: [(dur: 1/4, note: 50), (dur: 1/2, note: \rest), (dur: 2/3, note: 60)],
+	cp: 3,
+	melody: [(dur: 1/4, note: 60), (dur: 1/5, note: 50), (dur: 1/2, note: \rest), (dur: 1/2, note: \rest), (dur: 2/3, note: 60), (dur: 1/4, note: 60)],
 	voices: [(tempo: 55, transp: 4), (tempo: 51, transp: 1)]
 ));
 ~mySound = {|line, index|
@@ -201,4 +206,24 @@
 
 // ~withChords.canon.collect(~mySound).do(_.play);
 ~makeVisualization.(~withChords);
+nil
 )
+
+
+(xVals.size-1).do{|i|
+	var hasNoRests = (yVals[i] != \rest) && (yVals[i+1] != \rest);
+
+	if((hasNoRests),
+		{
+	      //desverge sin rests y sin acordes
+		},
+		{
+			//desverge usando ~fromChord
+		}
+	)
+};
+
+~fromChord = {
+	|note_or_chord|
+	if(note_or_chord.size > 0, {note_or_chord[0]}, {note_or_chord})
+}
