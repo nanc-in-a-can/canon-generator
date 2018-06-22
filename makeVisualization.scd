@@ -49,18 +49,47 @@
 
 	var drawPoints = {
 		|xVals, yVals, onset, canonIndex|
+		var yPoints= yVals.flatten;
+		var xPoints= Array.new(yVals.flatten.size);
+
 
 		xVals.size.do{|i|
+
+	if( yVals[i].isArray, {xPoints.add([xVals[i]].stutter(yVals[i].size))}, {xPoints.add([xVals[i]])})
+	};
+
+
+		xPoints.flatten.size.do{|i|
 
 			Pen.color= colors[canonIndex];
 			Pen.strokeColor= colors[canonIndex];
 
 
 			// here the coordinates are expressed as an underlying map
-			if(yVals[i] != \rest, {
-				Pen.addWedge((xVals[i] + onset).linlin(0,(durTotal),10,durSize)@(yVals[i].linlin(minY,maxY,480,0)), 4, 0pi, 2pi);
+			if(yPoints[i] != \rest, {
+				Pen.addWedge((xPoints.flatten[i] + onset).linlin(0,(durTotal),10,durSize)@(yPoints[i].linlin(minY,maxY,480,0)), 4, 0pi, 2pi);
 			});
 	        Pen.perform(\fill);
+
+		};
+
+	(xPoints.flatten.size-1).do{|i|
+
+			Pen.color= colors[canonIndex];
+			Pen.strokeColor= colors[canonIndex];
+
+
+	if( xPoints.flatten[i] == xPoints.flatten[i+1],
+		{
+
+			Pen.width= 0.3;
+					Pen.line(Point((xPoints.flatten[i]+ onset).linlin(0,(durTotal),10,durSize),
+						yPoints[i].linlin(minY,maxY,480,0)),
+					Point((xPoints.flatten[i+1] + onset).linlin(0,(durTotal),10,durSize),
+						yPoints[i+1].linlin(minY,maxY,480,0)));
+			Pen.stroke
+			});
+
 		};
 
 		(xVals.size-1).do{|i|
@@ -69,8 +98,8 @@
 				{
 					Pen.width= 1;
 					Pen.line(
-					Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize),yVals[i].linlin(minY,maxY,480,0)),
-					Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize),yVals[i+1].linlin(minY,maxY,480,0))
+						Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize), ~fromChord.(yVals[i]).linlin(minY,maxY,480,0)),
+						Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize), ~fromChord.(yVals[i+1]).linlin(minY,maxY,480,0))
 					);
 					Pen.stroke;
 				}
@@ -111,14 +140,14 @@
 			\instrument, \pianola,
 			\dur, Pseq([line.onset.postln] ++ line.durs, 1),
 			\freq, Pseq([\rest]++line.notes,inf),
-			\out, [0, ~reverbBus.index],
+			\out, [0, /*~reverbBus.index*/],
 			\amp, 1,
 			\pan, 0,
 			/*this series will provide an Index for later processes*/
 			\series, Pseries(0,1,inf),
 			/*messages to change the point positions in the map below*/
 			\coordinates, Pfunc({|event|
-				NetAddr("127.0.0.1", 57120).sendBundle(s.latency, [("/event"++index), event[\freq], event[\series], event[\dur]])
+				NetAddr("127.0.0.1", 57120).sendBundle(s.latency, [("/event"++index), if(event[\freq].isArray, {event[\freq][0]}, {event[\freq]}), event[\series], event[\dur]])
 			})
 		)
 	});
@@ -149,7 +178,7 @@
 				})
 			},
 			("/event"++index), n);
-			Pen.addWedge(Point(xCoord[index], yCoord[index]), 5, 0pi,2pi);
+			Pen.addWedge(Point(xCoord[index], yCoord[index]), 7, 0pi, 2pi);
 			Pen.fill;
 			Pen.stringAtPoint(
 				if( index== (canon.size-1),{":          Ecoic distances compared with this voice"}, {
@@ -184,9 +213,13 @@
 // ~makeVisualization.(~canon);
 ~withChords = ~makeCanon.((
 	cp: 3,
-	melody: [(dur: 1/4, note: 60), (dur: 1/5, note: 50), (dur: 1/2, note: \rest), (dur: 1/2, note: \rest), (dur: 2/3, note: 60), (dur: 1/4, note: 60)],
+	melody: [(dur: 1/4, note: [60, 80]), (dur: 1/5, note: 50),
+		(dur: 1/2, note: \rest), (dur: 1/2, note: \rest),
+		(dur: 2/3, note: [60,70,80]), (dur: 1/4, note: 60)],
+
 	voices: [(tempo: 55, transp: 4), (tempo: 51, transp: 1)]
 ));
+
 ~mySound = {|line, index|
     Pbind(
         \instrument, \pianola,
@@ -207,7 +240,7 @@
 // ~withChords.canon.collect(~mySound).do(_.play);
 ~makeVisualization.(~withChords);
 nil
-)
+);
 
 
 (xVals.size-1).do{|i|
@@ -215,7 +248,7 @@ nil
 
 	if((hasNoRests),
 		{
-	      //desverge sin rests y sin acordes
+	      //desverge sin acordes
 		},
 		{
 			//desverge usando ~fromChord
@@ -223,7 +256,27 @@ nil
 	)
 };
 
+		(xVals.size-1).do{|i|
+			var hasNoRests = (yVals[i] != \rest) && (yVals[i+1] != \rest);
+			if(hasNoRests,
+				{
+					Pen.width= 1;
+					Pen.line(
+					Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize),yVals[i].linlin(minY,maxY,480,0)),
+					Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize),yVals[i+1].linlin(minY,maxY,480,0))
+					);
+					Pen.stroke;
+				},
+				{
+					~fromChord.(note_or_chord: yVals[i]); yVals[i].postln;
+				}
+			)
+		};
+
+
 ~fromChord = {
 	|note_or_chord|
 	if(note_or_chord.size > 0, {note_or_chord[0]}, {note_or_chord})
 }
+
+~fromChord.([60, 72])
