@@ -14,8 +14,6 @@ s.waitForBoot({
 (baseDir++"/makeMelody.scd").load;//exports ~makeMelody
 (baseDir++"/canonPreConfigs.scd").load;// exports ~melodyMaker // este debe de cambiar por Melodic presets (o algo similar)
 (baseDir++"/makeVisualization.scd").load;//exports ~makeVisualization
-
-//(thisProcess.nowExecutingPath.dirname++"/makeGUI.scd").load;//generates GUI to use with presets
 });
 )
 
