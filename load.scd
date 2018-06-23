@@ -8,11 +8,11 @@ s.latency = 0.05;
 s.waitForBoot({
 (baseDir++"/filters.scd").load; // exports \reverb
 (baseDir++"/sounds.scd").loadPaths;// exports \pianola,
-(baseDir++"/makeTranspAndTempo.scd").load;
-(baseDir++"/makeCanon.scd").load; //exports ~makeCanon
-(baseDir++"/makeConvDivCanon.scd").load;//exports ~makeConvDivCanon
+(baseDir++"/makeVoices.scd").load;
+(baseDir++"/makeConvCanon.scd").load; //exports ~makeCanon
+(baseDir++"/makeDivCanon.scd").load;//exports ~makeConvDivCanon
 (baseDir++"/makeMelody.scd").load;//exports ~makeMelody
-(baseDir++"/melodyMaker.scd").load;// exports ~melodyMaker // este debe de cambiar por Melodic presets (o algo similar)
+(baseDir++"/canonPreConfigs.scd").load;// exports ~melodyMaker // este debe de cambiar por Melodic presets (o algo similar)
 (baseDir++"/makeVisualization.scd").load;//exports ~makeVisualization
 
 //(thisProcess.nowExecutingPath.dirname++"/makeGUI.scd").load;//generates GUI to use with presets
