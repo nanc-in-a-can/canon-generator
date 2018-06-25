@@ -27,7 +27,7 @@ var
     			percPassed: until,
     			tempos: acc.tempos.add((
     				percentage: tempo.percentage,
-    				t: tempo.t,
+    				tempo: tempo.tempo,
     				until: until
     			))
     		)
@@ -83,26 +83,19 @@ var
     processDurationsForVoice = {|totalDur, durs, voiceTempos|
     	durs.inject((elapsed: 0, durs: List []), {|acc, dur|
     		var
-                currentTempo = findCurrentTempo.(getPercOf.(acc.elapsed, totalDur) ,voiceTempos),
-                nextTempo = findCurrentTempo.(getPercOf.(acc.elapsed + dur, totalDur) ,voiceTempos) ? currentTempo,
+                currentTempo = findCurrentTempo.(getPercOf.(acc.elapsed, totalDur), voiceTempos),
+                nextTempo = findCurrentTempo.(getPercOf.(acc.elapsed + dur, totalDur),voiceTempos) ? currentTempo,
                 nextElapsed = getPercOf.(acc.elapsed+dur, totalDur),
                 durationAfterTempoChange_ = acc.elapsed+dur - getFromPercentage.(currentTempo.until, totalDur),
                 durationAfterTempoChange = if(durationAfterTempoChange_ > 0, {durationAfterTempoChange_}, {0}),
                 durationBeforeTempoChange = dur - durationAfterTempoChange,
-                duration = (durationBeforeTempoChange*currentTempo.t) + (durationAfterTempoChange*nextTempo.t);
+                duration = (durationBeforeTempoChange*currentTempo.tempo) + (durationAfterTempoChange*nextTempo.tempo);
     		(
     			elapsed: acc.elapsed+(dur),
     			durs: acc.durs.add(duration)
     		)
     	});
     },
-
-    getTotalDur = {|voice, durs|
-    	voice.collect({|tempo|
-    		durs.sum*tempo.percentage/100*tempo.t
-    	})
-    },
-
 
     processDurations = {|rotations, dur_arr|
     	var totalDur = dur_arr.sum;
@@ -132,7 +125,7 @@ var
         var r1, r2;// rotations for each test
         var test1, test2; //tests
         //TEST
-        r = rotate.([(t:1, percentage:25), (t:2, percentage:25), (t:3, percentage:25), (t:4, percentage:25)]); //rotations
+        r = rotate.([(tempo:1, percentage:25), (tempo:2, percentage:25), (tempo:3, percentage:25), (tempo:4, percentage:25)]); //rotations
 
         test1 = processDurations.(
             r,
@@ -146,7 +139,7 @@ var
         ("TEST 1 Passes:" + (test1.collect(_.sum) == [ 30, 30, 30, 30 ])).postln;
         /*
         "Order of tempos".postln;
-        r.collect(_.collect(_.t)).do(_.postln);
+        r.collect(_.collect(_.tempo)).do(_.postln);
 
         "Durations arrays for each voice:".postln;
         test.do(_.postln);
@@ -156,7 +149,7 @@ var
         */
 
         //TEST 2 Works with percentages that do not divide evenly the durations
-        r2 = rotate.([(t:1, percentage:10), (t:2, percentage:32), (t:3, percentage:28), (t:4, percentage:30)]); //rotations
+        r2 = rotate.([(tempo:1, percentage:10), (tempo:2, percentage:32), (tempo:3, percentage:28), (tempo:4, percentage:30)]); //rotations
 
         test2 = processDurations.(
         	r2,
@@ -170,7 +163,7 @@ var
         ("TEST 2 Passes:" + (test2.collect(_.sum) == [ 33.36, 33.36, 33.36, 33.36 ])).postln;
         /*
         "Order of tempos".postln;
-        r2.collect(_.collect(_.t)).do(_.postln);
+        r2.collect(_.collect(_.tempo)).do(_.postln);
 
         "Durations arrays for each voice:".postln;
         test2.do(_.postln);
@@ -191,7 +184,7 @@ var
 ~makeDivCanon.((
 	baseTempo: 60,
 	transps: [1, 2, 3],
-	tempos: [(t: 3, percentage: 30), (t: 5, percentage: 30), (t: 2, percentage: 40)],
+	tempos: [(tempo: 3, percentage: 30), (tempo: 5, percentage: 30), (tempo: 2, percentage: 40)],
 	melody: [(dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 4, note: 63)]
 ));
 )
