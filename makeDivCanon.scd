@@ -4,7 +4,7 @@
 // baseTempo: Float,
 // transps: [Int], // Array of transpositions, should equal in size the tempos array
 // melody: [(dur: Float, note: midiNote)], // Array of Event objects with note and duration
-// tempos: [(t: Float, percentage: Int)], //Array of Event objects with tempo proportion (t) and the percentage of time it should occupy in the melody. The user is responsible for the percentage that will add up in the end. It might be above 100 or below it depending on the sum of the "perc"s passed in.
+// tempos: [(tempo: Float, percentage: Int)], //Array of Event objects with tempo and percentage (the percentage of the melody that runs at that tempo). The user is responsible for the percentage that will add up in the end. It might be above 100 or below it depending on the sum of the "perc"s passed in.
 //)
 ~makeDivCanon = {|data|
 var
@@ -106,7 +106,12 @@ var
 	initAndLast = {|arr| (init: arr[..arr.size -2], last: arr[arr.size - 1])},
 	durations_ = initAndLast.(data.melody.collect(_.dur)),
 	notes = data.melody.collect(_.note),
-	rotations = rotate.(data.tempos),
+    convertTemposToPropotions = {|tempos|
+        var sorted = tempos.sort({|a, b| a.tempo < b.tempo});
+        var first = sorted[0];
+        sorted.collect({|t| (tempo: t.tempo/first.tempo, percentage: t.percentage)})
+    },
+	rotations = rotate.(convertTemposToPropotions.(data.tempos)),
 	toSeconds = {|tempo, propotion| 60*propotion/tempo},
 	durations = processDurations.(rotations, durations_.init)
 	    .collect(_.durs)

@@ -5,14 +5,14 @@
 // ~makeConvCanon.(~melodyMaker.pyramidalMelody);
 // ~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)).data.voices;
 // ~makeVisualization.(~makeConvCanon.(~melodyMaker.pyramidalMelody));
-
-/*~canon = ~makeDivCanon.((
-	baseTempo: 1000,
-	transps: [1, 2, 3],
-	tempos: [(t: 3, percentage: 30), (t: 5, percentage: 50), (t: 2, percentage: 20)],
-	melody: [(dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62)]
-));
-~makeVisualization.(~canon);*/
+//
+// ~canon = ~makeDivCanon.((
+// 	baseTempo: 1000,
+// 	transps: [1, 2, 3],
+// 	tempos: [(tempo: 3, percentage: 30), (tempo: 5, percentage: 50), (tempo: 2, percentage: 20)],
+// 	melody: [(dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62)]
+// ));
+// ~makeVisualization.(~canon);
 
 )
 
