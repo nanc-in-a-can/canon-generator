@@ -1,6 +1,6 @@
 //Example of a visualization
 (
-~makeVisualization = {|madeCanon, autoScrollSwitch=true|
+~makeVisualization = { |madeCanon, autoScrollSwitch=true|
 
 	//--window setup
 	var width= 940, height= 580;
@@ -44,6 +44,10 @@
 	var stringCP = "CP position:"+canon[0].cp;
 	var stringVcs = "Voices:"+canon.size;
 	var stringTempos = "Tempos:"+data.voices.collect(_.tempo).sort();
+    var fromChord = {
+        |note_or_chord|
+        if(note_or_chord.size > 0, {note_or_chord[0]}, {note_or_chord})
+    };
 	// var stringMelodia = ; Aqui debe ir nombre de la melodía
 
 
@@ -98,8 +102,8 @@
 				{
 					Pen.width= 1;
 					Pen.line(
-						Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize), ~fromChord.(yVals[i]).linlin(minY,maxY,480,0)),
-						Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize), ~fromChord.(yVals[i+1]).linlin(minY,maxY,480,0))
+						Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize), fromChord.(yVals[i]).linlin(minY,maxY,480,0)),
+						Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize), fromChord.(yVals[i+1]).linlin(minY,maxY,480,0))
 					);
 					Pen.stroke;
 				}
@@ -208,75 +212,4 @@
 
 	if( autoScrollSwitch == true, {scroller.play(AppClock)});
 };
-
-// ~makeVisualization.(~makeCanon.(~melodyMaker.simple4NoteMelody(3)));
-// ~makeVisualization.(~canon);
-~withChords = ~makeCanon.((
-	cp: 3,
-	melody: [(dur: 1/4, note: [60, 80]), (dur: 1/5, note: 50),
-		(dur: 1/2, note: \rest), (dur: 1/2, note: \rest),
-		(dur: 2/3, note: [60,70,80]), (dur: 1/4, note: 60)],
-
-	voices: [(tempo: 55, transp: 4), (tempo: 51, transp: 1)]
-));
-
-~mySound = {|line, index|
-    Pbind(
-        \instrument, \pianola,
-        \dur, Pseq([line.onset.postln] ++ line.durs, 1),
-        \freq, Pseq([\rest]++line.notes,inf),
-        \out, [0, ~reverbBus.index],
-        \amp, 1,
-        \pan, 0,
-        /*this series will provide an Index for later processes*/
-        \series, Pseries(0,1,inf),
-        /*messages to change the point positions in the map below*/
-        \coordinates, Pfunc({|event|
-            NetAddr("127.0.0.1", 57120).sendBundle(s.latency, [("/event"++index), event[\freq], event[\series], event[\dur]])
-        })
-    )
-};
-
-// ~withChords.canon.collect(~mySound).do(_.play);
-~makeVisualization.(~withChords);
-nil
 );
-
-
-(xVals.size-1).do{|i|
-	var hasNoRests = (yVals[i] != \rest) && (yVals[i+1] != \rest);
-
-	if((hasNoRests),
-		{
-	      //desverge sin acordes
-		},
-		{
-			//desverge usando ~fromChord
-		}
-	)
-};
-
-		(xVals.size-1).do{|i|
-			var hasNoRests = (yVals[i] != \rest) && (yVals[i+1] != \rest);
-			if(hasNoRests,
-				{
-					Pen.width= 1;
-					Pen.line(
-					Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize),yVals[i].linlin(minY,maxY,480,0)),
-					Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize),yVals[i+1].linlin(minY,maxY,480,0))
-					);
-					Pen.stroke;
-				},
-				{
-					~fromChord.(note_or_chord: yVals[i]); yVals[i].postln;
-				}
-			)
-		};
-
-
-~fromChord = {
-	|note_or_chord|
-	if(note_or_chord.size > 0, {note_or_chord[0]}, {note_or_chord})
-}
-
-~fromChord.([60, 72])
