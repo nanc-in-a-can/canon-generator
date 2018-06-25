@@ -14,23 +14,6 @@
 
         makeTempo = {|speed| 60/(speed/4)},
 
-
-        makePatt = {|sortedVoices, voice, index|
-            var pan = (index/sortedBySpeed.size*2 - 1) + (1/sortedBySpeed.size);//distributes voices evenly across the stereo field, but it avoids the extreme positions (-1 and 1)
-            var line  = voice.durs;
-            var melody  = voice.notes;
-            Pbind(
-                \instrument, \pianola,
-                \pan, pan,
-                \dur, Pseq(line,1),
-                \freq, Pseq(melody,inf),
-			\out, [0, ~reverbBus.index],
-                \amp, 1
-
-            );
-        },
-
-
         //creates voices [(melody: [(note, dur)], bcp)]
         voices = (data.voices
             .collect({|voice|
@@ -57,22 +40,19 @@
             .sort({|voice1, voice2| voice1.durs.sum < voice2.durs.sum })
         ),
 
-
-        //Pbinds
-        patterns = sortedBySpeed.collect(makePatt.(sortedBySpeed, _, _)),
-
-
         //voice onset times
         onsets = sortedBySpeed.reverse.inject([], {|acc, elem|
             acc ++ [(sortedBySpeed.reverse[0].bcp - elem.bcp).abs];
         }),
 
     	canon = sortedBySpeed.collect({|voice, i|
+		    var onset = (sortedBySpeed[sortedBySpeed.size - 1].bcp - voice.bcp).abs;
     		(
     			durs: voice.durs,
     			notes: voice.notes,
+			    remainder: sortedBySpeed[sortedBySpeed.size - 1].durs.sum - (onset + voice.durs.sum),
     			bcp: voice.bcp,
-    			onset: (sortedBySpeed[sortedBySpeed.size - 1].bcp - voice.bcp).abs,
+    			onset: onset,
     			cp: data.cp
     		)
     	});

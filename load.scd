@@ -6,14 +6,15 @@ Server.default.options.numWireBufs= 512;
 s = Server.local;
 s.latency = 0.05;
 s.waitForBoot({
-(baseDir++"/filters.scd").load; // exports \reverb
-(baseDir++"/instruments.scd").loadPaths;// exports \pianola,
+(baseDir++"/canonPreConfigs.scd").load;// exports ~melodyMaker // este debe de cambiar por Melodic presets (o algo similar)
+(baseDir++"/instrument.scd").load;// exports ~instrument,
+(baseDir++"/synthdef-instruments.scd").loadPaths;// add \pianola synthdef,
 (baseDir++"/makeVoices.scd").load;
 (baseDir++"/makeConvCanon.scd").load; //exports ~makeConvCanon
 (baseDir++"/makeDivCanon.scd").load;//exports ~makeDivCanon
 (baseDir++"/makeMelody.scd").load;//exports ~makeMelody
-(baseDir++"/canonPreConfigs.scd").load;// exports ~melodyMaker // este debe de cambiar por Melodic presets (o algo similar)
 (baseDir++"/makeVisualization.scd").load;//exports ~makeVisualization
 });
 )
+
 

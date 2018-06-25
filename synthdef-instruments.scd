@@ -6,13 +6,13 @@ SynthDef(\pianola,
 	var sig, env, strike, envAttack, noise, delayTime, deTune;
 
 
-		strike= Trig.ar(Impulse.ar((freq.asFloat.midicps)/temp),0.0001);
+		strike= Trig.ar(Impulse.ar((freq.asFloat)/temp),0.0001);
 envAttack= Decay2.ar(strike, 0.008, 0.03);
 noise= Mix(LFNoise2.ar([375,750,1500,3000], envAttack));
 
 	sig= Mix(Array.fill(4,{|i|
 		deTune= #[-0.05,0.01,0.04,-0.01].at(i);
-	delayTime= 1/((freq.asFloat.midicps)+deTune);
+	delayTime= 1/((freq.asFloat)+deTune);
 
 	CombL.ar(
 	noise, delayTime, delayTime, decayTime
@@ -24,7 +24,7 @@ noise= Mix(LFNoise2.ar([375,750,1500,3000], envAttack));
 
 		env= EnvGen.kr(Env([0,1,1,0],[att,sus,rel]),doneAction: done);
 
-		Out.ar([out, ~reverbBus.index], Limiter.ar(Pan2.ar(Mix(sig),pan)*amp,0.1)*env)
+		Out.ar(out, Limiter.ar(Pan2.ar(Mix(sig),pan)*amp,0.1)*env)
 };
 ).add;
 

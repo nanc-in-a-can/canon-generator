@@ -4,7 +4,7 @@
 //~makeConvCanon.(~melodyMaker.randomSymmetric4voices);
 // ~makeConvCanon.(~melodyMaker.pyramidalMelody);
 // ~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)).data.voices;
-// ~makeVisualization.(~makeConvCanon.(~melodyMaker.pyramidalMelody));
+~makeVisualization.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)));
 //
 // ~canon = ~makeDivCanon.((
 // 	baseTempo: 1000,
@@ -23,37 +23,38 @@
 ~makeVisualization.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)), autoScrollSwitch: false);
 
 ~reverb= Synth(\reverb);
-~makeVisualization.(~makeConvCanon.(~melodyMaker.randomSymmetric4voices));
+~makeVisualization.(~makeConvCanon.(~melodyMaker.randomSymmetric4voices), false);
 
 
 ~reverb= Synth(\reverb);
 ~makeVisualization.(~makeConvCanon.(~melodyMaker.pyramidalMelody));
 
-
+(
 // working area to customize melodies;
 (
 ~withChords = ~makeConvCanon.((
 	cp: 2,
-	melody: [(dur: 1/4, note: 50), (dur: 1/2, note: [62,73]), (dur: 2/3, note: [71,72,73])],
-	voices: [(tempo: 55, transp: 4), (tempo: 51, transp: 1)]
+	melody: [(dur: 1/4, note: [30, 50]), (dur: 1/4, note: [76, 90]), (dur: 1/4, note: 50), (dur: 1/2, note: [62,73]), (dur: 2/3, note: [71,72,73]), (dur: 1/4, note: 50), (dur: 1/2, note: [62,73]), (dur: 2/3, note: [71,72,73])],
+	voices: [(tempo: 170, transp: 20), (tempo: 120, transp: 1), (tempo: 130, transp: 86)]
 ));
-~mySound = {|line, index|
-    Pbind(
-        \instrument, \pianola,
-        \dur, Pseq([line.onset.postln] ++ line.durs, 1),
-        \freq, Pseq([\rest]++line.notes,inf),
-        \out, [0, ~reverbBus.index],
-        \amp, 1,
-        \pan, 0,
-        /*this series will provide an Index for later processes*/
-        \series, Pseries(0,1,inf),
-        /*messages to change the point positions in the map below*/
-        \coordinates, Pfunc({|event|
-            NetAddr("127.0.0.1", 57120).sendBundle(s.latency, [("/event"++index), event[\freq], event[\series], event[\dur]])
-        })
-    )
-};
 
-// ~withChords.canon.collect(~mySound).do(_.play);
-~makeVisualization.(~withChords);
+
+~withChords.canon.collect(~mySound).do(_.play);
+
+// ~instrument.(\pianola, ~withChords.canon).do(_.play);
+
+~mispbinds = ~withChords.canon
+.collect(~instrument.([\pianola], amp: 1, repeat: inf)));
+// .collect(~sound.(\otra))
+// .do(_.play);
+
+// ~withChords.canon.collect(~sound.(\pianola, _, _)).do(_.play);
+
+// ~makeVisualization.(~withChords);
+~mipdef = Pdef(\mipidef, Ppar(~mispbinds, inf))
+// ~mipdef2 = Pdef(\mipidef2, Ppar(~mispbinds, inf))
 )
+
+
+~mipdef.play
+~mipdef.stop
