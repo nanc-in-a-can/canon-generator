@@ -186,10 +186,10 @@ var
 		)
 	);
 };
-~makeDivCanon.((
-	baseTempo: 60,
-	transps: [1, 2, 3],
-	tempos: [(tempo: 3, percentage: 30), (tempo: 5, percentage: 30), (tempo: 2, percentage: 40)],
-	melody: [(dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 4, note: 63)]
-));
+// ~makeDivCanon.((
+// 	baseTempo: 60,
+// 	transps: [1, 2, 3],
+// 	tempos: [(tempo: 3, percentage: 30), (tempo: 5, percentage: 30), (tempo: 2, percentage: 40)],
+// 	melody: [(dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 4, note: 63)]
+// ));
 )
