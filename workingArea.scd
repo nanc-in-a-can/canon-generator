@@ -20,19 +20,19 @@
 // working area with presets;
 
 ~reverb= Synth(\reverb);
-~makeVisualization.(~makeCanon.(~melodyMaker.simple4NoteMelody(3)), autoScrollSwitch: false);
+~makeVisualization.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)), autoScrollSwitch: false);
 
 ~reverb= Synth(\reverb);
-~makeVisualization.(~makeCanon.(~melodyMaker.randomSymmetric4voices));
+~makeVisualization.(~makeConvCanon.(~melodyMaker.randomSymmetric4voices), false);
 
 
 ~reverb= Synth(\reverb);
-~makeVisualization.(~makeCanon.(~melodyMaker.pyramidalMelody));
+~makeVisualization.(~makeConvCanon.(~melodyMaker.pyramidalMelody));
 
 
 // working area to customize melodies;
 (
-~withChords = ~makeCanon.((
+~withChords = ~makeConvCanon.((
 	cp: 2,
 	melody: [(dur: 1/4, note: 50), (dur: 1/2, note: [62,73]), (dur: 2/3, note: [71,72,73])],
 	voices: [(tempo: 55, transp: 4), (tempo: 51, transp: 1)]

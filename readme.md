@@ -1,35 +1,74 @@
 # Nanc-in-a-can Canon Generator
 
-Nanc-in-a-can Canon Generator is a series of sc patches that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The patches are 6 that contain a function each, 2 that contain synthdefs and 1 that loads the modules, boots server and other processes that enables the program. 
-
-
+Nanc-in-a-can Canon Generator is a series of sc patches that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The patches are 7 that contain a function each, 2 that contain synthdefs and 1 that loads the modules, boots server and other processes that enables the program. The functions ~makeConvCanon and ~makeDivCanon are the core of the program, however, two other auxiliary functions have been created to generate meoldies, transposition patterns and tempos algorithmically instead of hardcoding them. The function ~makeVisualization incorporates a visual timeline of each canon made as well as creates the pbinds necessary to reproduce them as audio signal. The function ###~mySound### produces pbinds to perform the sound patterns skipping the visualization. 
 
 
 ## Functions.
 
 
-~makeMelody.(durs_arr: [float], notes_arr: [float / [float]])
+### ~makeMelody
 
-Is a function that generates an Event object with dur and notes necessary to create a musical object that might be a simple monody (one pitch value per event) or a melodic structure with various degrees of density (two or more pitch values per event) including rests. 
+Is a function that generates an array of Event objects with durations and notes necessary to create a musical object that might be a simple monody (one pitch value per duration) or a melodic structure with various degrees of density (two or more pitch values per duration) including rests. In case size of the arrays is not the same, the size of the array of events it returns will be equal to the size of the smaller array it took.
+
+#### Type Signature
+Takes an array of durations and an array of midi pitch values and returns an array of Event object with the keys `dur` and `note`. 
+```
+~makeMelody :: [Float] -> [Float] -> [(durs: Float, notes: Float)]
+
+
+#### Example
+```
+(
+~myMelody= 
+
+~makeMelody.( 
+	Array.fill(35, { [4, 8, 16].wchoose([0.2, 0.3, 0.5].normalizeSum).reciprocal } ) 
+	,
+	Array.fill(35, { [60, 67,[38, 72], 68, 63, 63.5].wchoose([6, 4, 3, 2, 1, 1].normalizeSum) } )
+		);
+
+);
+
+~myMelody.postln;
 
 Arguments:
 
-durs_arr. An array of floats that represents in durations in which 1 is equivalent to a bpm of tempo provided in Voices argument of ~makeConvCanon or ~makeDivCanon. 
+durs_arr. `[Float]`. Duration array. An array of floats that represents in durations in which 1 is equivalent to a bpm of tempo provided in Voices argument of ~makeConvCanon or ~makeDivCanon. Reciprocal of 2, 4, 8, 16 creates half, quarter, eighth and sixteenth notes respectively.  
 
-notes_arr. An array of floats or arrays of floats that represents the pitch value(s) in midi notes.  (que pedo con transp entonces deben de girar en torno a 0 y agregar el centro tonal m�s tarde o los valores que aqu� se generen entren en la funcion ~makeVoices para producir los valores en relacion al centro tonal sugerido en melody con sus respectivas transposiciones)
+notes_arr. `[Float] / [Float]]`. An array of a) floats, b) arrays of floats c) \rest symbols that represents the pitch value(s) in midi notes. If b) is taken then a chord will be returned. If the symbol \rest is taken then a silence value will be returned. The values are midi notes, if floats of midi notes provided then it will produce microtonal values. In the above example 63.5 will produce a E quarter note flat. 
 
 ----------------
-~makeVoices.(tempo: float / [float], proportions: String, transp: [float])
+### ~makeVoices
 
-Is a function that generates number of voices by declaring the tempo of each and its transposition value.
+Similar to makeMelody however it generates tempos and transposition values.
 
-Arguments:
+#### Type Signature
+Takes an array of tempos and transposition values and returns an array of Event object with the keys `tempo` and `transp`. 
+```
+~makeVoices :: [Float] -> [Float] -> [(tempo: Float, transp: Float)]
 
-tempo. It accepts an array of floats that arbitrarily determines the tempo of each voice. In case a single tempo (float) is decided it generates a value from which a relationship of proportional tempi is determined in the second argument.
 
-proportions. In case tempo is a float proportions is a string that describes a set of temporal relationships with the structure �t1:t2:t3:t4� in which each t is multiplied by the float in tempo answering an array of floats that represent a series of tempi that hold a proportional relationship among themselves.
+#### Example
+```
+(
 
-transp. An array of floats that represent a series of transposition values in midi notes. If transp is nil the transp values is taken from the temporal proportions determined in the last two arguments. The relationship between pitch and tempo is taken from the concept of harmonic rhythm developed by Henry Cowell.
+~myVoices= 
+
+~makeVoices.( 
+	Array.series(7, 60, 10)
+	,
+	Array.series(7, -12, 4)
+		);
+
+);
+
+~myVoices.postln;
+
+#### Arguments:
+
+tempo. An array of floats that generates tempo in bpm for each voice. 
+
+transp. An array of floats that generates a series of transposition values in midi notes. Negative floats will generate descending intervals in relationship to the midi values passed down from melody, positive ones will generate ascending intervales. 
 
 ----------
 ### ~makeConvCanon
@@ -94,25 +133,53 @@ Arguments:
 
 
 ----------------------------
-~makeVisualization.(~makeConvCanon / ~makeDivCanon, autoScrollSwitch: Bool) 
+### ~makeVisualization.(MadeCanon, autoScrollSwitch: Bool) 
 
-Is a function that generates a dynamic timeline in which pitch and duration are represented in a visual field. The different colours represent the different voices of the temporal canon. 
+Is a function that generates a Window object in which a dynamic timeline shows pitch and duration as cartesian coordinates in a visual field. The colour key represent the different voices of the temporal canon. It also generates a pbind per voice that is played synchronously with the visualization. 
+
+#### Type Signature
+Takes an Event Object MadeCanon and returns , , , , .
+```
+~makeVisualization ::
+
+
 
 Arguments:
 
-canon. The first argument accepts the functions ~makeConvCanon and ~makeDivCanon from which ti extracts the data necessary to make the visualization.
+MadeCanon. 
 
-autoScrollSwitch. Accepts a Boolean, if true the scroll maintains the present time in the view window. If false the user can navigate the score map of the time canon freely.  Default is true.
+autoScrollSwitch. Accepts a Boolean, if true the scroll maintains the "present moment" of the canon in the centre of the view window. If false the user can navigate the score map of the time canon freely.  Default is true.
 
 
 -----------------------------
-~canonPreConfigs 
+### ~canonPreConfigs
 
+A set of canon configurations that function as examples for the Nanc in a Can project. Each melody was design at some point of development of the program and is the outcome of the implementation of one or many ideas concerning the temporal canon concept. 
 
+Configurations:
+
+randomSymmetric4voices. A four voice canon configuration that creates a different melody everytime. The melody is generated using a weighted random process. The pitch set is modal /phrygian depending the octave with microtonal inflections. The durations are based in the theory of harmonic rhythm and the rhythm device of complex denomitar (irrational measures). 
+
+pyramidalMelody. Using the parcials 16 to 40 of a sound with a root in 12 htz we create a pitch configuration that is simultaneously expressed in duration values using the theory of harmonic rhythm. We used the function ~makeMelody to then apply several methods to such an array. The tempo was design proportionally.
+
+Fragment of Study 37 (sonido 13 version)
+
+Fragment of Study 33 
+
+chido_melody
 
 ----------------------------
-instrument module
+instrument module.
+
+Contains two sound-generating synthdefs. The first based in an algorithm by James McCartney that emulates a piano-player with the feature that may emulate a limited "prepared" piano timbre. 
+
 ----------------------------
 filter module
+
+Contains a reverb filter synthdef. 
+
 ----------------------------
-load module
+load module.
+
+Loads all the functions and compiles all the synths necessary to operate the Nanc-in-a-Can program. 
+
