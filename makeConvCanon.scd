@@ -6,7 +6,7 @@
 // voices: [(tempo: Float, transp: Int)]//Array of Event objects with tempo and transposition for each voice that will be generated
 //)
 
-~makeCanon = {|data|
+~makeConvCanon = {|data|
 
     var
 	makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
@@ -81,7 +81,7 @@
 
     };
 
-    // ~makeCanon.(~melodyMaker.simple4NoteMelody(2));
+// ~makeConvCanon.(~melodyMaker.simple4NoteMelody(2));
 )
 
 

@@ -1,12 +1,12 @@
 
 
 (
-//~makeCanon.(~melodyMaker.randomSymmetric4voices);
-// ~makeCanon.(~melodyMaker.pyramidalMelody);
-// ~makeCanon.(~melodyMaker.simple4NoteMelody(3)).data.voices;
-// ~makeVisualization.(~makeCanon.(~melodyMaker.pyramidalMelody));
+//~makeConvCanon.(~melodyMaker.randomSymmetric4voices);
+// ~makeConvCanon.(~melodyMaker.pyramidalMelody);
+// ~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)).data.voices;
+// ~makeVisualization.(~makeConvCanon.(~melodyMaker.pyramidalMelody));
 
-/*~canon = ~makeConvDivCanon.((
+/*~canon = ~makeDivCanon.((
 	baseTempo: 1000,
 	transps: [1, 2, 3],
 	tempos: [(t: 3, percentage: 30), (t: 5, percentage: 50), (t: 2, percentage: 20)],

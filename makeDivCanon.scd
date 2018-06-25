@@ -6,7 +6,7 @@
 // melody: [(dur: Float, note: midiNote)], // Array of Event objects with note and duration
 // tempos: [(t: Float, percentage: Int)], //Array of Event objects with tempo proportion (t) and the percentage of time it should occupy in the melody. The user is responsible for the percentage that will add up in the end. It might be above 100 or below it depending on the sum of the "perc"s passed in.
 //)
-~makeConvDivCanon = {|data|
+~makeDivCanon = {|data|
 var
     /**
 
@@ -188,7 +188,7 @@ var
 		)
 	);
 };
-~makeConvDivCanon.((
+~makeDivCanon.((
 	baseTempo: 60,
 	transps: [1, 2, 3],
 	tempos: [(t: 3, percentage: 30), (t: 5, percentage: 30), (t: 2, percentage: 40)],
