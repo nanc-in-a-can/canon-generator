@@ -20,7 +20,7 @@
 // working area with presets;
 
 ~reverb= Synth(\reverb);
-~makeVisualization.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)), autoScrollSwitch: false);
+~makeVisualization.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)), autoScroll: false);
 
 ~reverb= Synth(\reverb);
 ~makeVisualization.(~makeConvCanon.(~melodyMaker.randomSymmetric4voices), false);

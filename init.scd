@@ -1,6 +1,6 @@
 (//initialize
 // var baseDir = "/Users/user/sc/nanquirules";
-var baseDir = thisProcess.nowExecutingPath !? {thisProcess.nowExecutingPath.dirname} ? "/Users/user/sc/nanquirules"; // if you are not in an evironment where thisProcess.nowExecutingPath.dirname exists you can configure the path to the library
+var baseDir = thisProcess.nowExecutingPath.dirname; // if you are not in an evironment where thisProcess.nowExecutingPath.dirname exists you can configure the path to the library
 Server.default.options.memSize= 512000*20;
 Server.default.options.numWireBufs= 512;
 s = Server.local;

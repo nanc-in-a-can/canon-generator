@@ -1,6 +1,6 @@
 //Example of a visualization
 (
-~makeVisualization = { |madeCanon, autoScrollSwitch=true|
+~makeVisualization = { |madeCanon, autoScroll=true|
 
 	//--window setup
 	var width= 940, height= 580;
@@ -210,6 +210,7 @@
 
 	patterns.do(_.play);
 
-	if( autoScrollSwitch == true, {scroller.play(AppClock)});
+	if( autoScroll == true, {scroller.play(AppClock)});
+	nil;
 };
 );
