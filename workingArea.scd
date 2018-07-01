@@ -125,3 +125,44 @@ Pdef(\mipidef2, Ppar(~mispbinds2, inf))
 )
 
 
+
+(
+~canonConfig = (
+  baseTempo: 60,
+  melody: [
+    (dur: 1, note: 60),
+    (dur: 1/2, note: 61),
+    (dur: 1/3, note: 62),
+    (dur: 1/4, note: 63),
+		(dur: 1/4, note: 63),
+		(dur: 1/4, note: 63),
+		(dur: 1/4, note: 63),
+		(dur: 1/4, note: 63),
+		(dur: 1/4, note: 63),
+		(dur: 1, note: 60),
+    (dur: 1/2, note: 61),
+    (dur: 1/3, note: 62),
+    (dur: 1/4, note: 63),
+		(dur: 1/4, note: 63),
+		(dur: 1/4, note: 63),
+		(dur: 1/4, note: 63),
+		(dur: 1/4, note: 63),
+		(dur: 1/4, note: 63),
+  ],
+  voices: [ // Note that voices and tempos should be arrays of the same size
+    (transp: 2, amp: 0.7),
+    (transp: 10, amp: 0.5),
+    (transp: -12, amp: 1),
+    (transp: -8, amp: 1)
+  ],
+  tempos: [
+    (tempo: 70, percentage: 20),
+    (tempo: 40, percentage: 30),
+    (tempo: 120, percentage: 10),
+    (tempo: 300, percentage: 40)
+  ]
+);
+~myCanon = ~makeDivCanon.(~canonConfig);
+
+~makeVisualization.(~myCanon);
+)

@@ -2,12 +2,12 @@
 //data must be an Event object with the following keys
 //(
 // baseTempo: Float,
-// transps: [Int], // Array of transpositions, should equal in size the tempos array
+// voices: [(transp: Float, amp: Float)], // Array of transpositions, should equal in size the tempos array
 // melody: [(dur: Float, note: midiNote)], // Array of Event objects with note and duration
-// tempos: [(tempo: Float, percentage: Int)], //Array of Event objects with tempo and percentage (the percentage of the melody that runs at that tempo). The user is responsible for the percentage that will add up in the end. It might be above 100 or below it depending on the sum of the "perc"s passed in.
+// tempos: [(tempo: Float, percentage: Float)], //Array of Event objects with tempo and percentage (the percentage of the melody that runs at that tempo). The user is responsible for the percentage that will add up in the end. It might be above 100 or below it depending on the sum of the "perc"s passed in.
 //)
-~makeDivCanon = {|data|
-var
+var makeDivCanon = {|data|
+    var
     /**
 
     setUntil :: [(percentage: Number)] -> [(percentage: Number, until: Number)]
@@ -118,10 +118,11 @@ var
 	    .collect(_.collect(toSeconds.(data.baseTempo, _))),
 	canon = durations.collect({|voiceDurs, i|
 		(
-			notes: data.transps[i]+notes,
+			notes: data.voices[i].transp+notes,
 			durs: voiceDurs++[durations_.last],
 			onset: 0,
 			bcp: 0,
+			amp: data.voices[i].amp,
 			cp: 0
 		)
 	}),
@@ -186,10 +187,18 @@ var
 		)
 	);
 };
-// ~makeDivCanon.((
-// 	baseTempo: 60,
-// 	transps: [1, 2, 3],
-// 	tempos: [(tempo: 3, percentage: 30), (tempo: 5, percentage: 30), (tempo: 2, percentage: 40)],
-// 	melody: [(dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 4, note: 63)]
-// ));
+~makeDivCanon = {|data|
+	if(data.voices.size != data.tempos.size,
+		{"makeDivCanon requires that arguments \"voices\" and \"tempos\" should be arrays of the same size.".throw},
+		{makeDivCanon.(data)}
+	)
+
+};
+a = ~makeDivCanon.((
+	baseTempo: 60,
+	voices: [(transp: 1, amp: 1), (transp: 2, amp: 0.5), (transp: 3, amp: 0.7)],
+	tempos: [(tempo: 3, percentage: 30), (tempo: 5, percentage: 30), (tempo: 2, percentage: 40)],
+	melody: [(dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 4, note: 63)]
+)).canon;
 )
+

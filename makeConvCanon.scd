@@ -62,7 +62,7 @@
 
     };
 
-~makeConvCanon.((
+/*~makeConvCanon.((
             cp: 3,
 	        melody: [(dur: 1, note: 60), (dur: 1, note: 61), (dur: 1, note: 62), (dur: 1, note: 63)],
 			voices: [
@@ -71,6 +71,6 @@
 				(tempo: 57, transp: 12, amp: 0.7),
 				(tempo: 43, transp: 8, amp: 0.2)
 			]
-));
+));*/
 )
 
