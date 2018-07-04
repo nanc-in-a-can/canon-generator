@@ -118,16 +118,15 @@ Index :: Int
 MakePbind :: (CanonVoice, Index) -> Pbind 
 ```
 
-`MakePbind` is a very important type, that is used for playing back the canon.  An example can be seen with [~instrument](#~instrument)
+`MakePbind` is a very important type that is used for playing back the canon.  An example can be seen in [~instrument](#~instrument).
 
-One could read this signature as: `MakePbind` is the type of a function (denoted by the `->`) that takes two arguments, a `CanonVoice` and an `Index` which is an `Int`, and **returns** a `Pbind`.  This function literally transforms the data held in each canon voice into a `Pbind` ready for playback. The function may be implemented in several ways depending on the user's needs. In the file `~instrument.scd` you may find a somewhat complex implementation of it. 
+One could read this signature as: `MakePbind` is the type of a function (denoted by the `->`) that takes two arguments, a `CanonVoice` and an `Index` which is an `Int`, and **returns** a `Pbind`.  This function literally transforms the data held in a canon voice into a `Pbind` ready for playback. The function may be implemented in several ways depending on the user's needs. In the file `~instrument.scd` you may find a somewhat complex implementation of it. 
 
 ### Creating your own custom Pbinds to play a canon.
 
-Let's make a simple example:
+Let's make a simple example of a function of type `MakePbind`:
 
 ```supercollider
-
 //We use the melody of a previous example
 var melody = ~melodyMaker.pyramidalMelody;
 
