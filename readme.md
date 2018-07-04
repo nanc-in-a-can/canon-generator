@@ -1,6 +1,6 @@
 # Nanc-in-a-can Canon Generator
 <p align="center">
-   <img src="nanc-in-a-can.jpg">
+   <img width="100%" src="nanc-in-a-can.jpg">
 </p>
 
 Nanc-in-a-can Canon Generator is a series of sc files that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The files are 7 and mostly contain a function each, 1 of them contains `SynthDefs`. The functions `~convCanon` and `~divCanon` are the core of the program, however, three other auxiliary functions have been added to aid the creation of melodies, transposition patterns and tempos. The function `~visualize` generates a visual timeline for each canon and plays it back. The function `~instrument` produces `Pbinds` for each of the canon's voices. Finally there is a init file that compiles all the functions and modules design for it to run.
