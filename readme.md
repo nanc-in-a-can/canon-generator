@@ -9,38 +9,21 @@ Nanc-in-a-can Canon Generator is a series of sc files that can be used to produc
   * [Load Project files](#load-project-files)
   * [Basic Examples](#basic-examples)
   * [Functions (API)](#functions--api-)
+    + [Types](#types)
     + [Creating your own custom Pbinds to play a canon.](#creating-your-own-custom-pbinds-to-play-a-canon)
     + [~convCanon](#-convcanon)
-      - [Type Signature](#type-signature)
-      - [Example](#example)
-      - [Arguments:](#arguments-)
-      - [Type Signature](#type-signature-1)
-      - [Example](#example-1)
-      - [Arguments:](#arguments--1)
     + [~visualize.(madeCanon, autoScroll: true)](#-visualize-madecanon--autoscroll--true-)
-      - [Type Signature](#type-signature-2)
   * [Helper Functions](#helper-functions)
     + [~makeMelody](#-makemelody)
-      - [Type Signature](#type-signature-3)
-      - [Example](#example-2)
-      - [Arguments:](#arguments--2)
     + [~makeConvVoices](#-makeconvvoices)
-      - [Type Signature](#type-signature-4)
-      - [Example](#example-3)
-      - [Arguments:](#arguments--3)
     + [~makeDivTempo](#-makedivtempo)
-      - [Type Signature](#type-signature-5)
-      - [Example](#example-4)
-      - [Arguments:](#arguments--4)
     + [~instrument](#-instrument)
-    + [Example](#example-5)
-  * [Presets](#presets)
-    + [~canonPreConfigs](#-canonpreconfigs)
+    + [Presets](#presets)
+      - [~canonPreConfigs](#-canonpreconfigs)
   * [synthdef-instrument module.](#synthdef-instrument-module)
   * [init module.](#init-module)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
 
 ## Installation
 ### Using git
@@ -79,7 +62,7 @@ var melody = ~melodyMaker.pyramidalMelody;
 ```
 
 ## Functions (API)
-
+### Types
 A type is basically a label that indicates the category to which some data or event in a program belongs. 
 
 We are using a form of *Hindley-Milner type notation* to describe the data structures that the functions in this software take and return. By providing a function with the correct data types, we ensure that the program will run correctly no matter what.
@@ -218,7 +201,7 @@ Takes an Event Object with the keys `cp`, `melody` and `voices` and returns a `M
 
 
 ----------------------
-~divCanon
+### ~divCanon
 
 Is a function that generates a divergence-convergence temporal canon. All voices start and end simultaneously, however each voice switches from one tempo to another. In the end all voices pass through all tempos, but each one at different moments.
 
@@ -274,15 +257,22 @@ Is a function that generates a divergence-convergence temporal canon. All voices
 `tempos`: `[(tempo: Float, percentage: Float)]`. An array of Event objects with transposition and amplitude for each voice. The size of the array determines the number of voices of the temporal canon, but it should be the same as the size of the `voices` array (see above). `percentage` determines the amount of time each voice spends in a given tempo. `tempo` is the speed of the voice. The user is responsible for having all percentages sum up to `100`. The helper function `~makeDivTempo` provides an API that allows a simpler way to create this arrays.
 
 ----------------------------
-### ~visualize.(madeCanon, autoScroll: true) 
+### ~visualize
+
 
 #### Type Signature
 Takes an Event Object MadeCanon and creates a window object that visualizes and plays back the canon.
+
 ```haskell
 ~visualize :: Canon -> Nil
 ```
 
-Arguments:
+#### Example
+```supercollider
+~visualize.(madeCanon)
+```
+
+#### Arguments:
 
 `madeCanon` : `Canon`. A canon of the same type as the one returned by functions such as `~convCanon` or `~divCanon`.
 
@@ -399,7 +389,7 @@ Repeat :: Int
 
 `Amp`, `Pan`, `Out` and `Repeat` have default values and are optional.
 
-### Example
+##### Example
 ```supercollider
 (
 ~canonConfig = (
@@ -426,9 +416,9 @@ Repeat :: Int
 ```
 
 
-## Presets
+### Presets
 -----------------------------
-### ~canonPreConfigs
+#### ~canonPreConfigs
 
 A set of canon configurations that function as examples for the `Nanc-in-a-Can` project.
 
