@@ -24,7 +24,7 @@
 	var x_values_V1 = getXValues.(line);
 	var xCoord = canon.size.collect({0});
 	var yCoord = canon.size.collect({0});
-	var stringCoord = canon.size.collect({0});
+//	var stringCoord = canon.size.collect({0});
 
 	var colores= [Color.green(0.8), Color.red(0.8), Color.blue(0.8), Color.yellow(0.8), Color.new255(160, 32, 240),Color.new255(205, 70, 20),Color.new255(255, 192, 203),Color.new255(150, 150, 150),Color.new255(209, 166, 102),Color.new255(173, 216, 230)]; // hardcoded colours: green, red, blue, yellow, purple, orange, pink, grey, brown, light blue;
 	var colorExtra= (0..(canon.size)).collect({|n, i| [colores[i%10].vary].wrapAt(i)});
@@ -178,13 +178,13 @@
 				if(msg[1] !== \rest, {
 					yCoord[index]=msg[1].linlin(minY,maxY,480,0);
 					xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,durSize);
-					stringCoord[index]= (line[msg[2]] + onset);
+//					stringCoord[index]= (line[msg[2]] + onset);
 				})
 			},
 			("/event"++index), n);
 			Pen.addWedge(Point(xCoord[index], yCoord[index]), 7, 0pi, 2pi);
 			Pen.fill;
-			Pen.stringAtPoint(
+/*			Pen.stringAtPoint(
 				if( index== (canon.size-1),{":          Ecoic distances compared with this voice"}, {
 
 					":          " ++
@@ -192,7 +192,7 @@
 
 				}),
 				Point(xCoord[index]-20, (height-(canon.size*15))+((index+1)*11)), Font(Font.availableFonts[12], 13), colors[index].blend(Color.white, 0.4));
-			Pen.stroke;
+			Pen.stroke;*/
 	//
 			};
 	//

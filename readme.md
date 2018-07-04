@@ -1,6 +1,6 @@
 # Nanc-in-a-can Canon Generator
 
-Nanc-in-a-can Canon Generator is a series of sc files that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The files are 7 and mostly contain a function each, 2 of them contain `SynthDefs`. The functions `~makeConvCanon` and `~makeDivCanon` are the core of the program, however, two other auxiliary functions have been added to aid the creation of melodies, transposition patterns and tempos. The function `~makeVisualization` generates a visual timeline for each canon and plays it back. The function `~instrument` produces `Pbinds` for each of the canon's voices. 
+Nanc-in-a-can Canon Generator is a series of sc files that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The files are 7 and mostly contain a function each, 1 of them contains `SynthDefs`. The functions `~convCanon` and `~divCanon` are the core of the program, however, three other auxiliary functions have been added to aid the creation of melodies, transposition patterns and tempos. The function `~visualization` generates a visual timeline for each canon and plays it back. The function `~instrument` produces `Pbinds` for each of the canon's voices. Finally there is a init file that compiles all the functions and modules design for it to run.
 
 ## Installation
 ### Using git
@@ -23,7 +23,7 @@ Sound Only:
 ```
 (
 var melody = ~melodyMaker.pyramidalMelody;
-~makeConvCanon.(melody).canon
+~convCanon.(melody).canon
   .collect(~instrument.(\pianola))
   .do({|synthVoice| synthVoice.play})
 )
@@ -32,14 +32,18 @@ Sound and Visualization:
 ```
 (
 var melody = ~melodyMaker.pyramidalMelody;
-~makeVisualization.(~makeConvCanon.(melody));
+~visualization.(~convCanon.(melody));
 )
 ```
 
 ## Functions (API)
 
-Explicación de que usamos tipos
-Explicación de los Canon, Voice, Melody
+We are using types and a type system to explain how users might better control and understand the functions of this software. A type is basically the label that indicates the category to which an object or event described in a program is. A thorough explanation of what a type is might be found in the following links:
+
+http://learnyouahaskell.com/types-and-typeclasses
+
+<!-- link a types en Java  -->
+
 ```
 Canon :: (
   canon: (
@@ -76,7 +80,7 @@ MakePbind :: ((durs: [Float], notes: [Float], onset: Float, amp: Float), Index) 
 
 
 ----------
-### ~makeConvCanon
+### ~convCanon
 A function that generates a convergence-divergence temporal canon using a configuration object defining a convergence point, a melody, and the number of voices (with tempo and transposition).
 
 #### Type Signature
@@ -108,26 +112,24 @@ Takes an Event Object with the keys `cp`, `melody` and `voices` and returns a `M
     (tempo: 43, transp: 8)
   ]
 );
-~myCanon = ~makeConvCanon.(canonConfig);
+~myCanon = ~convCanon.(canonConfig);
 
-~makeVisualization(~myCanon);
+~visualization(~myCanon);
 )
 ```
 #### Arguments: 
 
-`~makeConvCanon` takes a single argument, an Event Object with the following keys:
+`~convCanon` takes a single argument, an Event Object with the following keys:
 
 `cp`: `Int`. **Convergence point**. An _integer_ that represents the index of the melodic structure at which all the different voices have the same structural and chronological position simultaneously.  The convergence point might be at any given onset value of the melody.
 
 `melody`: `[(dur: Float, note: [midiNote])]`. A melodic structure represented as an array of Event objects with a duration and a note values. `dur` is float representing rhythmic proportions. `note` may be a midi note -`Int`-, an array of midiNotes -`[Int]`- o the `\rest` keyword `Symbol`. The function `~makeMelody`(#makeMelody) may be used to generate this structure from a pair of arrays.
 
-`voices`: `[(tempo: Float, transp: Int)]`. An array of Event objects with tempo and transposition. The size of the array determines the number of voices of the temporal canon. Tempo is a float that represents a BPM value.  Transp represent a midi note value that will be added to the midi notes established in the melody. Negative numbers are descending intervals, positive numbers are ascending ones. The helper function `~makeVoices` provides an API that allows for the simplified creation of this array, using either tempos or proportions, and generating automatic transpositions relating the temporal propotions to pitch (as proposed by Henry Cowell).
-
-<!-- Inconsistencia entre la ~makeVoices y el modo en el que se construyen las melod�as. Resolver aquello urgentemente.  -->
+`voices`: `[(tempo: Float, transp: Int)]`. An array of Event objects with tempo and transposition. The size of the array determines the number of voices of the temporal canon. Tempo is a float that represents a BPM value.  Transp represent a midi note value that will be added to the midi notes established in the melody. Negative numbers are descending intervals, positive numbers are ascending ones. The helper function `~makeConvVoices` provides an API that allows for the simplified creation of this array.
 
 
 ----------------------
-~makeDivCanon
+~divCanon
 
 Is a function that generates a divergence-convergence temporal canon. All voices start and end simultaneously, however each voice switches from one tempo to another. In the end all voices pass through all tempos, but each one at different moments.
 
@@ -165,14 +167,14 @@ Is a function that generates a divergence-convergence temporal canon. All voices
     (tempo: 300, percentage: 40)
   ]
 );
-~myCanon = ~makeDivCanon.(canonConfig);
+~myCanon = ~divCanon.(canonConfig);
 
-~makeVisualization(~myCanon);
+~visualization(~myCanon);
 )
 ```
 #### Arguments: 
 
-`~makeDivCanon` takes a single argument, an `Event` Object with the following keys:
+`~divCanon` takes a single argument, an `Event` Object with the following keys:
 
 `baseTempo`: `Float`.
 
@@ -180,20 +182,20 @@ Is a function that generates a divergence-convergence temporal canon. All voices
 
 `voices`: `[(transp: Float, amp: Float)]`. An array of Event objects with transposition and amplitude for each voice. The size of the array determines the number of voices of the temporal canon, but it should be the same as the size of the `tempos` array (see below). `transp` represent a midi note value that will be added to the midi notes established in the melody. Negative numbers are descending intervals, positive numbers are ascending ones. `amp` must be a number between 0 and 1.
 
-`tempos`: `[(tempo: Float, percentage: Float)]`. An array of Event objects with transposition and amplitude for each voice. The size of the array determines the number of voices of the temporal canon, but it should be the same as the size of the `voices` array (see above). `percentage` determines the amount of time each voice spends in a given tempo. `tempo` is the speed of the voice. The user is responsible for having all percentages sum up to `100`.
+`tempos`: `[(tempo: Float, percentage: Float)]`. An array of Event objects with transposition and amplitude for each voice. The size of the array determines the number of voices of the temporal canon, but it should be the same as the size of the `voices` array (see above). `percentage` determines the amount of time each voice spends in a given tempo. `tempo` is the speed of the voice. The user is responsible for having all percentages sum up to `100`. The helper function `~makeDivTempo` provides an API that allows a simpler way to create this arrays.
 
 ----------------------------
-### ~makeVisualization.(madeCanon, autoScroll: true) 
+### ~visualization.(madeCanon, autoScroll: true) 
 
 #### Type Signature
 Takes an Event Object MadeCanon and creates a window object that visualizes and plays back the canon.
 ```
-~makeVisualization :: Canon -> Nil
+~visualization :: Canon -> Nil
 ```
 
 Arguments:
 
-`madeCanon` : `Canon`. A canon of the same type as the one returned by functions such as `~makeConvCanon` or `~makeDivCanon`.
+`madeCanon` : `Canon`. A canon of the same type as the one returned by functions such as `~convCanon` or `~divCanon`.
 
 `autoScroll`: `Boolean`.  Default is true.
 
@@ -215,34 +217,37 @@ Takes an array of durations and an array of midi pitch values and returns an arr
 #### Example
 ```
 (
-~myMelody= // SIMPLIFICAR EJEMPLO para que se vea pueda copiar el Resultado
+~myMelody= 
 
 ~makeMelody.( 
-	Array.fill(35, { [4, 8, 16].wchoose([0.2, 0.3, 0.5].normalizeSum).reciprocal } ) 
+	Array.geom(2, 8, 2).stutter(2).scramble.mirror2
 	,
-	Array.fill(35, { [60, 67,[38, 72], 68, 63, 63.5].wchoose([6, 4, 3, 2, 1, 1].normalizeSum) } )
+	Array.series(4, 60, 2).mirror
 		);
 
 );
 
-~myMelody.postln;
+~myMelody.postln; // [ ( 'note': 60, 'dur': 16 ), ( 'note': 62, 'dur': 8 ), ( 'note': 64, 'dur': 8 ), ( 'note': 66, 'dur': 16 ), ( 'note': 64, 'dur': 16 ), ( 'note': 62, 'dur': 8 ), ( 'note': 60, 'dur': 8 ) ]
+
+
+
 ```
 
 #### Arguments:
 
-`durs_arr`. `[Float]`. Duration array. An array of floats that represents in durations in which 1 is equivalent to a bpm of tempo provided in Voices argument of ~makeConvCanon or ~makeDivCanon. Reciprocal of 2, 4, 8, 16 creates half, quarter, eighth and sixteenth notes respectively.  
+`durs_arr`. `[Float]`. Duration array. An array of floats that represents in durations in which 1 is equivalent to a bpm of tempo provided in Voices argument of ~convCanon or ~divCanon. Reciprocal of 2, 4, 8, 16 creates half, quarter, eighth and sixteenth notes respectively.  
 
-`notes_arr`. `[Float] || [[Float]]`. An array of a) floats, b) arrays of floats c) \rest symbols that represents the pitch value(s) in midi notes. If b) is taken then a chord will be returned. If the symbol \rest is taken then a silence value will be returned. The values are midi notes, if floats of midi notes provided then it will produce microtonal values. In the above example 63.5 will produce a E quarter note flat. 
+`notes_arr`. `[Float] || [[Float]]`. An array of a) floats, b) arrays of floats c) \rest symbols that represents the pitch value(s) in midi notes. If b) is taken then a chord will be returned. If the symbol \rest is taken then a rest value will be returned. The values are midi notes, if floats of midi notes provided then it will produce microtonal values. 
 
 ----------------
-### ~makeVoices
+### ~makeConvVoices
 
 Similar to makeMelody however it generates tempos and transposition values.
 
 #### Type Signature
 Takes an array of tempos and transposition values and returns an array of Event object with the keys `tempo` and `transp`. 
 ```
-~makeVoices :: ([Float], [Float]) -> Voices
+~makeConvVoices :: ([Float], [Float]) -> Voices
 ```
 
 
@@ -250,7 +255,7 @@ Takes an array of tempos and transposition values and returns an array of Event 
 
 ```
 (
-~myVoices= ~makeVoices.( 
+~myVoices= ~makeConvVoices.( 
     Array.series(3, 60, 10),
     Array.series(3, -12, 8)
 );
@@ -260,10 +265,42 @@ Takes an array of tempos and transposition values and returns an array of Event 
 ```
 #### Arguments:
 
-tempo. An array of floats that generates tempo in bpm for each voice. 
+`tempo`. `[Float]`. An array of floats that generates tempo in bpm for each voice. 
 
-transp. An array of floats that generates a series of transposition values in midi notes. Negative floats will generate descending intervals in relationship to the midi values passed down from melody, positive ones will generate ascending intervales. 
+`transp`. `[Float]`. An array of floats that generates a series of transposition values in midi notes. Negative floats will generate descending intervals in relationship to the midi values passed down from melody, positive ones will generate ascending intervales. 
 
+----------------
+### ~makeDivTempo
+
+Similar to makeMelody and makeVoices however it generates tempo values and a percentage value. A boolean may determine whether the percentage values are normalized or not.
+
+#### Type Signature
+Takes an array of tempos and percentage values and returns an array of Event object with the keys `tempo` and `percentage`. 
+```
+~makeDivTempo :: ([Float], [Float], Bool) -> Tempo
+```
+
+
+#### Example
+
+```
+(
+~myTempos= ~makeDivTempo.( 
+    Array.series(4, 4, 2),
+	  (30!2) ++ (20!2),
+	  norm: true
+);
+)
+
+~myTempos.postln; //[ ( 'percentage': 30, 'tempo': 4 ), ( 'percentage': 30, 'tempo': 6 ), ( 'percentage': 20, 'tempo': 8 ), ( 'percentage': 20, 'tempo': 10 ) ]
+```
+#### Arguments:
+
+`tempo`. `[Float]`. An array of floats that generate tempos for the function. 
+
+`percentage`. `[Float]`. An array of floats that generates a percentage value in which the rotation of the tempo switch happens.
+
+`norm`. `Bool` If false the percentages may be more or less than 100% in which case the final convergence point will not happen. If true the values given to percentage will be normalized so it always sums 100.
 
 ----------------------------
 ### ~instrument
@@ -300,7 +337,7 @@ Repeat :: Int
   ]
 );
 
-~makeConvCanon.(canonConfig)
+~convCanon.(canonConfig)
 .canon //we extract the canon from the data structure that is returned
 .collect(~instrument.([\pianola], amp: 1, repeat: 2)) // we pass each voice into our ~instrument. At this point ~instrument is returning a `MakePbind`, because it has been partially applied with `([Symbol], Amp, Repeat)`. This line will return: `[Pbind, Pbind, Pbind, Pbind]`
 .do({|pbind| pbind.play})// finally we play each voice
