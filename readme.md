@@ -86,7 +86,7 @@ A function that generates a convergence-divergence temporal canon using a config
 #### Type Signature
 Takes an Event Object with the keys `cp`, `melody` and `voices` and returns a `MadeCanon` (see below for the MadeCanon type definition)
 ```
-~makeConvCanon ::
+~convCanon ::
   (
     cp: Int, 
     melody: Melody
@@ -357,17 +357,17 @@ Configurations:
 `simple4NoteMelody`. Just that, a `hello world` for `Nanc-in-a-Can`.  It accepts one parameter and `Int` which should be a number between 0 and 3, and which defines the convergence point of the melodies.
 
 ```supercollider
-~visualize.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)), autoScroll: false);
+~visualize.(~convCanon.(~melodyMaker.simple4NoteMelody(3)), autoScroll: false);
 ```
 
 `randomSymmetric4voices`. A four voice canon configuration that creates a different melody everytime. The melody is generated using a weighted random process. The pitch set is modal /phrygian depending the octave with microtonal inflections. The durations are based in the theory of harmonic rhythm and the rhythm device of complex denomitar (irrational measures). 
 ```supercollider
-~visualize.(~makeConvCanon.(~melodyMaker.randomSymmetric4voices), false);
+~visualize.(~convCanon.(~melodyMaker.randomSymmetric4voices), false);
 ```
 
 `pyramidalMelody`. Using the partials 16 to 40 of a sound with a root at 12hz we create a pitch configuration that is simultaneously expressed in duration values using the theory of harmonic rhythm. The function `~makeMelody` is used, and several algorithmic methods are used to generate the result.
 ```supercollider
-~visualize.(~makeConvCanon.(~melodyMaker.pyramidalMelody));
+~visualize.(~convCanon.(~melodyMaker.pyramidalMelody));
 ```
 
 Fragment of Study 37 (sonido 13 version)

@@ -1,10 +1,10 @@
 
 
 (
-//~makeConvCanon.(~melodyMaker.randomSymmetric4voices);
-// ~makeConvCanon.(~melodyMaker.pyramidalMelody);
-// ~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)).data.voices;
-~visualize.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)));
+//~convCanon.(~melodyMaker.randomSymmetric4voices);
+// ~convCanon.(~melodyMaker.pyramidalMelody);
+// ~convCanon.(~melodyMaker.simple4NoteMelody(3)).data.voices;
+~visualize.(~convCanon.(~melodyMaker.simple4NoteMelody(3)));
 //
 // ~canon = ~makeDivCanon.((
 // 	baseTempo: 1000,
@@ -20,19 +20,19 @@
 // working area with presets;
 
 ~reverb= Synth(\reverb);
-~visualize.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)), autoScroll: false);
+~visualize.(~convCanon.(~melodyMaker.simple4NoteMelody(3)), autoScroll: false);
 
 ~reverb= Synth(\reverb);
-~visualize.(~makeConvCanon.(~melodyMaker.randomSymmetric4voices), autoScroll: true);
+~visualize.(~convCanon.(~melodyMaker.randomSymmetric4voices), autoScroll: true);
 
 
 ~reverb= Synth(\reverb);
-~visualize.(~makeConvCanon.(~melodyMaker.pyramidalMelody), autoScroll: true);
+~visualize.(~convCanon.(~melodyMaker.pyramidalMelody), autoScroll: true);
 
 (
 // working area to customize melodies;
 (
-~withChords = ~makeConvCanon.((
+~withChords = ~convCanon.((
 	cp: 4,
 	melody: [
 		(dur: 1/14,     note: [130,130.2, 130.3]),
@@ -83,7 +83,7 @@
 (
 // working area to customize melodies;
 (
-~withChords = ~makeConvCanon.((
+~withChords = ~convCanon.((
 	cp: 10,
 	melody: [
 		(dur: 8/14/30,     note: [10]),

@@ -10,7 +10,7 @@ s.waitForBoot({
 (baseDir++"/instrument.scd").load;// exports ~instrument,
 (baseDir++"/synthdef-instruments.scd").loadPaths;// add \pianola synthdef,
 (baseDir++"/makeVoices.scd").load;
-(baseDir++"/makeConvCanon.scd").load; //exports ~makeConvCanon
+(baseDir++"/convCanon.scd").load; //exports ~convCanon
 (baseDir++"/makeDivCanon.scd").load;//exports ~makeDivCanon
 (baseDir++"/makeMelody.scd").load;//exports ~makeMelody
 (baseDir++"/visualize.scd").load;//exports ~visualize

@@ -2,7 +2,7 @@
 // ~visualize.(~makeCanon.(~melodyMaker.simple4NoteMelody(3)));
 // ~visualize.(~canon);
 (
-~withChords = ~makeConvCanon.((
+~withChords = ~convCanon.((
  cp: 3,
  melody: [(dur: 1/4, note: [60, 80]), (dur: 1/5, note: 50),
      (dur: 1/2, note: \rest), (dur: 1/2, note: \rest),
