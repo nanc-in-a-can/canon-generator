@@ -1,12 +1,13 @@
 
 // ~visualize.(~makeCanon.(~melodyMaker.simple4NoteMelody(3)));
 // ~visualize.(~canon);
-~withChords = ~makeCanon.((
+(
+~withChords = ~makeConvCanon.((
  cp: 3,
  melody: [(dur: 1/4, note: [60, 80]), (dur: 1/5, note: 50),
      (dur: 1/2, note: \rest), (dur: 1/2, note: \rest),
  (dur: 2/3, note: [60,70,80]), (dur: 1/4, note: 60)],
- 
+
  voices: [(tempo: 55, transp: 4), (tempo: 51, transp: 1)]
 ));
 
@@ -29,3 +30,4 @@
 
 // ~withChords.canon.collect(~mySound).do(_.play);
 ~visualize.(~withChords);
+)
