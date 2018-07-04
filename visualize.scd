@@ -49,8 +49,8 @@
 		var yPoints = yVals.flatten;
 		var xPoints = xVals.collect({|xVal, i|
 			if( yVals[i].isArray,
-				{xVal.stutter(yVals[i].size)},
-				{xVal}
+				{[xVal].stutter(yVals[i].size)},
+				{[xVal]}
 			)
 		})
 		.flatten;
