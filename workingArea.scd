@@ -23,11 +23,11 @@
 ~makeVisualization.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)), autoScroll: false);
 
 ~reverb= Synth(\reverb);
-~makeVisualization.(~makeConvCanon.(~melodyMaker.randomSymmetric4voices), false);
+~makeVisualization.(~makeConvCanon.(~melodyMaker.randomSymmetric4voices), autoScroll: true);
 
 
 ~reverb= Synth(\reverb);
-~makeVisualization.(~makeConvCanon.(~melodyMaker.pyramidalMelody));
+~makeVisualization.(~makeConvCanon.(~melodyMaker.pyramidalMelody), autoScroll: true);
 
 (
 // working area to customize melodies;

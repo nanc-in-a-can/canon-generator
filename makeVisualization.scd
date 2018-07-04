@@ -27,6 +27,7 @@
 //	var stringCoord = canon.size.collect({0});
 
 	var colores= [Color.green(0.8), Color.red(0.8), Color.blue(0.8), Color.yellow(0.8), Color.new255(160, 32, 240),Color.new255(205, 70, 20),Color.new255(255, 192, 203),Color.new255(150, 150, 150),Color.new255(209, 166, 102),Color.new255(173, 216, 230)]; // hardcoded colours: green, red, blue, yellow, purple, orange, pink, grey, brown, light blue;
+
 	var colorExtra= (0..(canon.size)).collect({|n, i| [colores[i%10].vary].wrapAt(i)});
 	var colors= colores++colorExtra;
 
@@ -59,7 +60,10 @@
 
 		xVals.size.do{|i|
 
-	if( yVals[i].isArray, {xPoints.add([xVals[i]].stutter(yVals[i].size))}, {xPoints.add([xVals[i]])})
+	if( yVals[i].isArray,
+				{xPoints.add([xVals[i]].stutter(yVals[i].size))},
+
+				{xPoints.add([xVals[i]])})
 	};
 
 
@@ -81,19 +85,21 @@
 
 			Pen.color= colors[canonIndex];
 			Pen.strokeColor= colors[canonIndex];
-
+			Pen.width= 0.3;
 
 	if( xPoints.flatten[i] == xPoints.flatten[i+1],
 		{
 
-			Pen.width= 0.3;
-					Pen.line(Point((xPoints.flatten[i]+ onset).linlin(0,(durTotal),10,durSize),
+
+					Pen.line(
+						Point((xPoints.flatten[i]+ onset).linlin(0,(durTotal),10,durSize),
 						yPoints[i].linlin(minY,maxY,480,0)),
-					Point((xPoints.flatten[i+1] + onset).linlin(0,(durTotal),10,durSize),
+
+						Point((xPoints.flatten[i+1] + onset).linlin(0,(durTotal),10,durSize),
 						yPoints[i+1].linlin(minY,maxY,480,0)));
-			Pen.stroke
 			});
 
+			Pen.stroke
 		};
 
 		(xVals.size-1).do{|i|
@@ -116,9 +122,12 @@
 	//  here a line marks the CP;
 			Pen.width= 0.3;
 
-					Pen.stringAtPoint("Point of Convergence",Point((canon[0].bcp + canon[0].onset + 0.2).linlin(0,(durTotal),10,durSize),maxY.linlin(minY,maxY,480,0)),color: Color.gray);
+			Pen.stringAtPoint("Point of Convergence",
+				Point((canon[0].bcp + canon[0].onset + 0.2).linlin(0,(durTotal),10,durSize),maxY.linlin(minY,maxY,480,0)),color: Color.gray);
 
-			Pen.line(Point((canon[0].bcp + canon[0].onset).linlin(0,(durTotal),10,durSize),minY.linlin(minY,maxY,480,0)),Point((canon[0].bcp + canon[0].onset).linlin(0,(durTotal),10,durSize),maxY.linlin(minY,maxY,480,0)));
+			Pen.line(
+				Point((canon[0].bcp + canon[0].onset).linlin(0,(durTotal),10,durSize),minY.linlin(minY,maxY,480,0)),
+				Point((canon[0].bcp + canon[0].onset).linlin(0,(durTotal),10,durSize),maxY.linlin(minY,maxY,480,0)));
 
 			Pen.strokeColor= Color.gray;
 
@@ -143,7 +152,7 @@
 		Pbind(
 			\instrument, \pianola,
 			\dur, Pseq([line.onset.postln] ++ line.durs, 1),
-			\freq, Pseq([\rest]++line.notes,inf),
+			\midinote, Pseq([\rest]++line.notes,inf),
 			\out, [0, /*~reverbBus.index*/],
 			\amp, 1,
 			\pan, 0,
@@ -151,12 +160,16 @@
 			\series, Pseries(0,1,inf),
 			/*messages to change the point positions in the map below*/
 			\coordinates, Pfunc({|event|
-				NetAddr("127.0.0.1", 57120).sendBundle(s.latency, [("/event"++index), if(event[\freq].isArray, {event[\freq][0]}, {event[\freq]}), event[\series], event[\dur]])
+				NetAddr("127.0.0.1", 57120).sendBundle(s.latency, [("/event"++index), if(event[\midinote].isArray, {event[\midinote][0]}, {event[\midinote]}), event[\series], event[\dur]])
 			})
 		)
 	});
 
 	var canonWithXValues = canon.collect({|line| (xValues: [0]++getXValues.(line.durs), onset: line.onset)});
+
+	var playOnce = {|fn| var hasPlayed = false; { if(hasPlayed.not, { hasPlayed = true; fn.(); }); } };
+
+	var playPatterns = playOnce.({patterns.do(_.play);});
 
 	//
 	w.drawFunc = { // draw the points of the canon;
@@ -166,39 +179,32 @@
 
 	//in U the present moment of the events will be emphasised visually in the map
 	u.drawFunc= {
+	var selectMoment = {|index, line, onset|
 
-		var selectMoment = {|index, line, onset|
+		Pen.fillColor= colors[index].blend(Color.white, 0.4); //always fill with grey
 
-	//
-		Pen.fillColor= colors[index].blend(Color.white, 0.4);				//always fill with purple color
-	//
-	// 		// receive the data from the Pbind in realtime assigning global variables
-			OSCdef("test"++index, {|msg, time, addr, recvPort|
-				// msg.postln;
-				if(msg[1] !== \rest, {
-					yCoord[index]=msg[1].linlin(minY,maxY,480,0);
-					xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,durSize);
-//					stringCoord[index]= (line[msg[2]] + onset);
-				})
-			},
-			("/event"++index), n);
-			Pen.addWedge(Point(xCoord[index], yCoord[index]), 7, 0pi, 2pi);
-			Pen.fill;
-/*			Pen.stringAtPoint(
-				if( index== (canon.size-1),{":          Ecoic distances compared with this voice"}, {
+	// receive the data from the Pbind in realtime assigning global variables
+		OSCdef("test"++index, {|msg, time, addr, recvPort|
+		// msg.postln;
+			if(msg[1] !== \rest, {
+				yCoord[index]=msg[1].linlin(minY,maxY,480,0);
 
-					":          " ++
-					(stringCoord[index] - stringCoord[canon.size-1]).asString
+				xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,durSize);
 
-				}),
-				Point(xCoord[index]-20, (height-(canon.size*15))+((index+1)*11)), Font(Font.availableFonts[12], 13), colors[index].blend(Color.white, 0.4));
-			Pen.stroke;*/
-	//
-			};
-	//
-		u.frameRate= 28;
-		canonWithXValues.do({|line, i| selectMoment.(i, line.xValues, line.onset)})
-		};
+			})
+		},
+
+		("/event"++index), n); Pen.addWedge(Point(xCoord[index], yCoord[index]), 7, 0pi, 2pi);
+
+		Pen.fill;
+
+	};
+
+	u.frameRate= 28;
+	canonWithXValues.do({|line, i| selectMoment.(i, line.xValues, line.onset)});
+	playPatterns.()
+
+};
 
 	//--window management
 	u.clearOnRefresh= true;
@@ -207,8 +213,6 @@
 	u.animate= true;
 
 	CmdPeriod.doOnce({if(w.isClosed.not, {w.close; patterns.do(_.stop)})});
-
-	patterns.do(_.play);
 
 	if( autoScroll == true, {scroller.play(AppClock)});
 	nil;
