@@ -1,4 +1,5 @@
 # Nanc-in-a-can Canon Generator
+![logo](nanc-in-a-can.jpg)
 
 Nanc-in-a-can Canon Generator is a series of sc files that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The files are 7 and mostly contain a function each, 1 of them contains `SynthDefs`. The functions `~convCanon` and `~divCanon` are the core of the program, however, three other auxiliary functions have been added to aid the creation of melodies, transposition patterns and tempos. The function `~visualize` generates a visual timeline for each canon and plays it back. The function `~instrument` produces `Pbinds` for each of the canon's voices. Finally there is a init file that compiles all the functions and modules design for it to run.
 
@@ -6,13 +7,14 @@ Nanc-in-a-can Canon Generator is a series of sc files that can be used to produc
   * [Installation](#installation)
     + [Using git](#using-git)
     + [Manual download](#manual-download)
-  * [Load Project files](#load-project-files)
+  * [Loading the project files](#loading-the-project-files)
   * [Basic Examples](#basic-examples)
   * [Functions (API)](#functions--api-)
     + [Types](#types)
     + [Creating your own custom Pbinds to play a canon.](#creating-your-own-custom-pbinds-to-play-a-canon)
     + [~convCanon](#-convcanon)
-    + [~visualize.(madeCanon, autoScroll: true)](#-visualize-madecanon--autoscroll--true-)
+    + [~divCanon](#-divcanon)
+    + [~visualize](#-visualize)
   * [Helper Functions](#helper-functions)
     + [~makeMelody](#-makemelody)
     + [~makeConvVoices](#-makeconvvoices)
@@ -33,7 +35,7 @@ Nanc-in-a-can Canon Generator is a series of sc files that can be used to produc
 [Click here](https://github.com/nanc-in-a-can/canon-generator/archive/master.zip) and save the zip file wherever you want.
 
 
-## Load Project files
+## Loading the project files
 Open Supercollider and add and compile the following line of code.
 
 ```supercollider
@@ -42,7 +44,7 @@ Open Supercollider and add and compile the following line of code.
 
 This starts up the server and loads all the necessary files and functions.
 
-## Basic Examples
+## Basic examples
 Sound Only:
 
 ```supercollider
