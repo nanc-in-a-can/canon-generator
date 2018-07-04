@@ -114,7 +114,7 @@ Takes an Event Object with the keys `cp`, `melody` and `voices` and returns a `M
 );
 ~myCanon = ~convCanon.(canonConfig);
 
-~visualization(~myCanon);
+~visualize(~myCanon);
 )
 ```
 #### Arguments: 
@@ -169,7 +169,7 @@ Is a function that generates a divergence-convergence temporal canon. All voices
 );
 ~myCanon = ~divCanon.(canonConfig);
 
-~visualization(~myCanon);
+~visualize(~myCanon);
 )
 ```
 #### Arguments: 
@@ -185,12 +185,12 @@ Is a function that generates a divergence-convergence temporal canon. All voices
 `tempos`: `[(tempo: Float, percentage: Float)]`. An array of Event objects with transposition and amplitude for each voice. The size of the array determines the number of voices of the temporal canon, but it should be the same as the size of the `voices` array (see above). `percentage` determines the amount of time each voice spends in a given tempo. `tempo` is the speed of the voice. The user is responsible for having all percentages sum up to `100`. The helper function `~makeDivTempo` provides an API that allows a simpler way to create this arrays.
 
 ----------------------------
-### ~visualization.(madeCanon, autoScroll: true) 
+### ~visualize.(madeCanon, autoScroll: true) 
 
 #### Type Signature
 Takes an Event Object MadeCanon and creates a window object that visualizes and plays back the canon.
 ```
-~visualization :: Canon -> Nil
+~visualize :: Canon -> Nil
 ```
 
 Arguments:
