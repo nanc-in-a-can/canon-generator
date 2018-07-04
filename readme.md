@@ -2,6 +2,46 @@
 
 Nanc-in-a-can Canon Generator is a series of sc files that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The files are 7 and mostly contain a function each, 1 of them contains `SynthDefs`. The functions `~convCanon` and `~divCanon` are the core of the program, however, three other auxiliary functions have been added to aid the creation of melodies, transposition patterns and tempos. The function `~visualize` generates a visual timeline for each canon and plays it back. The function `~instrument` produces `Pbinds` for each of the canon's voices. Finally there is a init file that compiles all the functions and modules design for it to run.
 
+- [Nanc-in-a-can Canon Generator](#nanc-in-a-can-canon-generator)
+  * [Installation](#installation)
+    + [Using git](#using-git)
+    + [Manual download](#manual-download)
+  * [Load Project files](#load-project-files)
+  * [Basic Examples](#basic-examples)
+  * [Functions (API)](#functions--api-)
+    + [Creating your own custom Pbinds to play a canon.](#creating-your-own-custom-pbinds-to-play-a-canon)
+    + [~convCanon](#-convcanon)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments-)
+      - [Type Signature](#type-signature-1)
+      - [Example](#example-1)
+      - [Arguments:](#arguments--1)
+    + [~visualize.(madeCanon, autoScroll: true)](#-visualize-madecanon--autoscroll--true-)
+      - [Type Signature](#type-signature-2)
+  * [Helper Functions](#helper-functions)
+    + [~makeMelody](#-makemelody)
+      - [Type Signature](#type-signature-3)
+      - [Example](#example-2)
+      - [Arguments:](#arguments--2)
+    + [~makeConvVoices](#-makeconvvoices)
+      - [Type Signature](#type-signature-4)
+      - [Example](#example-3)
+      - [Arguments:](#arguments--3)
+    + [~makeDivTempo](#-makedivtempo)
+      - [Type Signature](#type-signature-5)
+      - [Example](#example-4)
+      - [Arguments:](#arguments--4)
+    + [~instrument](#-instrument)
+    + [Example](#example-5)
+  * [Presets](#presets)
+    + [~canonPreConfigs](#-canonpreconfigs)
+  * [synthdef-instrument module.](#synthdef-instrument-module)
+  * [init module.](#init-module)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 ## Installation
 ### Using git
 `git clone <path-to-folder>`
