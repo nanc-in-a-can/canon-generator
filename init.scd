@@ -13,7 +13,7 @@ s.waitForBoot({
 (baseDir++"/makeConvCanon.scd").load; //exports ~makeConvCanon
 (baseDir++"/makeDivCanon.scd").load;//exports ~makeDivCanon
 (baseDir++"/makeMelody.scd").load;//exports ~makeMelody
-(baseDir++"/makeVisualization.scd").load;//exports ~makeVisualization
+(baseDir++"/visualize.scd").load;//exports ~visualize
 });
 )
 

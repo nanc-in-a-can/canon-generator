@@ -37,5 +37,5 @@
 };
 
 ~withChords.canon.collect(~mySound).do(_.play);
-// ~makeVisualization.(~withChords);
+// ~visualize.(~withChords);
 )

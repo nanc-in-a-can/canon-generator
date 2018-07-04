@@ -1,6 +1,6 @@
 //Example of a visualization
 (
-~makeVisualization = { |madeCanon, autoScroll=true|
+~visualize = { |madeCanon, autoScroll=true|
 
 	//--window setup
 	var width= 940, height= 580;

@@ -4,7 +4,7 @@
 //~makeConvCanon.(~melodyMaker.randomSymmetric4voices);
 // ~makeConvCanon.(~melodyMaker.pyramidalMelody);
 // ~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)).data.voices;
-~makeVisualization.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)));
+~visualize.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)));
 //
 // ~canon = ~makeDivCanon.((
 // 	baseTempo: 1000,
@@ -12,7 +12,7 @@
 // 	tempos: [(tempo: 3, percentage: 30), (tempo: 5, percentage: 50), (tempo: 2, percentage: 20)],
 // 	melody: [(dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62)]
 // ));
-// ~makeVisualization.(~canon);
+// ~visualize.(~canon);
 
 )
 
@@ -20,14 +20,14 @@
 // working area with presets;
 
 ~reverb= Synth(\reverb);
-~makeVisualization.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)), autoScroll: false);
+~visualize.(~makeConvCanon.(~melodyMaker.simple4NoteMelody(3)), autoScroll: false);
 
 ~reverb= Synth(\reverb);
-~makeVisualization.(~makeConvCanon.(~melodyMaker.randomSymmetric4voices), autoScroll: true);
+~visualize.(~makeConvCanon.(~melodyMaker.randomSymmetric4voices), autoScroll: true);
 
 
 ~reverb= Synth(\reverb);
-~makeVisualization.(~makeConvCanon.(~melodyMaker.pyramidalMelody), autoScroll: true);
+~visualize.(~makeConvCanon.(~melodyMaker.pyramidalMelody), autoScroll: true);
 
 (
 // working area to customize melodies;
@@ -71,7 +71,7 @@
 
 // ~withChords.canon.collect(~sound.(\pianola, _, _)).do(_.play);
 
-// ~makeVisualization.(~withChords);
+// ~visualize.(~withChords);
 ~mipdef = Pdef(\mipidef, Ppar(~mispbinds, inf))
 // ~mipdef2 = Pdef(\mipidef2, Ppar(~mispbinds, inf))
 )
@@ -119,7 +119,7 @@
 
 // ~withChords.canon.collect(~sound.(\pianola, _, _)).do(_.play);
 
-// ~makeVisualization.(~withChords);
+// ~visualize.(~withChords);
 Pdef(\mipidef2, Ppar(~mispbinds2, inf))
 // ~mipdef2 = Pdef(\mipidef2, Ppar(~mispbinds, inf))
 )
@@ -164,5 +164,5 @@ Pdef(\mipidef2, Ppar(~mispbinds2, inf))
 );
 ~myCanon = ~makeDivCanon.(~canonConfig);
 
-~makeVisualization.(~myCanon);
+~visualize.(~myCanon);
 )

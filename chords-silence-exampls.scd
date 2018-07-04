@@ -1,6 +1,6 @@
 
-// ~makeVisualization.(~makeCanon.(~melodyMaker.simple4NoteMelody(3)));
-// ~makeVisualization.(~canon);
+// ~visualize.(~makeCanon.(~melodyMaker.simple4NoteMelody(3)));
+// ~visualize.(~canon);
 ~withChords = ~makeCanon.((
  cp: 3,
  melody: [(dur: 1/4, note: [60, 80]), (dur: 1/5, note: 50),
@@ -28,4 +28,4 @@
 };
 
 // ~withChords.canon.collect(~mySound).do(_.play);
-~makeVisualization.(~withChords);
+~visualize.(~withChords);
