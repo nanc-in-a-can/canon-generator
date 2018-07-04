@@ -1,6 +1,6 @@
 # Nanc-in-a-can Canon Generator
 
-Nanc-in-a-can Canon Generator is a series of sc files that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The files are 7 and mostly contain a function each, 1 of them contains `SynthDefs`. The functions `~convCanon` and `~divCanon` are the core of the program, however, three other auxiliary functions have been added to aid the creation of melodies, transposition patterns and tempos. The function `~visualization` generates a visual timeline for each canon and plays it back. The function `~instrument` produces `Pbinds` for each of the canon's voices. Finally there is a init file that compiles all the functions and modules design for it to run.
+Nanc-in-a-can Canon Generator is a series of sc files that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The files are 7 and mostly contain a function each, 1 of them contains `SynthDefs`. The functions `~convCanon` and `~divCanon` are the core of the program, however, three other auxiliary functions have been added to aid the creation of melodies, transposition patterns and tempos. The function `~visualize` generates a visual timeline for each canon and plays it back. The function `~instrument` produces `Pbinds` for each of the canon's voices. Finally there is a init file that compiles all the functions and modules design for it to run.
 
 ## Installation
 ### Using git
@@ -13,14 +13,16 @@ Nanc-in-a-can Canon Generator is a series of sc files that can be used to produc
 ## Load Project files
 Open Supercollider and add and compile the following line of code.
 
-`(path/to/nanc-in-a-can/init.scd").load;`
+```supercollider
+(path/to/nanc-in-a-can/init.scd").load;
+```
 
 This starts up the server and loads all the necessary files and functions.
 
-## Examples
+## Basic Examples
 Sound Only:
 
-```
+```supercollider
 (
 var melody = ~melodyMaker.pyramidalMelody;
 ~convCanon.(melody).canon
@@ -29,35 +31,49 @@ var melody = ~melodyMaker.pyramidalMelody;
 )
 ```
 Sound and Visualization:
-```
+```supercollider
 (
 var melody = ~melodyMaker.pyramidalMelody;
-~visualization.(~convCanon.(melody));
+~visualize.(~convCanon.(melody));
 )
 ```
 
 ## Functions (API)
 
-We are using types and a type system to explain how users might better control and understand the functions of this software. A type is basically the label that indicates the category to which an object or event described in a program is. A thorough explanation of what a type is might be found in the following links:
+A type is basically a label that indicates the category to which some data or event in a program belongs. 
 
-http://learnyouahaskell.com/types-and-typeclasses
+We are using a form of *Hindley-Milner type notation* to describe the data structures that the functions in this software take and return. By providing a function with the correct data types, we ensure that the program will run correctly no matter what.
 
-<!-- link a types en Java  -->
+ A thorough explanation of what a type is might be found in the following links:
 
-```
+http://learnyouahaskell.com/types-and-typeclasses 
+
+(For people familiar with Javascript) https://mostly-adequate.gitbooks.io/mostly-adequate-guide/ch07.html
+
+
+```haskell
+CanonVoice :: (
+  notes: [Float],
+  durs: [Float],
+  onset: Float, -- duration of time before canon starts
+  remainder: Float, -- duation of time left after canon ends
+  bcp: Float, -- duration of time before convergence point
+  cp: Int, -- convergence point
+)
+
 Canon :: (
-  canon: (
-    notes: [Float],
-    durs: [Float],
-    onset: Float,
-    bcp: Float,
-    cp: Int
-  ),
+  canon: [CanonVoice],
   data: (
     voices: [(transp: Float, tempo: Float )]
   )
 )
+```
+`Canon` is the main data structure of the program.  It is returned by `~convCanon` and `~divCanon` and can be used to make a visualization or to play a canon (as shown in the [examples above](#basic-examples)).
 
+One could read this type signature as: `Canon` is a structure consisting of an Event object that has two keys, `canon` and `data`.  The key `canon` holds an array of `CanonVoice`s, which are also `Event` objects that hold several other keys: `notes` and `durs` are `Arrays` of `Floats`, while `onset` and `bcp` are just Floats and `cp` is an `Int`.
+
+The next signatures are more simple:
+```
 Note :: (
   durs: Float, 
   notes: [Float] || \rest
@@ -69,15 +85,49 @@ Voice :: (tempo: Float, transp: Float)
 
 Voices :: [Voice]
 
+```
+
+```haskell
 Index :: Int
 
+MakePbind :: (CanonVoice, Index) -> Pbind 
 ```
-```
-MakePbind :: ((durs: [Float], notes: [Float], onset: Float, amp: Float), Index) -> Pbind 
-```
+
 `MakePbind` is a very important type, that is used for playing back the canon.  An example can be seen with [~instrument](#~instrument)
 
+One could read this signature as: `MakePbind` is the type of a function (denoted by the `->`) that takes two arguments, a `CanonVoice` and an `Index` which is an `Int`, and **returns** a `Pbind`.  This function literally transforms the data held in each canon voice into a `Pbind` ready for playback. The function may be implemented in several ways depending on the user's needs. In the file `~instrument.scd` you may find a somewhat complex implementation of it. 
 
+### Creating your own custom Pbinds to play a canon.
+
+Let's make a simple example:
+
+```supercollider
+
+//We use the melody of a previous example
+var melody = ~melodyMaker.pyramidalMelody;
+
+
+~makePbind = {|voice, index|
+  /* We will coordinate the convergence point of the voices of our canon. For this we have to do the following: on the Pseqs of \dur and \midinote we concatenate the voice.onset time at the beginning of \dur, this corresponds to a \rest  on \midinote, and will allow the different voices to start at the correct time when we play our Pbinds (see below) 
+  
+  Here we will not use the index argument, but it might be of use in some cases.
+  */
+
+  Pbind(
+    \instrument, \default,
+    \dur, Pseq([voice.onset] ++ voice.durs),
+    \midinote, Pseq([\rest]++voice.notes, inf),
+  )
+}
+
+
+//Now we create our canon
+//The call on `.collect` will return the following: [Pbind, Pbind, Pbind, Pbind] -- `.collect` is a method that iterates over the the array of CanonVoices, it will call ~makePbind on each voice and collect the result in a new array. (.collect is often called `map` in other languages).
+
+~canon = ~convCanon.(melody).canon
+  .collect(~makePbind)
+  .do({|pbind| pbind.play}) //finally we iterate again but this time we call play on each Pbind
+```
 
 ----------
 ### ~convCanon
@@ -85,17 +135,16 @@ A function that generates a convergence-divergence temporal canon using a config
 
 #### Type Signature
 Takes an Event Object with the keys `cp`, `melody` and `voices` and returns a `MadeCanon` (see below for the MadeCanon type definition)
-```
-~convCanon ::
-  (
-    cp: Int, 
-    melody: Melody
-    voices: Voices
-  ) -> Canon
+```haskell
+~convCanon :: (
+  cp: Int, 
+  melody: Melody
+  voices: Voices
+) -> Canon
 ```
 
 #### Example
-```
+```supercollider
 (
 ~canonConfig = (
   cp: 2,
@@ -114,7 +163,7 @@ Takes an Event Object with the keys `cp`, `melody` and `voices` and returns a `M
 );
 ~myCanon = ~convCanon.(canonConfig);
 
-~visualization(~myCanon);
+~visualize.(~myCanon);
 )
 ```
 #### Arguments: 
@@ -135,8 +184,8 @@ Is a function that generates a divergence-convergence temporal canon. All voices
 
 #### Type Signature
 
-```
-(
+```haskell
+~divCanon :: (
   baseTempo: Float,
   voices: [(transp: Float, amp: Float)],
   melody: Melody,
@@ -144,7 +193,7 @@ Is a function that generates a divergence-convergence temporal canon. All voices
 ) -> Canon
 ```
 #### Example
-```
+```supercollider
 (
 ~canonConfig = (
   baseTempo: 60,
@@ -169,7 +218,7 @@ Is a function that generates a divergence-convergence temporal canon. All voices
 );
 ~myCanon = ~divCanon.(canonConfig);
 
-~visualization(~myCanon);
+~visualize(~myCanon);
 )
 ```
 #### Arguments: 
@@ -185,12 +234,12 @@ Is a function that generates a divergence-convergence temporal canon. All voices
 `tempos`: `[(tempo: Float, percentage: Float)]`. An array of Event objects with transposition and amplitude for each voice. The size of the array determines the number of voices of the temporal canon, but it should be the same as the size of the `voices` array (see above). `percentage` determines the amount of time each voice spends in a given tempo. `tempo` is the speed of the voice. The user is responsible for having all percentages sum up to `100`. The helper function `~makeDivTempo` provides an API that allows a simpler way to create this arrays.
 
 ----------------------------
-### ~visualization.(madeCanon, autoScroll: true) 
+### ~visualize.(madeCanon, autoScroll: true) 
 
 #### Type Signature
 Takes an Event Object MadeCanon and creates a window object that visualizes and plays back the canon.
-```
-~visualization :: Canon -> Nil
+```haskell
+~visualize :: Canon -> Nil
 ```
 
 Arguments:
@@ -209,28 +258,20 @@ Is a function that generates an array of `Event` objects with durations and note
 
 #### Type Signature
 Takes an array of durations and an array of midi pitch values and returns an array of Event object with the keys `dur` and `note`. 
-```
+```haskell
 ~makeMelody :: ([Float], [Float]) -> Melody
 ```
 
 
 #### Example
-```
+```supercollider
 (
-~myMelody= 
-
-~makeMelody.( 
-	Array.geom(2, 8, 2).stutter(2).scramble.mirror2
-	,
-	Array.series(4, 60, 2).mirror
-		);
-
+~myMelody = ~makeMelody.( 
+	Array.geom(2, 8, 2).stutter(2).scramble.mirror2,
+	Array.series(4, 60, 2).mirror);
 );
 
 ~myMelody.postln; // [ ( 'note': 60, 'dur': 16 ), ( 'note': 62, 'dur': 8 ), ( 'note': 64, 'dur': 8 ), ( 'note': 66, 'dur': 16 ), ( 'note': 64, 'dur': 16 ), ( 'note': 62, 'dur': 8 ), ( 'note': 60, 'dur': 8 ) ]
-
-
-
 ```
 
 #### Arguments:
@@ -246,14 +287,14 @@ Similar to makeMelody however it generates tempos and transposition values.
 
 #### Type Signature
 Takes an array of tempos and transposition values and returns an array of Event object with the keys `tempo` and `transp`. 
-```
+```haskell
 ~makeConvVoices :: ([Float], [Float]) -> Voices
 ```
 
 
 #### Example
 
-```
+```supercollider
 (
 ~myVoices= ~makeConvVoices.( 
     Array.series(3, 60, 10),
@@ -283,7 +324,7 @@ Takes an array of tempos and percentage values and returns an array of Event obj
 
 #### Example
 
-```
+```supercollider
 (
 ~myTempos= ~makeDivTempo.( 
     Array.series(4, 4, 2),
@@ -304,7 +345,7 @@ Takes an array of tempos and percentage values and returns an array of Event obj
 
 ----------------------------
 ### ~instrument
-```
+```haskell
 Amp :: Float
 Pan :: Float
 Out :: [Float]
