@@ -6,7 +6,7 @@
 // melody: [(dur: Float, note: midiNote)], // Array of Event objects with note and duration
 // tempos: [(tempo: Float, percentage: Float)], //Array of Event objects with tempo and percentage (the percentage of the melody that runs at that tempo). The user is responsible for the percentage that will add up in the end. It might be above 100 or below it depending on the sum of the "perc"s passed in.
 //)
-var makeDivCanon = {|data|
+var divCanon = {|data|
     var
     /**
 
@@ -187,14 +187,14 @@ var makeDivCanon = {|data|
 		)
 	);
 };
-~makeDivCanon = {|data|
+~divCanon = {|data|
 	if(data.voices.size != data.tempos.size,
-		{"makeDivCanon requires that arguments \"voices\" and \"tempos\" should be arrays of the same size.".throw},
-		{makeDivCanon.(data)}
+		{"divCanon requires that arguments \"voices\" and \"tempos\" should be arrays of the same size.".throw},
+		{divCanon.(data)}
 	)
 
 };
-a = ~makeDivCanon.((
+a = ~divCanon.((
 	baseTempo: 60,
 	voices: [(transp: 1, amp: 1), (transp: 2, amp: 0.5), (transp: 3, amp: 0.7)],
 	tempos: [(tempo: 3, percentage: 30), (tempo: 5, percentage: 30), (tempo: 2, percentage: 40)],

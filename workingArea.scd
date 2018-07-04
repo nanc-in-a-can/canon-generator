@@ -6,7 +6,7 @@
 // ~convCanon.(~melodyMaker.simple4NoteMelody(3)).data.voices;
 ~visualize.(~convCanon.(~melodyMaker.simple4NoteMelody(3)));
 //
-// ~canon = ~makeDivCanon.((
+// ~canon = ~divCanon.((
 // 	baseTempo: 1000,
 // 	transps: [1, 2, 3],
 // 	tempos: [(tempo: 3, percentage: 30), (tempo: 5, percentage: 50), (tempo: 2, percentage: 20)],
@@ -162,7 +162,7 @@ Pdef(\mipidef2, Ppar(~mispbinds2, inf))
     (tempo: 300, percentage: 40)
   ]
 );
-~myCanon = ~makeDivCanon.(~canonConfig);
+~myCanon = ~divCanon.(~canonConfig);
 
 ~visualize.(~myCanon);
 )
