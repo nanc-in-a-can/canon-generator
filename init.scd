@@ -7,13 +7,11 @@ s = Server.local;
 s.latency = 0.05;
 s.waitForBoot({
 (baseDir++"/canonPreConfigs.scd").load;// exports ~melodyMaker // este debe de cambiar por Melodic presets (o algo similar)
-(baseDir++"/instrument.scd").load;// exports ~instrument,
 (baseDir++"/synthdef-instruments.scd").loadPaths;// add \pianola synthdef,
-(baseDir++"/makeConvVoices.scd").load;
 (baseDir++"/convCanon.scd").load; //exports ~convCanon
 (baseDir++"/divCanon.scd").load;//exports ~divCanon
-(baseDir++"/makeMelody.scd").load;//exports ~makeMelody
 (baseDir++"/visualize.scd").load;//exports ~visualize
+(baseDir++"/helpers.scd").load;// exports ~instrument, ~makeMelody, ~makeConvVoices, ~makeDivVoices, ~makeDivTempos
 });
 )
 
