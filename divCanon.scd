@@ -183,7 +183,7 @@ var divCanon = {|data|
 	(
 		canon: canon,
 		data: (
-			voices: [ ( 'transp': 0, 'tempo': 60 ), ( 'transp': -12, 'tempo': 65 ), ( 'transp': 12, 'tempo': 57 ), ( 'transp': 8, 'tempo': 63 ) ] // TODO ARREGLAR ESTO!!!!!!!!!!!!!!!!!!!!!
+			voices: data.tempos
 		)
 	);
 };
