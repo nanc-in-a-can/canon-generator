@@ -468,9 +468,9 @@ Configurations:
 ~visualize.(~convCanon.(~melodyMaker.pyramidalMelody));
 ```
 
-Fragment of Study 37 (sonido 13 version)
+<!-- Fragment of Study 37 (sonido 13 version) -->
 
-Fragment of Study 33 
+<!-- Fragment of Study 33  -->
 
 ----------------------------
 ## synthdef-instrument module.
