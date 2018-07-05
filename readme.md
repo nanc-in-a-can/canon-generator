@@ -130,9 +130,9 @@ One could read this signature as: `MakePbind` is the type of a function (denoted
 Let's make a simple example of a function of type `MakePbind`:
 
 ```supercollider
+(
 //We use the melody of a previous example
 var melody = ~melodyMaker.pyramidalMelody;
-
 
 ~makePbind = {|voice, index|
   /* We will coordinate the convergence point of the voices of our canon. For this we have to do the following: on the Pseqs of \dur and \midinote we concatenate the voice.onset time at the beginning of \dur, this corresponds to a \rest  on \midinote, and will allow the different voices to start at the correct time when we play our Pbinds (see below) 
@@ -145,7 +145,7 @@ var melody = ~melodyMaker.pyramidalMelody;
     \dur, Pseq([voice.onset] ++ voice.durs),
     \midinote, Pseq([\rest]++voice.notes, inf),
   )
-}
+};
 
 
 //Now we create our canon
@@ -153,7 +153,8 @@ var melody = ~melodyMaker.pyramidalMelody;
 
 ~canon = ~convCanon.(melody).canon
   .collect(~makePbind)
-  .do({|pbind| pbind.play}) //finally we iterate again but this time we call play on each Pbind
+  .do({|pbind| pbind.play}); //finally we iterate again but this time we call play on each Pbind
+)
 ```
 
 ----------
@@ -188,13 +189,9 @@ Takes an Event Object with the keys `cp`, `melody` and `voices` and returns a `M
     (tempo: 43, transp: 8)
   ]
 );
-~myCanon = ~convCanon.(canonConfig);
+~myCanon = ~convCanon.(~canonConfig);
 
-<<<<<<< HEAD
-~visualize(~myCanon);
-=======
 ~visualize.(~myCanon);
->>>>>>> 79e3d6473b645df8c5250c8604bbc85dc248d11c
 )
 ```
 #### Arguments: 
@@ -247,9 +244,9 @@ Is a function that generates a divergence-convergence temporal canon. All voices
     (tempo: 300, percentage: 40)
   ]
 );
-~myCanon = ~divCanon.(canonConfig);
+~myCanon = ~divCanon.(~canonConfig);
 
-~visualize(~myCanon);
+~visualize.(~myCanon);
 )
 ```
 #### Arguments: 
@@ -265,12 +262,7 @@ Is a function that generates a divergence-convergence temporal canon. All voices
 `tempos`: `[(tempo: Float, percentage: Float)]`. An array of Event objects with transposition and amplitude for each voice. The size of the array determines the number of voices of the temporal canon, but it should be the same as the size of the `voices` array (see above). `percentage` determines the amount of time each voice spends in a given tempo. `tempo` is the speed of the voice. The user is responsible for having all percentages sum up to `100`. The helper function `~makeDivTempo` provides an API that allows a simpler way to create this arrays.
 
 ----------------------------
-<<<<<<< HEAD
-### ~visualize.(madeCanon, autoScroll: true) 
-=======
 ### ~visualize
-
->>>>>>> 79e3d6473b645df8c5250c8604bbc85dc248d11c
 
 #### Type Signature
 Takes an Event Object MadeCanon and creates a window object that visualizes and plays back the canon.
@@ -278,14 +270,13 @@ Takes an Event Object MadeCanon and creates a window object that visualizes and 
 ```haskell
 ~visualize :: Canon -> Nil
 ```
-<<<<<<< HEAD
-~visualize :: Canon -> Nil
-=======
 
 #### Example
 ```supercollider
-~visualize.(madeCanon)
->>>>>>> 79e3d6473b645df8c5250c8604bbc85dc248d11c
+(
+var melody = ~melodyMaker.pyramidalMelody;
+~visualize.(~convCanon.(melody));
+)
 ```
 
 #### Arguments:
@@ -314,10 +305,11 @@ Takes an array of durations and an array of midi pitch values and returns an arr
 (
 ~myMelody = ~makeMelody.( 
 	Array.geom(2, 8, 2).stutter(2).scramble.mirror2,
-	Array.series(4, 60, 2).mirror);
+	Array.series(4, 60, 2).mirror
 );
 
 ~myMelody.postln; // [ ( 'note': 60, 'dur': 16 ), ( 'note': 62, 'dur': 8 ), ( 'note': 64, 'dur': 8 ), ( 'note': 66, 'dur': 16 ), ( 'note': 64, 'dur': 16 ), ( 'note': 62, 'dur': 8 ), ( 'note': 60, 'dur': 8 ) ]
+)
 ```
 
 #### Arguments:
@@ -377,9 +369,9 @@ Takes an array of tempos and percentage values and returns an array of Event obj
 	  (30!2) ++ (20!2),
 	  norm: true
 );
-)
 
 ~myTempos.postln; //[ ( 'percentage': 30, 'tempo': 4 ), ( 'percentage': 30, 'tempo': 6 ), ( 'percentage': 20, 'tempo': 8 ), ( 'percentage': 20, 'tempo': 10 ) ]
+)
 ```
 #### Arguments:
 
@@ -424,7 +416,7 @@ Repeat :: Int
   ]
 );
 
-~convCanon.(canonConfig)
+~convCanon.(~canonConfig)
 .canon //we extract the canon from the data structure that is returned
 .collect(~instrument.([\pianola], amp: 1, repeat: 2)) // we pass each voice into our ~instrument. At this point ~instrument is returning a `MakePbind`, because it has been partially applied with `([Symbol], Amp, Repeat)`. This line will return: `[Pbind, Pbind, Pbind, Pbind]`
 .do({|pbind| pbind.play})// finally we play each voice
