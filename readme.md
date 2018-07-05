@@ -57,6 +57,7 @@ var melody = ~melodyMaker.pyramidalMelody;
   .do({|synthVoice| synthVoice.play})
 )
 ```
+
 Sound and Visualization:
 ```supercollider
 (
