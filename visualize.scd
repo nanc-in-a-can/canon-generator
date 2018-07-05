@@ -108,7 +108,6 @@
 			//  here a line marks the CP;
 			Pen.width= 0.3;
 			Pen.strokeColor= Color.gray;
-			Pen.stroke;
 
 			Pen.stringAtPoint("Point of Convergence",
 				Point((canon[0].bcp + canon[0].onset + 0.2).linlin(0,(durTotal),10,durSize),maxY.linlin(minY,maxY,480,0)),
@@ -119,6 +118,8 @@
 				Point((canon[0].bcp + canon[0].onset).linlin(0,(durTotal),10,durSize),minY.linlin(minY,maxY,480,0)),
 				Point((canon[0].bcp + canon[0].onset).linlin(0,(durTotal),10,durSize),maxY.linlin(minY,maxY,480,0))
 			);
+
+			Pen.stroke;
 		};
 	};
 
