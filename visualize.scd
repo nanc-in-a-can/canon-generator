@@ -65,20 +65,21 @@
 
 		xPoints.size.do{|i|
 			Pen.color= colors[canonIndex];
-			Pen.strokeColor= colors[canonIndex];
-			Pen.perform(\fill);
 
 			// here the coordinates are expressed as an underlying map
 			if(yPoints[i] != \rest, {
 				Pen.addWedge((xPoints[i] + onset).linlin(0,(durTotal),10,durSize)@(yPoints[i].linlin(minY,maxY,480,0)), 4, 0pi, 2pi);
 			});
+
+			Pen.strokeColor= colors[canonIndex];
+			Pen.perform(\fill);
+
 		};
 
 		(xPoints.size-1).do{|i|
 			Pen.color= colors[canonIndex];
 			Pen.strokeColor= colors[canonIndex];
 			Pen.width= 0.3;
-			Pen.stroke;
 
 			if( xPoints[i] == xPoints[i+1],
 				{
@@ -88,6 +89,7 @@
 					);
 				}
 			);
+			Pen.stroke;
 		};
 
 		(xVals.size-1).do{|i|
