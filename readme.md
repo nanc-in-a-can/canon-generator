@@ -6,26 +6,45 @@
 Nanc-in-a-can Canon Generator is a series of sc files that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The files are 7 and mostly contain a function each, 1 of them contains `SynthDefs`. The functions `~convCanon` and `~divCanon` are the core of the program, however, three other auxiliary functions have been added to aid the creation of melodies, transposition patterns and tempos. The function `~visualize` generates a visual timeline for each canon and plays it back. The function `~instrument` produces `Pbinds` for each of the canon's voices. Finally there is a init file that compiles all the functions and modules design for it to run.
 
 - [Nanc-in-a-can Canon Generator](#nanc-in-a-can-canon-generator)
-  * [Installation](#installation)
-    + [Using git](#using-git)
-    + [Manual download](#manual-download)
-  * [Loading the project files](#loading-the-project-files)
-  * [Basic Examples](#basic-examples)
-  * [Functions (API)](#functions--api-)
-    + [Types](#types)
-    + [Creating your own custom Pbinds to play a canon.](#creating-your-own-custom-pbinds-to-play-a-canon)
-    + [~convCanon](#convcanon)
-    + [~divCanon](#divcanon)
-    + [~visualize](#visualize)
-  * [Helper Functions](#helper-functions)
-    + [~makeMelody](#makemelody)
-    + [~makeConvVoices](#makeconvvoices)
-    + [~makeDivTempo](#makedivtempo)
-    + [~instrument](#instrument)
-    + [Presets](#presets)
+  - [Installation](#installation)
+    - [Using git](#using-git)
+    - [Manual download](#manual-download)
+  - [Loading the project files](#loading-the-project-files)
+  - [Basic examples](#basic-examples)
+  - [Functions (API)](#functions-api)
+    - [Types](#types)
+    - [Creating your own custom Pbinds to play a canon.](#creating-your-own-custom-pbinds-to-play-a-canon)
+    - [~convCanon](#convcanon)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
+    - [~divCanon](#divcanon)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
+    - [~visualize](#visualize)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
+  - [Helper Functions](#helper-functions)
+    - [~makeMelody](#makemelody)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
+    - [~makeConvVoices](#makeconvvoices)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
+    - [~makeDivTempo](#makedivtempo)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
+    - [~instrument](#instrument)
+        - [Example](#example)
+    - [Presets](#presets)
       - [~canonPreConfigs](#canonpreconfigs)
-  * [synthdef-instrument module.](#synthdef-instrument-module)
-  * [init module.](#init-module)
+  - [synthdef-instrument module.](#synthdef-instrument-module)
+  - [init module.](#init-module)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -187,13 +206,9 @@ Takes an Event Object with the keys `cp`, `melody` and `voices` and returns a `M
     (tempo: 43, transp: 8)
   ]
 );
-~myCanon = ~convCanon.(canonConfig);
+~myCanon = ~convCanon.(~canonConfig);
 
-<<<<<<< HEAD
-~visualize(~myCanon);
-=======
 ~visualize.(~myCanon);
->>>>>>> 79e3d6473b645df8c5250c8604bbc85dc248d11c
 )
 ```
 #### Arguments: 
@@ -240,15 +255,15 @@ Is a function that generates a divergence-convergence temporal canon. All voices
     (transp: -8, amp: 1)
   ],
   tempos: [
-    (tempo: 70, percentage: 20),
-    (tempo: 40, percentage: 30),
+    (tempo: 70,  percentage: 20),
+    (tempo: 40,  percentage: 30),
     (tempo: 120, percentage: 10),
     (tempo: 300, percentage: 40)
   ]
 );
-~myCanon = ~divCanon.(canonConfig);
+~myCanon = ~divCanon.(~canonConfig);
 
-~visualize(~myCanon);
+~visualize.(~myCanon);
 )
 ```
 #### Arguments: 
@@ -264,12 +279,8 @@ Is a function that generates a divergence-convergence temporal canon. All voices
 `tempos`: `[(tempo: Float, percentage: Float)]`. An array of Event objects with transposition and amplitude for each voice. The size of the array determines the number of voices of the temporal canon, but it should be the same as the size of the `voices` array (see above). `percentage` determines the amount of time each voice spends in a given tempo. `tempo` is the speed of the voice. The user is responsible for having all percentages sum up to `100`. The helper function `~makeDivTempo` provides an API that allows a simpler way to create this arrays.
 
 ----------------------------
-<<<<<<< HEAD
-### ~visualize.(madeCanon, autoScroll: true) 
-=======
 ### ~visualize
 
->>>>>>> 79e3d6473b645df8c5250c8604bbc85dc248d11c
 
 #### Type Signature
 Takes an Event Object MadeCanon and creates a window object that visualizes and plays back the canon.
@@ -277,14 +288,10 @@ Takes an Event Object MadeCanon and creates a window object that visualizes and 
 ```haskell
 ~visualize :: Canon -> Nil
 ```
-<<<<<<< HEAD
-~visualize :: Canon -> Nil
-=======
 
 #### Example
 ```supercollider
 ~visualize.(madeCanon)
->>>>>>> 79e3d6473b645df8c5250c8604bbc85dc248d11c
 ```
 
 #### Arguments:
@@ -423,7 +430,7 @@ Repeat :: Int
   ]
 );
 
-~convCanon.(canonConfig)
+~convCanon.(~canonConfig)
 .canon //we extract the canon from the data structure that is returned
 .collect(~instrument.([\pianola], amp: 1, repeat: 2)) // we pass each voice into our ~instrument. At this point ~instrument is returning a `MakePbind`, because it has been partially applied with `([Symbol], Amp, Repeat)`. This line will return: `[Pbind, Pbind, Pbind, Pbind]`
 .do({|pbind| pbind.play})// finally we play each voice
