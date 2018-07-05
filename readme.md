@@ -41,7 +41,7 @@ Nanc-in-a-can Canon Generator is a series of sc files that can be used to produc
 Open Supercollider and add and compile the following line of code.
 
 ```supercollider
-(path/to/nanc-in-a-can/init.scd").load;
+("path/to/nanc-in-a-can/init.scd").load;
 ```
 
 This starts up the server and loads all the necessary files and functions.
@@ -53,7 +53,7 @@ Sound Only:
 (
 var melody = ~melodyMaker.pyramidalMelody;
 ~convCanon.(melody).canon
-  .collect(~instrument.(\pianola))
+  .collect(~instrument.([\pianola]))
   .do({|synthVoice| synthVoice.play})
 )
 ```
