@@ -50,7 +50,7 @@ Sound Only:
 
 ```supercollider
 (
-var melody = ~melodyMaker.pyramidalMelody;
+var melody = ~presets.pyramidalMelody;
 ~convCanon.(melody).canon
   .collect(~instrument.([\pianola]))
   .do({|synthVoice| synthVoice.play})
@@ -60,7 +60,7 @@ var melody = ~melodyMaker.pyramidalMelody;
 Sound and Visualization:
 ```supercollider
 (
-var melody = ~melodyMaker.pyramidalMelody;
+var melody = ~presets.pyramidalMelody;
 ~visualize.(~convCanon.(melody));
 )
 ```
@@ -131,7 +131,7 @@ Let's make a simple example of a function of type `MakePbind`:
 ```supercollider
 (
 //We use the melody of a previous example
-var melody = ~melodyMaker.pyramidalMelody;
+var melody = ~presets.pyramidalMelody;
 
 ~makePbind = {|voice, index|
   /* We will coordinate the convergence point of the voices of our canon. For this we have to do the following: on the Pseqs of \dur and \midinote we concatenate the voice.onset time at the beginning of \dur, this corresponds to a \rest  on \midinote, and will allow the different voices to start at the correct time when we play our Pbinds (see below) 
@@ -273,7 +273,7 @@ Takes an Event Object MadeCanon and creates a window object that visualizes and 
 #### Example
 ```supercollider
 (
-var melody = ~melodyMaker.pyramidalMelody;
+var melody = ~presets.pyramidalMelody;
 ~visualize.(~convCanon.(melody));
 )
 ```
@@ -435,17 +435,17 @@ Configurations:
 `simple4NoteMelody`. Just that, a `hello world` for `Nanc-in-a-Can`.  It accepts one parameter and `Int` which should be a number between 0 and 3, and which defines the convergence point of the melodies.
 
 ```supercollider
-~visualize.(~convCanon.(~melodyMaker.simple4NoteMelody(3)), autoScroll: false);
+~visualize.(~convCanon.(~presets.simple4NoteMelody(3)), autoScroll: false);
 ```
 
 `randomSymmetric4voices`. A four voice canon configuration that creates a different melody everytime. The melody is generated using a weighted random process. The pitch set is modal /phrygian depending the octave with microtonal inflections. The durations are based in the theory of harmonic rhythm and the rhythm device of complex denomitar (irrational measures). 
 ```supercollider
-~visualize.(~convCanon.(~melodyMaker.randomSymmetric4voices), false);
+~visualize.(~convCanon.(~presets.randomSymmetric4voices), false);
 ```
 
 `pyramidalMelody`. Using the partials 16 to 40 of a sound with a root at 12hz we create a pitch configuration that is simultaneously expressed in duration values using the theory of harmonic rhythm. The function `~makeMelody` is used, and several algorithmic methods are used to generate the result.
 ```supercollider
-~visualize.(~convCanon.(~melodyMaker.pyramidalMelody));
+~visualize.(~convCanon.(~presets.pyramidalMelody));
 ```
 
 <!-- Fragment of Study 37 (sonido 13 version) -->

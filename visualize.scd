@@ -16,7 +16,7 @@
 		}).durs;
 	};
 	var canon = madeCanon.canon;
-	var data = madeCanon.data.postln;
+	var data = madeCanon.data;
 	var y_values_V1 = canon[0].notes;
 	var line = canon[0].durs;
 	var x_values_V1 = getXValues.(line);
@@ -128,7 +128,7 @@
 	var patterns = canon.collect({|line, index|
 		Pbind(
 			\instrument, \pianola,
-			\dur, Pseq([line.onset.postln] ++ line.durs, 1),
+			\dur, Pseq([line.onset] ++ line.durs, 1),
 			\midinote, Pseq([\rest]++line.notes,inf),
 			\out, [0, /*~reverbBus.index*/],
 			\amp, 1,

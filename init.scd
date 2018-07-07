@@ -6,7 +6,7 @@ Server.default.options.numWireBufs= 512;
 s = Server.local;
 s.latency = 0.05;
 s.waitForBoot({
-(baseDir++"/canonPreConfigs.scd").load;// exports ~melodyMaker // este debe de cambiar por Melodic presets (o algo similar)
+(baseDir++"/presets.scd").load;// exports ~presets
 (baseDir++"/synthdef-instruments.scd").loadPaths;// add \pianola synthdef,
 (baseDir++"/convCanon.scd").load; //exports ~convCanon
 (baseDir++"/divCanon.scd").load;//exports ~divCanon
@@ -14,5 +14,3 @@ s.waitForBoot({
 (baseDir++"/helpers.scd").load;// exports ~instrument, ~makeMelody, ~makeConvVoices, ~makeDivVoices, ~makeDivTempos
 });
 )
-
-

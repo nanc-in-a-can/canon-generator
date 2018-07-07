@@ -1,5 +1,5 @@
 (
-~melodyMaker = (
+~presets = (
 	randomSymmetric4voices: {
         var
             tp = 300,
@@ -33,7 +33,7 @@
         )
 
 	},
-	simple4NoteMelody: {|this_, convergence_point| /*for some reason SC automatically passes the Event object as the first parameter, but the function just needs to receive the convergence point as the first parameter when being called. E.g.: ~melodyMaker.simple4NoteMelody(2)*/
+	simple4NoteMelody: {|this_, convergence_point| /*for some reason SC automatically passes the Event object as the first parameter, but the function just needs to receive the convergence point as the first parameter when being called. E.g.: ~presets.simple4NoteMelody(2)*/
 
 		(
             cp: convergence_point,
@@ -51,7 +51,7 @@
 		(
         	cp: 600,
         	melody: ~makeMelody.(
-        		(16..40).pyramid.reciprocal.reverse.mirror.postln,
+        		(16..40).pyramid.reciprocal.reverse.mirror,
 				((16..40).pyramidg.collect({|arr, i| arr+i})*12).flatten.reverse.mirror.cpsmidi
         	),
         	voices: [
@@ -106,7 +106,7 @@
     }
 );
 
-// ~melodyMaker.chido_melody.();
-// ~melodyMaker.randomSymmetric4voices.();
-// ~melodyMaker.simple4NoteMelody(2)
+// ~presets.chido_melody.();
+// ~presets.randomSymmetric4voices.();
+// ~presets.simple4NoteMelody(2)
 )
