@@ -69,7 +69,7 @@ var divCanon = {|data|
     },
 
     findCurrentTempo = {|percElapsed, tempos|
-    	findFirst.({|tempo| tempo.until > percElapsed}, tempos)
+    	findFirst.({|tempo| tempo.until >= percElapsed}, tempos)
     },
 
     getPercOf = {|part, total|
