@@ -14,23 +14,23 @@
 };
 
 //~makeMelody ::[Float] -> [Float] -> [(dur, note)]
-~makeMelody = {|durs_arr, notes_arr|
-    [durs_arr.size, notes_arr.size].minItem.collect({|i|
-        (dur: durs_arr[i], note: notes_arr[i])
+~makeMelody = {|durs, notes|
+    [durs.size, notes.size].minItem.collect({|i|
+        (dur: durs[i], note: notes[i])
     })
 };
 
 //~makeConvVoices :: ([Float], [Float], [Float]) -> [(tempo, transp, amp)]
-~makeConvVoices = { | tempo_arr, transp_arr, amp_arr = ([])|
-    [tempo_arr.size, transp_arr.size].minItem.collect({|i|
-		(tempo: tempo_arr[i], transp: transp_arr[i], amp: amp_arr[i] ? 1)
+~makeConvVoices = { | tempos, transps, amps = ([])|
+    [tempos.size, transps.size].minItem.collect({|i|
+		(tempo: tempos[i], transp: transps[i], amp: amps[i] ? 1)
     })
 };
 
 //~makeDivVoices :: ([Float], [Float]) ->[(transp: Float, amp: Float)]
-~makeDivVoices = { |transp_arr, amp_arr = ([])|
-    transp_arr.collect({|transp, i|
-        (transp: transp, amp: amp_arr[i] ? 1)
+~makeDivVoices = { |transps, amps = ([])|
+    transps.collect({|transp, i|
+        (transp: transp, amp: amps[i] ? 1)
     })
 };
 
