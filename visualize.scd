@@ -97,13 +97,13 @@
 			if(hasNoRests,
 				{
 					Pen.width= 1;
-					Pen.stroke;
 					Pen.line(
 						Point((xVals[i] + onset).linlin(0,(durTotal),10,durSize), fromChord.(yVals[i]).linlin(minY,maxY,480,0)),
 						Point((xVals[i+1] + onset).linlin(0,(durTotal),10,durSize), fromChord.(yVals[i+1]).linlin(minY,maxY,480,0))
 					);
 				}
-			)
+			);
+			Pen.stroke;
 		};
 
 		1.do{
@@ -111,10 +111,12 @@
 			Pen.width= 0.3;
 			Pen.strokeColor= Color.gray;
 
+
 			Pen.stringAtPoint("Point of Convergence",
 				Point((canon[0].bcp + canon[0].onset + 0.2).linlin(0,(durTotal),10,durSize),maxY.linlin(minY,maxY,480,0)),
 				color: Color.gray
-			);
+				);
+
 
 			Pen.line(
 				Point((canon[0].bcp + canon[0].onset).linlin(0,(durTotal),10,durSize),minY.linlin(minY,maxY,480,0)),
