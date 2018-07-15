@@ -34,6 +34,14 @@ var divCanon = {|data|
     	}).tempos
     },
 
+	setUntilForDurs = {|durs, totalDur|
+		durs.inject((elapsed: 0, durs: List []), {|acc, dur|
+			acc.elapsed = acc.elapsed + dur;
+			acc.durs.add((val: dur, until: getPercOf.(acc.elapsed, totalDur)));
+			acc;
+		}).durs
+	},
+
     /**
     rotate :: [a] -> [[a]]
 
@@ -87,14 +95,7 @@ var divCanon = {|data|
     },
 
     processDurationsForVoice = {|totalDur, durs, voiceTempos|
-		var newDurs = durs.inject((elapsed: 0, durs: List []), {|acc, dur|
-			acc.elapsed = acc.elapsed + dur;
-			acc.durs.add((val: dur, until: getPercOf.(acc.elapsed, totalDur)));
-			acc;
-		}).durs;//sacar de aquí porque corre muchas veces
-
-
-		newDurs.inject((elapsed: 0, durs: List []), {|acc, dur|
+		durs.inject((elapsed: 0, durs: List []), {|acc, dur|
 			var finalElapsed = acc.elapsed+dur.val;
 			var getElapsedPerc = getPercOf.(_, totalDur);
 			var initialPerc = getElapsedPerc.(acc.elapsed);
@@ -132,8 +133,7 @@ var divCanon = {|data|
 		});
 	},
 
-    processDurations = {|rotations, dur_arr|
-    	var totalDur = dur_arr.sum;
+    processDurations = {|rotations, dur_arr, totalDur|
     	rotations.collect(processDurationsForVoice.(totalDur,dur_arr, _))
     },
 
@@ -148,7 +148,8 @@ var divCanon = {|data|
     },
 	rotations = rotate.(convertTemposToPropotions.(data.tempos)),
 	toSeconds = {|tempo, propotion| 60*propotion/tempo},
-	durations = processDurations.(rotations, durations_.init)
+	totalDur = durations_.init.sum,
+	durations = processDurations.(rotations, setUntilForDurs.(durations_.init, totalDur), totalDur)
 	    .collect(_.durs)
 	    .collect(_.collect(toSeconds.(data.baseTempo, _))),
 	canon = durations.collect({|voiceDurs, i|
