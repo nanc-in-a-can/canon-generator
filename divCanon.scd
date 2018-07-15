@@ -69,7 +69,7 @@ var divCanon = {|data|
     },
 
     findCurrentTempo = {|percElapsed, tempos|
-    	findFirst.({|tempo| tempo.until >= percElapsed}, tempos)
+    	findFirst.({|tempo| tempo.until > percElapsed}, tempos)
     },
 
     getPercOf = {|part, total|
@@ -80,22 +80,57 @@ var divCanon = {|data|
         perc*total/100
     },
 
-    processDurationsForVoice = {|totalDur, durs, voiceTempos|
-    	durs.inject((elapsed: 0, durs: List []), {|acc, dur|
-    		var
-                currentTempo = findCurrentTempo.(getPercOf.(acc.elapsed, totalDur), voiceTempos),
-                nextTempo = findCurrentTempo.(getPercOf.(acc.elapsed + dur, totalDur),voiceTempos) ? currentTempo,
-                nextElapsed = getPercOf.(acc.elapsed+dur, totalDur),
-                durationAfterTempoChange_ = acc.elapsed+dur - getFromPercentage.(currentTempo.until, totalDur),
-                durationAfterTempoChange = if(durationAfterTempoChange_ > 0, {durationAfterTempoChange_}, {0}),
-                durationBeforeTempoChange = dur - durationAfterTempoChange,
-                duration = (durationBeforeTempoChange*currentTempo.tempo) + (durationAfterTempoChange*nextTempo.tempo);
-    		(
-    			elapsed: acc.elapsed+(dur),
-    			durs: acc.durs.add(duration)
-    		)
-    	});
+	getNextTempos = {|currentlyElapsed/*percentage*/, durUntil/*percentage*/, tempos|
+	    var first = tempos.detectIndex(_.until >= currentlyElapsed);
+	    var last =  tempos.detectIndex(_.until >= durUntil);
+	    tempos[first..last];
     },
+
+    processDurationsForVoice = {|totalDur, durs, voiceTempos|
+		var newDurs = durs.inject((elapsed: 0, durs: List []), {|acc, dur|
+			acc.elapsed = acc.elapsed + dur;
+			acc.durs.add((val: dur, until: getPercOf.(acc.elapsed, totalDur)));
+			acc;
+		}).durs;//sacar de aquí porque corre muchas veces
+
+
+		newDurs.inject((elapsed: 0, durs: List []), {|acc, dur|
+			var finalElapsed = acc.elapsed+dur.val;
+			var getElapsedPerc = getPercOf.(_, totalDur);
+			var initialPerc = getElapsedPerc.(acc.elapsed);
+			var finalPerc = getElapsedPerc.(finalElapsed);
+			var percSpan = finalPerc - initialPerc;
+			var tempos = getNextTempos.(initialPerc, finalPerc, voiceTempos);
+			var nextDur = tempos.inject((elapsed: acc.elapsed ,totalDur: 0, durLeft: dur.val), {|acc2, tempo|
+				if(dur.until <= tempo.until,
+					{
+						(
+							totalDur: acc2.totalDur + (acc2.durLeft*tempo.tempo),
+							durLeft: 0,
+							elapsed: acc2.elapsed+acc2.durLeft
+
+						)
+					},
+					{//dur.until > tempo.until
+						var elapsedPerc2 = getElapsedPerc.(acc2.elapsed);
+						var percentageElapsed = getPercOf.(tempo.until - elapsedPerc2, percSpan);
+						var durUsed = getFromPercentage.(dur.val, percentageElapsed);
+						var durOnTempo = durUsed*tempo.tempo;
+						(
+							durLeft: (acc2.durLeft - durUsed),
+							totalDur: acc2.totalDur+durOnTempo,
+							elapsed: (acc2.elapsed+durUsed);
+						);
+					}
+				);
+			});
+
+			(
+				elapsed: nextDur.elapsed,
+				durs: acc.durs.add(nextDur.totalDur)
+			)
+		});
+	},
 
     processDurations = {|rotations, dur_arr|
     	var totalDur = dur_arr.sum;
@@ -104,7 +139,7 @@ var divCanon = {|data|
 
 	//initAndLast :: [a] -> (init:[a], last: a)
 	initAndLast = {|arr| (init: arr[..arr.size -2], last: arr[arr.size - 1])},
-	durations_ = initAndLast.(data.melody.collect(_.dur)),
+	durations_ = initAndLast.(data.melody.collect(_.dur)),//we do this so that the last note of each voice will fall in unison with the rest
 	notes = data.melody.collect(_.note),
     convertTemposToPropotions = {|tempos|
         var sorted = tempos.sort({|a, b| a.tempo < b.tempo});
