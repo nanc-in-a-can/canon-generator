@@ -28,5 +28,18 @@ noise= Mix(LFNoise2.ar([375,750,1500,3000], envAttack));
 };
 ).add;
 
+SynthDef(\portamento1, {|
+	freq = 400, 
+	portamento = 0, 
+	portamento_amp = 0.3, 
+	portamento_amp_speed = 0.3, 
+	amp = 0.3, 
+	gate=1
+	|
+	var sig = {
+		SinOsc.ar(Lag.kr(freq, portamento), 0, Lag.kr(portamento_amp, portamento_amp_speed)) * EnvGen.kr(Env.asr(0.1, amp, 1.3), gate, doneAction:2)
+	} ;
+	Out.ar(0, sig ! 2);
+}).add;
 
 

@@ -3,7 +3,7 @@
    <img width="100%" src="nanc-in-a-can.jpg">
 </p>
 
-Nanc-in-a-can Canon Generator is a series of sc files that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The files are 7 and mostly contain a function each, 1 of them contains `SynthDefs`. The functions `~convCanon` and `~divCanon` are the core of the program, however, three other auxiliary functions have been added to aid the creation of melodies, transposition patterns and tempos. The function `~visualize` generates a visual timeline for each canon and plays it back. The function `~instrument` produces `Pbinds` for each of the canon's voices. Finally there is a init file that compiles all the functions and modules design for it to run.
+Nanc-in-a-can Canon Generator is a series of sc files that can be used to produce temporal canons as the ones created by Conlon Nancarrow. The files are 7 and mostly contain a function each, 1 of them contains `SynthDefs`. The functions `~convCanon` and `~divCanon` are the core of the program, however, four other auxiliary functions have been added to aid the creation of melodies, transposition patterns and tempos. The function `~visualize` generates a visual timeline for each canon and plays it back. The function `~instrument` produces `Pbinds` for each of the canon's voices. Finally there is a init file that compiles all the functions and modules design for it to run.
 
 - [Nanc-in-a-can Canon Generator](#nanc-in-a-can-canon-generator)
   - [Installation](#installation)
@@ -15,14 +15,39 @@ Nanc-in-a-can Canon Generator is a series of sc files that can be used to produc
     - [Types](#types)
     - [Creating your own custom Pbinds to play a canon.](#creating-your-own-custom-pbinds-to-play-a-canon)
     - [~convCanon](#convcanon)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
     - [~divCanon](#divcanon)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
     - [~visualize](#visualize)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
   - [Helper Functions](#helper-functions)
     - [~makeMelody](#makemelody)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
     - [~makeConvVoices](#makeconvvoices)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
+    - [~makeDivVoices](#makedivvoices)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
+  - [`amp`. `[Float]`. An array of floats that generates an amplitude value normalized between 0 and 1 for each voice. ](#amp-float-an-array-of-floats-that-generates-an-amplitude-value-normalized-between-0-and-1-for-each-voice)
     - [~makeDivTempo](#makedivtempo)
+      - [Type Signature](#type-signature)
+      - [Example](#example)
+      - [Arguments:](#arguments)
     - [~instrument](#instrument)
-  - [Presets](#presets)
+        - [Example](#example)
+    - [Presets](#presets)
+      - [~canonPreConfigs](#canonpreconfigs)
   - [synthdef-instrument module.](#synthdef-instrument-module)
   - [init module.](#init-module)
 
@@ -91,7 +116,7 @@ CanonVoice :: (
 Canon :: (
   canon: [CanonVoice],
   data: (
-    voices: [(transp: Float, tempo: Float )]
+    voices: [(transp: Float, tempo: Float, amp: Float)]
   )
 )
 ```
@@ -108,7 +133,7 @@ Note :: (
 
 Melody :: [Note]
 
-Voice :: (tempo: Float, transp: Float)
+Voice :: (tempo: Float, transp: Float, amp: Float)
 
 Voices :: [Voice]
 
@@ -320,12 +345,12 @@ Takes an array of durations and an array of midi pitch values and returns an arr
 ----------------
 ### ~makeConvVoices
 
-Similar to makeMelody however it generates tempos and transposition values.
+Similar to makeMelody however it generates tempos, transposition and amplitude values.
 
 #### Type Signature
-Takes an array of tempos and transposition values and returns an array of Event object with the keys `tempo` and `transp`. 
+Takes an array of tempos, transposition and amplitude values and returns an array of Event object with the keys `tempo`, `transp` and `amp`. The `amp` value is optional, if nil then it is 1.
 ```haskell
-~makeConvVoices :: ([Float], [Float]) -> Voices
+~makeConvVoices :: ([Float], [Float], [Float]) -> Voices
 ```
 
 
@@ -347,10 +372,42 @@ Takes an array of tempos and transposition values and returns an array of Event 
 
 `transp`. `[Float]`. An array of floats that generates a series of transposition values in midi notes. Negative floats will generate descending intervals in relationship to the midi values passed down from melody, positive ones will generate ascending intervales. 
 
+`amp`. `[Float]`. An array of floats that generates an amplitude value normalized between 0 and 1 for each voice. 
+
+----------------
+### ~makeDivVoices
+
+Similar to makeConvVoices however it only generates transposition and amplitude values.
+
+#### Type Signature
+Takes an array of transposition and amplitude values and returns an array of Event object with the keys `transp` and `amp`. The `amp` value is optional, if nil then it is 1.
+```haskell
+~makeDivVoices :: ([Float], [Float], [Float]) -> Voices
+```
+
+
+#### Example
+
+```supercollider
+(
+~myVoices= ~makeDivVoices.(
+    Array.series(3, -12, 8),
+    Array.series(3, 0.5, 0.2)
+);
+
+~myVoices.postln; // [ ( 'amp': 0.5, 'transp': -12 ), ( 'amp': 0.7, 'transp': -4 ), ( 'amp': 0.9, 'transp': 4 ) ]
+
+)
+```
+#### Arguments:
+
+`transp`. `[Float]`. An array of floats that generates a series of transposition values in midi notes. Negative floats will generate descending intervals in relationship to the midi values passed down from melody, positive ones will generate ascending intervales. 
+
+`amp`. `[Float]`. An array of floats that generates an amplitude value normalized between 0 and 1 for each voice. 
 ----------------
 ### ~makeDivTempo
 
-Similar to makeMelody and makeVoices however it generates tempo values and a percentage value. A boolean may determine whether the percentage values are normalized or not.
+Similar to makeMelody however it generates tempo values and a percentage value. A boolean may determine whether the percentage values are normalized or not.
 
 #### Type Signature
 Takes an array of tempos and percentage values and returns an array of Event object with the keys `tempo` and `percentage`. 
@@ -378,7 +435,7 @@ Takes an array of tempos and percentage values and returns an array of Event obj
 
 `percentage`. `[Float]`. An array of floats that generates a percentage value in which the rotation of the tempo switch happens.
 
-`norm`. `Bool` If false the percentages may be more or less than 100% in which case the final convergence point will not happen. If true the values given to percentage will be normalized so it always sums 100.
+`normalize`. `Bool` If false the percentages may be more or less than 100% in which case the final convergence point will not happen. If true the values given to percentage will be normalized so it always sums 100.
 
 ----------------------------
 ### ~instrument
