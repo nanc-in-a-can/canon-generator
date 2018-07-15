@@ -160,61 +160,7 @@ var divCanon = {|data|
 			amp: data.voices[i].amp,
 			cp: 0
 		)
-	}),
-
-    tests = {
-        var r1, r2;// rotations for each test
-        var test1, test2; //tests
-        //TEST
-        r = rotate.([(tempo:1, percentage:25), (tempo:2, percentage:25), (tempo:3, percentage:25), (tempo:4, percentage:25)]); //rotations
-
-        test1 = processDurations.(
-            r,
-            [//each line is a 25% of the duration
-                3,
-                1,1,1,
-                1,2,
-                2,1
-            ]
-        ).collect(_.durs).collect(_.asArray);
-        ("TEST 1 Passes:" + (test1.collect(_.sum) == [ 30, 30, 30, 30 ])).postln;
-        /*
-        "Order of tempos".postln;
-        r.collect(_.collect(_.tempo)).do(_.postln);
-
-        "Durations arrays for each voice:".postln;
-        test.do(_.postln);
-
-        "Durations of each part shoulde be equal".postln;
-        test.collect(_.sum).postln;
-        */
-
-        //TEST 2 Works with percentages that do not divide evenly the durations
-        r2 = rotate.([(tempo:1, percentage:10), (tempo:2, percentage:32), (tempo:3, percentage:28), (tempo:4, percentage:30)]); //rotations
-
-        test2 = processDurations.(
-        	r2,
-        	[//each line is a 25% of the duration
-        		3,
-        		1,1,1,
-        		1,2,
-        		2,1
-        	]
-        ).collect(_.durs).collect(_.asArray);
-        ("TEST 2 Passes:" + (test2.collect(_.sum) == [ 33.36, 33.36, 33.36, 33.36 ])).postln;
-        /*
-        "Order of tempos".postln;
-        r2.collect(_.collect(_.tempo)).do(_.postln);
-
-        "Durations arrays for each voice:".postln;
-        test2.do(_.postln);
-
-        "Durations of each part shoulde be equal".postln;
-        test2.collect(_.sum).postln;
-        */
-    };
-
-	// tests.()// run tests
+	});
 	(
 		canon: canon,
 		data: (
@@ -229,11 +175,5 @@ var divCanon = {|data|
 	)
 
 };
-a = ~divCanon.((
-	baseTempo: 60,
-	voices: [(transp: 1, amp: 1), (transp: 2, amp: 0.5), (transp: 3, amp: 0.7)],
-	tempos: [(tempo: 3, percentage: 30), (tempo: 5, percentage: 30), (tempo: 2, percentage: 40)],
-	melody: [(dur: 1, note: 60), (dur: 2, note: 61), (dur: 3, note: 62), (dur: 4, note: 63)]
-)).canon;
 )
 

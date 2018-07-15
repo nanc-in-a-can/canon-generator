@@ -25,7 +25,7 @@ var allEqual = {|arr|
 	.inject(true, {|acc, el| acc && el})
 };
 
-1000.collect({
+100.collect({
 	~divCanon.(makeDivCanonnn.()).canon
 	.collect(_.durs)
 	.collect(_.sum)
