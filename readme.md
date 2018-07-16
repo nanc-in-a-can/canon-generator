@@ -55,7 +55,8 @@ Nanc-in-a-can Canon Generator is a series of sc files that can be used to produc
 
 ## Installation
 ### Using git
-`git clone <path-to-folder>`
+`git clone https://github.com/nanc-in-a-can/canon-generator.git nanc-in-a-can`
+Ths will clone the proyect into `<your-current-path>/nanc-in-a-can`
 
 ### Manual download
 [Click here](https://github.com/nanc-in-a-can/canon-generator/archive/master.zip) and save the zip file wherever you want.
