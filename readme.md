@@ -126,8 +126,8 @@ Canon :: (
 
 One could read this type signature as: `Canon` is a structure consisting of an Event object that has two keys, `canon` and `data`.  The key `canon` holds an array of `CanonVoice`s, which are also `Event` objects that hold several other keys: `notes` and `durs` are `Arrays` of `Floats`, while `onset` and `bcp` are just Floats and `cp` is an `Int`.
 
-The next signatures are more simple:
-```
+The next signatures are simpler:
+```haskell
 Note :: (
   durs: Float, 
   notes: [Float] || \rest
