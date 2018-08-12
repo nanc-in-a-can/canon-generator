@@ -128,8 +128,9 @@
 	};
 
 	var patterns = canon.collect({|line, index|
+
 		Pbind(
-			\instrument, \pianola,
+			\instrument, \distPad,
 			\dur, Pseq([line.onset] ++ line.durs, 1),
 			\midinote, Pseq([\rest]++line.notes,inf),
 			\out, [0, /*~reverbBus.index*/],
@@ -139,7 +140,23 @@
 			\series, Pseries(0,1,inf),
 			/*messages to change the point positions in the map below*/
 			\coordinates, Pfunc({|event|
-				NetAddr("127.0.0.1", 57120).sendBundle(s.latency, [("/event"++index), if(event[\midinote].isArray, {event[\midinote][0]}, {event[\midinote]}), event[\series], event[\dur]])
+
+				NetAddr("127.0.0.1", 57120).sendBundle(s.latency,
+					[
+						"/receiveNote",
+						index,
+						if( event[\midinote].isArray,
+							{
+								event[\midinote][0]
+							},
+							{
+								event[\midinote]
+							}
+						),
+						event[\series],
+						event[\dur]
+					]
+				)
 			})
 		)
 	});
@@ -167,27 +184,12 @@
 	};
 
 	u.drawFunc= {//in U the present moment of the events will be emphasised visually in the map
-		var selectMoment = {|index, line, onset|
-			Pen.fillColor= colors[index].blend(Color.white, 0.4); //always fill with grey
 
-			// receive the data from the Pbind in realtime assigning global variables
-			OSCdef("test"++index,
-				{|msg, time, addr, recvPort|
-					// msg.postln;
-					if(msg[1] !== \rest, {
-						yCoord[index]=msg[1].linlin(minY,maxY,480,0);
-						xCoord[index]= (line[msg[2]] + onset).linlin(0,(durTotal),10,durSize);
-					})
-				},
-				("/event"++index)
-			);
-			Pen.addWedge(Point(xCoord[index], yCoord[index]), 7, 0pi, 2pi);
-			Pen.fill;
-		};
 
 		u.frameRate= 28;
-		canonWithXValues.do({|line, i| selectMoment.(i, line.xValues, line.onset)});
+		canonWithXValues.do({|line, i| ~selectMoment.(i, line.xValues, line.onset)});
 		playPatterns.()
+
 	};
 
 	//--window management
@@ -199,6 +201,34 @@
 	CmdPeriod.doOnce({if(w.isClosed.not, {w.close; patterns.do(_.stop)})});
 
 	if( autoScroll == true, {scroller.play(AppClock)});
+
+
+
+	OSCdef("/receiveNote",
+		{|msg, time, addr, recvPort|
+			var index = msg[1];
+			if(msg[2] !== \rest, {
+				yCoord[index]=msg[2].linlin(minY,maxY,480,0);
+				// xCoord[index]= (line[msg[3]] + onset).linlin(0,(durTotal),10,durSize);
+				xCoord[index]= (line[msg[3]] + 1).linlin(0,(durTotal),10,durSize);
+			})
+		},
+		"/receiveNote"
+	);
+
+
+
+	~selectMoment = {|index, line, onset|
+		Pen.fillColor= colors[index].blend(Color.white, 0.4); //always fill with grey
+		// receive the data from the Pbind in realtime assigning global variables
+		Pen.addWedge(Point(xCoord[index], yCoord[index]), 7, 0pi, 2pi);
+		Pen.fill;
+	};
+
+
+
 	nil;
+
+
 };
 );
