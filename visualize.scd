@@ -130,7 +130,7 @@
 	var patterns = canon.collect({|line, index|
 
 		Pbind(
-			\instrument, \distPad,
+			\instrument, \pianola,
 			\dur, Pseq([line.onset] ++ line.durs, 1),
 			\midinote, Pseq([\rest]++line.notes,inf),
 			\out, [0, /*~reverbBus.index*/],
