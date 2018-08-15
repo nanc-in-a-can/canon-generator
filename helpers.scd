@@ -42,4 +42,16 @@
         (tempo: tempos[i], percentage: percentages[i])
     });
 };
+
+//~mergeCanons :: Canon -> Canon -> Canon
+~mergeCanons = {|a, b|
+	(
+		canon: a.canon ++ b.canon,
+		data: (
+			voices: a.data.voices ++ b.data.voices,
+			cp: [a.data.cp, b.data.cp].minItem,//for now we keep only the first cp, for the visualizer purposes, it does not affect the cp in the canons that will sound
+			//for now we forgoe the "melody" key in the data array
+		)
+	)
+};
 )

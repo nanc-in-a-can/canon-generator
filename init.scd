@@ -11,6 +11,6 @@ s.waitForBoot({
 (baseDir++"/convCanon.scd").load; //exports ~convCanon
 (baseDir++"/divCanon.scd").load;//exports ~divCanon
 (baseDir++"/visualize.scd").load;//exports ~visualize
-(baseDir++"/helpers.scd").load;// exports ~instrument, ~makeMelody, ~makeConvVoices, ~makeDivVoices, ~makeDivTempos
+(baseDir++"/helpers.scd").load;// exports ~instrument, ~makeMelody, ~makeConvVoices, ~makeDivVoices, ~makeDivTempos, ~mergeCanons
 });
 )
