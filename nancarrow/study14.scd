@@ -385,9 +385,9 @@ var lowerStaff = convertNoteNamestoMidi.([
     (dur: 3/8, note: \rest)
 ]);
 
-var canonConfig = {|tempo, melody|
+var canonConfig = {|cp, tempo, melody|
 	(
-		cp: 94,
+		cp: cp,
 		melody: melody,
 		voices: [
 			(tempo: tempo, transp: 0),
@@ -396,9 +396,11 @@ var canonConfig = {|tempo, melody|
 	)
 };
 
+var tempo = 120;
+
 var canon = ~mergeCanons.(*
-	[upperStaff, lowerStaff]
-	.collect(canonConfig.(110, _))
+	[canonConfig.(94, tempo, upperStaff), canonConfig.(90, tempo, lowerStaff)]//converge points are different for each canon only in the algorithm, this is because voices are independent and each one has a different number of events
+	// .collect(canonConfig.(110, _))
 	.collect(~convCanon)
 );
 
