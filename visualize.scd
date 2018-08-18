@@ -4,7 +4,9 @@
 
 	//--window setup
 	var width= 940, height= 580;
+
 	var w= Window("Nanc in a Can - Canon generator", Rect(99, 99, width, height), true, scroll: true);
+
 	var u= UserView(w, Rect(0, 0, width*220, height));
 
 	//--variables
@@ -130,7 +132,7 @@
 	var patterns = canon.collect({|line, index|
 
 		Pbind(
-			\instrument, \pianola,
+			\instrument, \silent,
 			\dur, Pseq([line.onset] ++ line.durs, 1),
 			\midinote, Pseq([\rest]++line.notes,inf),
 			\out, [0, /*~reverbBus.index*/],
@@ -140,6 +142,8 @@
 			\series, Pseries(0,1,inf),
 			/*messages to change the point positions in the map below*/
 			\coordinates, Pfunc({|event|
+
+				["event", index, event].postln;
 
 				NetAddr("127.0.0.1", 57120).sendBundle(s.latency,
 					[
