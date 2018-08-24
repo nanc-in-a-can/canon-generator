@@ -80,7 +80,7 @@ var melody = (
         (tempo: 140, transp: 0),
         (tempo: 140*37/25, transp: 2.5),
         (tempo: 140*48/37, transp: 3.7),
-        (tempo: 140*4/3, transp: 4.8),
+        (tempo: 140*4/3, transp: 4.8),// 64/48
         (tempo: 140*75/64, transp: 6.4),
         (tempo: 140*93/75, transp: 7.5),
         (tempo: 140*107/93, transp: 9.3),
@@ -101,7 +101,3 @@ var playable = canon.canon
 
 
 )
-
-// ~naranjo.play
-
-// ~visualize.(~naranjo.canon)
