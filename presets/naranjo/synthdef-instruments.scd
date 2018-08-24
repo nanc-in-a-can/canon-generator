@@ -27,27 +27,7 @@ noise= Mix(LFNoise2.ar([375,750,1500,3000], envAttack));
 		Out.ar(out, Limiter.ar(Pan2.ar(Mix(sig),pan)*amp,0.1)*env)
 };
 ).add;
-
-SynthDef(\portamento1, {|
-	freq = 400,
-	portamento = 0,
-	portamento_amp = 0.3,
-	portamento_amp_speed = 0.3,
-	amp = 0.3,
-	gate=1
-	|
-	var sig = {
-		SinOsc.ar(Lag.kr(freq, portamento), 0, Lag.kr(portamento_amp, portamento_amp_speed)) * EnvGen.kr(Env.asr(0.1, amp, 1.3), gate, doneAction:2)
-	} ;
-	Out.ar(0, sig ! 2);
-}).add;
-
-/*
-* @author Iván Naranjo
-* @website www.ivan-naranjo.com
-* @email naranjoivan@gmail.com
-*/
-SynthDef(\blipo, {|out, freq=60, amp=0.003, ampC, att=0.2, dur, sus=1, rel, nharm=1, dtime|
+SynthDef("blipo", {|out, freq=60, amp=0.003, ampC, att=0.2, dur, sus=1, rel, nharm=1, dtime|
 	var sig, env, comv;
 	amp = amp * AmpCompA.kr(freq);
 	ampC = Select.kr(freq> (65.midicps), [0.01, 0.08]);
@@ -66,3 +46,20 @@ SynthDef(\blipo, {|out, freq=60, amp=0.003, ampC, att=0.2, dur, sus=1, rel, nhar
 	sig = Spreader.ar(sig)*amp;
 	OffsetOut.ar(out, Limiter.ar(sig, 0.1));//1, 2
 }).add;
+
+
+SynthDef(\portamento1, {|
+	freq = 400,
+	portamento = 0,
+	portamento_amp = 0.3,
+	portamento_amp_speed = 0.3,
+	amp = 0.3,
+	gate=1
+	|
+	var sig = {
+		SinOsc.ar(Lag.kr(freq, portamento), 0, Lag.kr(portamento_amp, portamento_amp_speed)) * EnvGen.kr(Env.asr(0.1, amp, 1.3), gate, doneAction:2)
+	} ;
+	Out.ar(0, sig ! 2);
+}).add;
+
+

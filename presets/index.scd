@@ -1,6 +1,7 @@
 (
 ~presets = (
     nancarrow: (), //studies are defined on  "/nancarrow"
+    naranjo: (), //studies are defined on  "/naranjo"
 	randomSymmetric4voices: {
         var
             tp = 300,
@@ -108,6 +109,7 @@
 // ~presets.randomSymmetric4voices.();
 // ~presets.simple4NoteMelody(2)
 (thisProcess.nowExecutingPath.dirname++"/nancarrow/index.scd").load;
+(thisProcess.nowExecutingPath.dirname++"/naranjo/arrowCanon.scd").load;
 )
 
 
