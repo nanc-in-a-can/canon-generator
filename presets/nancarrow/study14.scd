@@ -406,5 +406,5 @@ var canon = ~mergeCanons.(*
 
 {Compander.ar(In.ar(0,2), WhiteNoise.ar(0.8), 0.2, 0.5)}.play;
 {FreeVerb2.ar(In.ar(0,1),In.ar(1,1), 0.4, 0.6, 0.5, 0.5)}.play;
-~presets.nancarrow["study14"] = canon;
+~presets.nancarrow.study14 = canon;
 )
