@@ -90,6 +90,12 @@ Sound and Visualization:
 var melody = ~presets.pyramidalMelody;
 ~visualize.(~convCanon.(melody));
 )
+
+(
+// Some presets have a bit of syntax sugar ("see /nancarrow/study14.scd" for the implementation details)
+~presets.nancarrow.study14.visualize;
+// ~presets.nancarrow.study14.play; // it can also be played!
+)
 ```
 
 ## Functions (API)
@@ -482,15 +488,33 @@ Repeat :: Int
 ```
 
 
-### Presets
+### Presets and Compositions
 -----------------------------
-#### ~canonPreConfigs
+#### ~presets
 
 A set of canon configurations that function as examples for the `Nanc-in-a-Can` project.
 
 Configurations:
 
+##### Compositions
+`Nancarrow.Study14`. One of Conlon Nancarrow's famous pianola studies.
 
+```supercollider
+~presets.nancarrow.study14.play;
+//or
+~presets.nancarrow.study14.visualize;
+```
+
+`Naranjo.ArrowCanon`. Fractal canon by mexican composer Iván Naranjo
+```supercollider
+~presets.naranjo.arrowCanon.play;
+//or
+~presets.naranjo.arrowCanon.visualize;
+```
+
+-----------------------------
+
+##### Examples
 `simple4NoteMelody`. Just that, a `hello world` for `Nanc-in-a-Can`.  It accepts one parameter and `Int` which should be a number between 0 and 3, and which defines the convergence point of the melodies.
 
 ```supercollider
