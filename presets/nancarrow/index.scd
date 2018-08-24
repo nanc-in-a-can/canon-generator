@@ -1,0 +1,1 @@
+(thisProcess.nowExecutingPath.dirname++"/study14.scd").load;

@@ -6,7 +6,7 @@ Server.default.options.numWireBufs= 512;
 s = Server.local;
 s.latency = 0.05;
 s.waitForBoot({
-(baseDir++"/presets.scd").load;// exports ~presets
+(baseDir++"/presets/index.scd").load;// exports ~presets
 (baseDir++"/synthdef-instruments.scd").loadPaths;// add \pianola synthdef,
 (baseDir++"/convCanon.scd").load; //exports ~convCanon
 (baseDir++"/divCanon.scd").load;//exports ~divCanon
