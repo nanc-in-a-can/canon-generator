@@ -505,7 +505,7 @@ Configurations:
 ~presets.nancarrow.study14.visualize;
 ```
 
-`Naranjo.ArrowCanon`. Fractal canon by mexican composer Iván Naranjo
+`Naranjo.ArrowCanon`. Fractal canon by mexican composer Iván Naranjo. See [/presets/naranjo/arrowCanon.scd](/presets/naranjo/arrowCanon.scd) for details and comments on the composition.
 ```supercollider
 ~presets.naranjo.arrowCanon.play;
 //or
