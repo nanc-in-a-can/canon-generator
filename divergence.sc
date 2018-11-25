@@ -156,9 +156,15 @@
 			amp: data.voices[i].amp,
 			cp: 0
 		)
-	});
+	}),
+	instruments = this.getInstruments(data),
+
+	player = this.getPlayer(data, canon, instruments);
+
 	^(
 		canon: canon,
+		player: player,
+		play: {player.play},
 		data: (
 			voices: data.tempos
 		)

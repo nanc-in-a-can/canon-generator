@@ -49,8 +49,18 @@
 			    amp: voice.amp,
     			cp: data.cp
     		)
-    	});
+    	}),
 
-	   ^(canon: canon, data: data);
+		instruments = this.getInstruments(data),
+
+		player = this.getPlayer(data, canon, instruments);
+
+		^(
+			canon: canon,
+			data: data,
+			player: player,
+			play: {player.play},
+			visualize: {|server, autoscroll = true| this.visualize(server, (canon: canon, data: data), autoscroll)}
+		);
 	}
 }

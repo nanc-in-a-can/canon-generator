@@ -47,7 +47,7 @@ SynthDef(\portamento1, {|
 * @website www.ivan-naranjo.com
 * @email naranjoivan@gmail.com
 */
-SynthDef(\blipo, {|out, freq=60, amp=0.003, ampC, att=0.2, dur, sus=1, rel, nharm=1, dtime|
+/*SynthDef(\blipo, {|out, freq=60, amp=0.003, ampC, att=0.2, dur, sus=1, rel, nharm=1, dtime|
 	var sig, env, comv;
 	amp = amp * AmpCompA.kr(freq);
 	ampC = Select.kr(freq> (65.midicps), [0.01, 0.08]);
@@ -65,4 +65,4 @@ SynthDef(\blipo, {|out, freq=60, amp=0.003, ampC, att=0.2, dur, sus=1, rel, nhar
 	// sig = Pan2.ar(sig, pan, amp);
 	sig = Spreader.ar(sig)*amp;
 	OffsetOut.ar(out, Limiter.ar(sig, 0.1));//1, 2
-}).add;
+}).add;*/
