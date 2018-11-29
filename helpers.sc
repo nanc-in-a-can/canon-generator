@@ -14,14 +14,14 @@
 	}
 
 	//~makeDivVoices :: ([Float], [Float]) ->[(transp: Float, amp: Float)]
-	*makeDivVoices { |transps, amps = ([])|
+	*divoices { |transps, amps = ([])|
 		^transps.collect({|transp, i|
 			(transp: transp, amp: amps[i] ? 1)
 		})
 	}
 
 	//~makeDivTempos :: ([Float], [Float], Boolean) ->[(tempo: Float, percentage: Float)]
-	*makeDivTempos { | tempos, percentageForTempo, normalize= false|
+	*divtempos { | tempos, percentageForTempo, normalize= false|
 		var percentages = if(normalize, {percentageForTempo.normalizeSum*100}, {percentageForTempo});
 
 		^[tempos.size, percentageForTempo.size].minItem.collect({|i|
