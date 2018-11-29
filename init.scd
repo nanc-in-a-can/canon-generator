@@ -15,22 +15,7 @@ s.waitForBoot({
 });
 )
 
-(
-~config = ~presets.pyramidalMelody;
-~config[\instruments] = [\portamento, \pianola];
-/*~config[\player] = {|self, canon, instruments|
-	Task({
-		"customplayer".postln;
-		1.wait;
-		canon.postln;
-		1.wait;
-		instruments.postln;
-	})
-};*/
-c = Can.convergence(~config);
-c.play;
-nil
-)
+
 // c.player.pause
 
 
@@ -57,7 +42,7 @@ var player = {|self, canon, instruments|
 var canonConfig = (
   baseTempo: 60,
   instruments: [\pianola],
-	player: player,
+	//player: player,
   melody: [
     (dur: 1, note: 60),
     (dur: 1/2, note: 61),
@@ -82,8 +67,36 @@ Can.divergence(canonConfig).play
 )
 
 Can.makeMelody([1,2,3], [4,5,6])
-
-s = Can.defaultServerConfig
+(
+s = Can.defaultServerConfig;
 s.waitForBoot({
-	Can.registerDefaultSynthDefs
+	Can.registerDefaultSynthDefs;
+
+// ~config = ~presets.pyramidalMelody;
+// ~config[\instruments] = [\portamento, \pianola];
+~myplayer = {|canon, instruments|
+	Task({
+		"customplayer".postln;
+		1.wait;
+		canon.postln;
+		1.wait;
+		instruments.postln;
+	})
+};
+c = Can.converge(
+		instruments: [\portamento, \pianola],
+		// player: ~myplayer,
+        	cp: 600,
+        	melody: Can.melody(
+        		(16..40).pyramid.reciprocal.reverse.mirror,
+				((16..40).pyramidg.collect({|arr, i| arr+i})*12).flatten.reverse.mirror.cpsmidi
+        	),
+		voices: Can.convoices(
+			[120*7/12, 120*11/12, 120*13/12, 120*17/12, 120*19/12, 120*23/12],
+			[0,1,2,3,4,5]
+		)
+        );
+c.play;
+
 })
+)

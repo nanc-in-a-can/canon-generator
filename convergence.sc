@@ -1,5 +1,5 @@
 +Can {
-	*convergence {|data|
+	*converge {|melody, cp, voices, instruments, player|
 
     var
 	    makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
@@ -7,16 +7,16 @@
         makeTempo = {|speed| 60/(speed/4)},
 
         //creates voices [(melody: [(note, dur)], bcp)]
-        voices = (data.voices
+        voices1 = (voices
             .collect({|voice|
                 //for each melody set the correct durations and transposition
-                data.melody.collect({|event|
+                melody.collect({|event|
                     (dur: event.dur*makeTempo.(voice.tempo), note: event.note+voice.transp)
                 })
             })
             //get the durations of all notes Before the Convergence Point
             .collect({|voice|
-                var bcp = makeBcp.(data.cp, voice.collect(_.dur));
+                var bcp = makeBcp.(cp, voice.collect(_.dur));
 			    (melody: voice, bcp: bcp)
             })
         ),
@@ -24,11 +24,11 @@
 
         //sorted voices from shortes to longest
     	//[(durs: [Float], notes: [midiNote], bcp: [Float])]
-        sortedBySpeed = (voices.collect({|voice, i| (
+        sortedBySpeed = (voices1.collect({|voice, i| (
             durs: voice.melody.collect(_.dur),
             notes: voice.melody.collect(_.note),
             bcp: voice.bcp.sum,
-		    amp: data.voices[i].amp
+		    amp: voices1[i].amp
         )})
             .sort({|voice1, voice2| voice1.durs.sum < voice2.durs.sum })
         ),
@@ -47,14 +47,14 @@
     			bcp: voice.bcp,
     			onset: onset,
 			    amp: voice.amp,
-    			cp: data.cp
+    			cp: cp
     		)
     	}),
 
-		instruments = this.getInstruments(data),
+		instruments1 = this.getInstruments(instruments),
 
-		player = this.getPlayer(data, canon, instruments);
-
+		data = (melody: melody, cp: cp, voices: voices);
+		player = this.getPlayer(player, canon, instruments1);
 		^(
 			canon: canon,
 			data: data,

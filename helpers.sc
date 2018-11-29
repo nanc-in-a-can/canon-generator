@@ -1,13 +1,13 @@
 +Can {
-	//~makeMelody ::[Float] -> [Float] -> [(dur, note)]
-	*makeMelody {|durs, notes|
+	//~melody ::[Float] -> [Float] -> [(dur, note)]
+	*melody {|durs, notes|
 		^[durs.size, notes.size].minItem.collect({|i|
 			(dur: durs[i], note: notes[i])
 		})
 	}
 
-	//~makeConvVoices :: ([Float], [Float], [Float]) -> [(tempo, transp, amp)]
-	*makeConvVoices { | tempos, transps, amps = ([])|
+	//~convvoices :: ([Float], [Float], [Float]) -> [(tempo, transp, amp)]
+	*convoices { | tempos, transps, amps = ([])|
 		^[tempos.size, transps.size].minItem.collect({|i|
 			(tempo: tempos[i], transp: transps[i], amp: amps[i] ? 1)
 		})

@@ -5,16 +5,16 @@ Can {
 		defaultInstruments = [\pianola];
 	}
 
-	*getInstruments {|data|
-		^if(data.instruments != nil,
-			{data.instruments},
+	*getInstruments {|instruments|
+		^if(instruments != nil,
+			{instruments},
 			{this.defaultInstruments}
 		)
 	}
 
-	*getPlayer {|data, canon, instruments|
-		^if(data.player != nil,
-			{data.player(canon, instruments)},
+	*getPlayer {|player, canon, instruments|
+		^if(player != nil,
+			{player.(canon, instruments)},
 			{this.pPlayer(canon, instruments)}
 		)
 	}
