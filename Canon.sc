@@ -12,4 +12,12 @@ Canon {
 	stop {
 		player.stop
 	}
+
+	pause {
+		player.pause
+	}
+
+	resume {
+		player.resume
+	}
 }

@@ -1,5 +1,5 @@
-+Can {
-	*visualize {|server, madeCanon, autoScroll=true|
++Canon {
+	visualize {|server, autoScroll=true|
 
 	//--window setup
 	var width= 940, height= 580;
@@ -14,8 +14,8 @@
 			acc;
 		}).durs;
 	};
-	var canon = madeCanon.canon;
-	var data = madeCanon.data;
+	var canon = this.canon;
+	var data = this.data;
 	var y_values_V1 = canon[0].notes;
 	var line = canon[0].durs;
 	var x_values_V1 = getXValues.(line);
