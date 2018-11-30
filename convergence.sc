@@ -51,10 +51,12 @@
     		)
     	}),
 
-		instruments1 = this.getInstruments(instruments),
+		instruments_ = this.getInstruments(instruments),
 
-		data = (melody: melody, cp: cp, voices: voices);
-		player = this.getPlayer(player, canon, instruments1);
+		player_ = this.getPlayer(player, canon, instruments_),
+
+		data = (melody: melody, cp: cp, voices: voices, instruments: instruments_, player: player);
+
 		^(
 			canon: canon,
 			data: data,
