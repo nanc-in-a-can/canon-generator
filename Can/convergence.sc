@@ -57,12 +57,12 @@
 
 		data = (melody: melody, cp: cp, voices: voices, instruments: instruments_, player: player);
 
-		^(
+		^Canon(
 			canon: canon,
 			data: data,
 			player: player_,
-			play: {player_.play},
-			visualize: {|server, autoscroll = true| this.visualize(server, (canon: canon, data: data), autoscroll)}
+			// play: {player_.play},
+			// visualize: {|server, autoscroll = true| this.visualize(server, (canon: canon, data: data), autoscroll)}
 		);
 	}
 }
