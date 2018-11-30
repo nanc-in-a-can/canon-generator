@@ -1,33 +1,33 @@
-(//compile to initialize Nanc-in-a-Can
-Server.default.options.memSize= 512000*20;
-Server.default.options.numWireBufs= 512;
-s = Server.local;
-s.latency = 0.05;
-s.waitForBoot({
-	var baseDir = thisProcess.nowExecutingPath.dirname; // if you are not in an evironment where thisProcess.nowExecutingPath.dirname exists you can configure the path to the library
-	(baseDir++"/synthdef-instruments.scd").loadPaths;// add \pianola synthdef,
-	(baseDir++"/helpers.scd").load;// exports ~instrument, ~makeMelody, ~makeConvVoices, ~makeDivVoices, ~makeDivTempos, ~mergeCanons
-	(baseDir++"/visualize.scd").load;//exports ~visualize
-	(baseDir++"/convCanon.scd").load; //exports ~convCanon
-	(baseDir++"/divCanon.scd").load;//exports ~divCanon
-	(baseDir++"/presets/index.scd").load;// exports ~presets
-
-});
-)
-
-
-// c.player.pause
-
-
-
 (
-a = ();
-a.player = {|self, x| ("Hola"+x).postln};
-a.player(5)
-
+s = Can.defaultServerConfig;
+s.waitForBoot({
+	var player, canonConfig;
+	Can.registerDefaultSynthDefs;
+	Can.diverge(
+		baseTempo: 60,
+		instruments: [\pianola],
+		//player: player,
+		melody: [
+			(dur: 1, note: 60),
+			(dur: 1/2, note: 61),
+			(dur: 1/3, note: 62),
+			(dur: 1/4, note: 63)
+		],
+		voices: [ // Note that voices and tempos should be arrays of the same size
+			(transp: 2, amp: 0.7),
+			(transp: 10, amp: 0.5),
+			(transp: -12, amp: 1),
+			(transp: -8, amp: 1)
+		],
+		tempos: [
+			(tempo: 70,  percentage: 20),
+			(tempo: 40,  percentage: 30),
+			(tempo: 120, percentage: 10),
+			(tempo: 300, percentage: 40)
+		]
+	).play
+})
 )
-
-
 
 (
 var player = {|self, canon, instruments|
@@ -166,7 +166,5 @@ Can.divergence(
 })
 )
 
-~myPlayer.(CanPresets.naranjo.url, [\myinst]).play
 
 
-Can.naranjo
