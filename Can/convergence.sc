@@ -60,8 +60,8 @@
 		^(
 			canon: canon,
 			data: data,
-			player: player,
-			play: {player.play},
+			player: player_,
+			play: {player_.play},
 			visualize: {|server, autoscroll = true| this.visualize(server, (canon: canon, data: data), autoscroll)}
 		);
 	}
