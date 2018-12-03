@@ -4,6 +4,8 @@ s.waitForBoot({
 	var player, canonConfig;
 	Can.registerDefaultSynthDefs;
 	Can.diverge(
+		\hola,
+		repeat: inf,
 		baseTempo: 60,
 		instruments: [\pianola],
 		//player: player,
@@ -28,6 +30,8 @@ s.waitForBoot({
 	).play
 })
 )
+
+
 
 (
 var player = {|self, canon, instruments|
@@ -84,19 +88,19 @@ s.waitForBoot({
 	// 		instruments.postln;
 	// 	})
 	// };
-	// c = Can.converge(
-	// 	instruments: [\portamento, \pianola],
-	// 	// player: ~myplayer,
-	// 	cp: 600,
-	// 	melody: Can.melody(
-	// 		(16..40).pyramid.reciprocal.reverse.mirror,
-	// 		((16..40).pyramidg.collect({|arr, i| arr+i})*12).flatten.reverse.mirror.cpsmidi
-	// 	),
-	// 	voices: Can.convoices(
-	// 		[120*7/12, 120*11/12, 120*13/12, 120*17/12, 120*19/12, 120*23/12],
-	// 		[0,1,2,3,4,5]
-	// 	)
-	// );
+	c = Can.converge(
+		instruments: [\portamento, \pianola],
+		// player: ~myplayer,
+		cp: 600,
+		melody: Can.melody(
+			(16..40).pyramid.reciprocal.reverse.mirror,
+			((16..40).pyramidg.collect({|arr, i| arr+i})*12).flatten.reverse.mirror.cpsmidi
+			),
+		voices: Can.convoices(
+			[120*7/12, 120*11/12, 120*13/12, 120*17/12, 120*19/12, 120*23/12],
+			[0,1,2,3,4,5]
+			)
+		);
 	// c.visualize;
 
 
@@ -168,3 +172,22 @@ Can.divergence(
 
 
 
+
+(
+c = Can.converge(
+	// instruments: [\portamento, \pianola],
+		// player: ~myplayer,
+	    repeat: inf,
+		cp: 600,
+		melody: Can.melody(
+			(20..25).pyramid.reciprocal.reverse.mirror,
+			((20..25).pyramidg.collect({|arr, i| arr+i})*12).flatten.reverse.mirror.cpsmidi
+			),
+		voices: Can.convoices(
+			[120*7/12, 120*11/12, 120*13/12, 120*17/12, 120*19/12, 120*23/12],
+			[0,1,2,3,4,5]
+			)
+		);
+
+c.play;
+)

@@ -1,13 +1,15 @@
 +Can {
 	*prDiverge{
-		|melody, voices, tempos, baseTempo = 60, instruments, player|
+		|symbol, melody, voices, tempos, baseTempo = 60, instruments, player, repeat|
         var data = (
+			symbol: symbol,
             melody: melody,
             voices: voices,
             tempos: tempos,
             baseTempo: baseTempo,
             instruments: instruments,
-            player: player
+            player: player,
+			repeat: repeat
         );
         /**
 
@@ -161,27 +163,30 @@
     			onset: 0,
     			bcp: 0,
     			amp: data.voices[i].amp,
-    			cp: 0
+    			cp: 0,
+				remainder: 0
     		)
     	});
-	   instruments = this.getInstruments(data.instruments);
-	   player = this.getPlayer(data.player, canon, instruments);
+		var player_ = this.getPlayer(symbol, data.player, canon, instruments, repeat);
+		instruments = this.getInstruments(data.instruments);
 
-	^(
-		canon: canon,
-		player: player,
-		play: {player.play},
-		data: (
-			voices: data.tempos
-		)
-	);
+
+		^Canon(
+			canon: canon,
+			player: player_,
+			// play: {player_.play},
+			data: (
+				repeat: repeat,
+				voices: data.tempos
+			)
+		);
 	}
 
 	*diverge{
-		|melody, voices, tempos, baseTempo = 60, instruments, player|
+		|symbol, melody, voices, tempos, baseTempo = 60, instruments, player, repeat = 1|
 		^if(voices.size != tempos.size,
 			{"Can.divergence requires that arguments \"voices\" and \"tempos\" should be arrays of the same size.".throw},
-			{this.prDiverge(melody, voices, tempos, baseTempo, instruments, player)}
+			{this.prDiverge(symbol, melody, voices, tempos, baseTempo, instruments, player, repeat)}
 		)
 	}
 }

@@ -1,6 +1,6 @@
 +Can {
 
-	*pPlayer {|canon, instruments, repeat = 1|
+	*pPlayer {|symbol, canon, instruments, repeat = 1|
 
 		var pBindVoicePlayer = {|instrument, amp=1, pan=0, out=0, repeat=1|
 			{|voice, index|
@@ -20,12 +20,10 @@
 			pBindVoicePlayer.(
 				instruments,
 				amp: 1,
-				repeat: 2
+				repeat: repeat
 			)
 		);
 
-		instruments.postln;
-
-		^Pdef(\a, Ppar(result), repeat);
+		^Pdef(symbol ? UniqueID.next.asSymbol, Ppar(result), repeat);
 	}
 }
