@@ -8,8 +8,8 @@
             tempos: tempos,
             baseTempo: baseTempo,
             instruments: instruments,
-            player: player,
-			repeat: repeat
+			repeat: repeat,
+			player: {player} //we put the player function inside a function, because otherwise the Event object will excute it, we want to keep it as metadata, and for the Event object to return it
         );
         /**
 
@@ -169,7 +169,7 @@
     	});
 
 		instruments = this.getInstruments(data.instruments.postln);
-		player = this.getPlayer(symbol, player, canon, instruments, repeat);
+		player = this.getPlayer(symbol, data.player, canon, instruments, repeat);
 
 		^Canon(
 			canon: canon,

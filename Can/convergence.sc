@@ -55,7 +55,15 @@
 
 		player_ = this.getPlayer(symbol, player, canon, instruments_, repeat),
 
-		data = (symbol: symbol, melody: melody, cp: cp, voices: voices, instruments: instruments_, player: player, repeat: repeat);
+		data = (
+			symbol: symbol,
+			melody: melody,
+			cp: cp,
+			voices: voices,
+			instruments: instruments_,
+			player: {player}, //we put the player function inside a function, because otherwise the Event object will excute it, we want to keep it as metadata, and for the Event object to return it
+			repeat: repeat
+		);
 
 		^Canon(
 			canon: canon,
