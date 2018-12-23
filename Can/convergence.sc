@@ -1,12 +1,5 @@
-(
-//data must be an Event object with the following keys
-//(
-// cp: Int,//Note number on melody on which the convergence point should happen.
-// melody: [(dur: Float, note: midiNote)]// Array of Event objects with note and duration
-// voices: [(tempo: Float, transp: Float, amp: Float)]//Array of Event objects with tempo and transposition for each voice that will be generated
-//)
-
-~convCanon = {|data|
++Can {
+	*converge {|symbol, melody, cp, voices, instruments, player, repeat = 1|
 
     var
 	    makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
@@ -14,16 +7,16 @@
         makeTempo = {|speed| 60/(speed/4)},
 
         //creates voices [(melody: [(note, dur)], bcp)]
-        voices = (data.voices
+        voices1 = (voices
             .collect({|voice|
                 //for each melody set the correct durations and transposition
-                data.melody.collect({|event|
+                melody.collect({|event|
                     (dur: event.dur*makeTempo.(voice.tempo), note: event.note+voice.transp)
                 })
             })
             //get the durations of all notes Before the Convergence Point
             .collect({|voice|
-                var bcp = makeBcp.(data.cp, voice.collect(_.dur));
+                var bcp = makeBcp.(cp, voice.collect(_.dur));
 			    (melody: voice, bcp: bcp)
             })
         ),
@@ -31,11 +24,11 @@
 
         //sorted voices from shortes to longest
     	//[(durs: [Float], notes: [midiNote], bcp: [Float])]
-        sortedBySpeed = (voices.collect({|voice, i| (
+        sortedBySpeed = (voices1.collect({|voice, i| (
             durs: voice.melody.collect(_.dur),
             notes: voice.melody.collect(_.note),
             bcp: voice.bcp.sum,
-		    amp: data.voices[i].amp
+		    amp: voices1[i].amp
         )})
             .sort({|voice1, voice2| voice1.durs.sum < voice2.durs.sum })
         ),
@@ -54,23 +47,30 @@
     			bcp: voice.bcp,
     			onset: onset,
 			    amp: voice.amp,
-    			cp: data.cp
+    			cp: cp
     		)
-    	});
+    	}),
 
-	   (canon: canon, data: data);
+		instruments_ = this.getInstruments(instruments),
 
-    };
+		player_ = this.getPlayer(symbol, player, canon, instruments_, repeat),
 
-/*~convCanon.((
-            cp: 3,
-	        melody: [(dur: 1, note: 60), (dur: 1, note: 61), (dur: 1, note: 62), (dur: 1, note: 63)],
-			voices: [
-				(tempo: 70, transp: 0, amp: 1),
-				(tempo: 65, transp: -12, amp: 0.5),
-				(tempo: 57, transp: 12, amp: 0.7),
-				(tempo: 43, transp: 8, amp: 0.2)
-			]
-));*/
-)
+		data = (
+			symbol: symbol,
+			melody: melody,
+			cp: cp,
+			voices: voices,
+			instruments: instruments_,
+			player: {player}, //we put the player function inside a function, because otherwise the Event object will excute it, we want to keep it as metadata, and for the Event object to return it
+			repeat: repeat
+		);
 
+		^Canon(
+			canon: canon,
+			data: data,
+			player: player_,
+			// play: {player_.play},
+			// visualize: {|server, autoscroll = true| this.visualize(server, (canon: canon, data: data), autoscroll)}
+		);
+	}
+}

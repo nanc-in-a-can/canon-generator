@@ -1,6 +1,5 @@
-//Example of a visualization
-(
-~visualize = { |madeCanon, autoScroll=true|
++Canon {
+	visualize {|server, autoScroll=true|
 
 	//--window setup
 	var width= 940, height= 580;
@@ -15,8 +14,8 @@
 			acc;
 		}).durs;
 	};
-	var canon = madeCanon.canon;
-	var data = madeCanon.data;
+	var canon = this.canon;
+	var data = this.data;
 	var y_values_V1 = canon[0].notes;
 	var line = canon[0].durs;
 	var x_values_V1 = getXValues.(line);
@@ -139,7 +138,7 @@
 			\series, Pseries(0,1,inf),
 			/*messages to change the point positions in the map below*/
 			\coordinates, Pfunc({|event|
-				NetAddr("127.0.0.1", 57120).sendBundle(s.latency, [("/event"++index), if(event[\midinote].isArray, {event[\midinote][0]}, {event[\midinote]}), event[\series], event[\dur]])
+				NetAddr("127.0.0.1", 57120).sendBundle(server.latency, [("/event"++index), if(event[\midinote].isArray, {event[\midinote][0]}, {event[\midinote]}), event[\series], event[\dur]])
 			})
 		)
 	});
@@ -199,6 +198,6 @@
 	CmdPeriod.doOnce({if(w.isClosed.not, {w.close; patterns.do(_.stop)})});
 
 	if( autoScroll == true, {scroller.play(AppClock)});
-	nil;
-};
-);
+	^nil;
+}
+}
