@@ -535,6 +535,47 @@ Configurations:
 
 <!-- Fragment of Study 33  -->
 
+## OSC
+Default OSC behviour has been implemented for the default player.
+
+```
+s.boot
+Can.defaultServerConfig
+Can.registerDefaultSynthDefs
+o = OSCFunc(_.postln, \canosc, recvPort: 7777);
+(
+Can.converge(\can,
+  melody: Can.melody(
+    durs: [1, 1/5],
+    notes: [56, 58]
+  ),
+  cp: 2,
+  voices: Can.convoices(
+    tempos: [90, 120],
+    transps: [0, 1]
+  ),
+  osc: (port: 7777, path: \canosc, vals: [\dur, \midinote, \miko])
+).play
+)
+
+(
+Can.diverge(\divergre,
+  melody: Can.melody(
+    durs: [1, 1/5, 5],
+    notes: [56, 58, 70]
+  ),
+  voices: Can.divoices(
+    transps: [1,2]
+  ),
+  tempos: Can.divtempos(
+    tempos: [60, 70],
+    percentageForTempo: [40, 60]
+  ),
+  osc: (port: 7777, path: \canosc, vals: [\dur, \midinote, \miko])
+).play
+)
+```
+
 ----------------------------
 ## synthdef-instrument module.
 
