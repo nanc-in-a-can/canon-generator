@@ -1,5 +1,5 @@
 +Can {
-	*converge {|symbol, melody, cp, voices, instruments, player, repeat = 1|
+	*converge {|symbol, melody, cp, voices, instruments, player, repeat = 1, osc|
 
     var
 	    makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
@@ -53,7 +53,7 @@
 
 		instruments_ = this.getInstruments(instruments),
 
-		player_ = this.getPlayer(symbol, player, canon, instruments_, repeat),
+		player_ = this.getPlayer(symbol, player, canon, instruments_, repeat, osc),
 
 		data = (
 			symbol: symbol,
@@ -62,7 +62,8 @@
 			voices: voices,
 			instruments: instruments_,
 			player: {player}, //we put the player function inside a function, because otherwise the Event object will excute it, we want to keep it as metadata, and for the Event object to return it
-			repeat: repeat
+			repeat: repeat,
+			osc: osc
 		);
 
 		^Canon(

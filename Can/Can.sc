@@ -12,10 +12,10 @@ Can {
 		)
 	}
 
-	*getPlayer {|symbol, player, canon, instruments, repeat|
+	*getPlayer {|symbol, player, canon, instruments, repeat, osc|
 		^if(player != nil,
-			{player.(symbol, canon, instruments, repeat)},
-			{this.pPlayer(symbol, canon, instruments, repeat)}
+			{player.(symbol, canon, instruments, repeat, osc)},
+			{this.pPlayer(symbol, canon, instruments, repeat, osc)}
 		)
 	}
 }
