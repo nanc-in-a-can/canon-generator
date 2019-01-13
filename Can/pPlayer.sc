@@ -3,16 +3,14 @@
 	*pPlayer {|symbol, canon, instruments, repeat = 1, osc|
 		var sym = symbol ? UniqueID.next.asSymbol;
 
-		var oscSender = if(osc != nil, {NetAddr.new("127.0.0.1", osc.port ? 7777)});
-
 		var oscParam = if(osc != nil,
 			{
 				[
 					\osc,
 					Pfunc({|event|
-						oscSender.sendMsg(
+						osc.net.sendMsg(
 							*([osc.path ? \canosc] ++
-								osc.vals.collect(event[_]))
+								osc.send.collect(event[_])).flatten
 						)
 					})
 				]
