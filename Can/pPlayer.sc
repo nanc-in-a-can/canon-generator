@@ -1,6 +1,5 @@
 +Can {
-
-	*pPlayer {|symbol, canon, instruments, repeat = 1, osc|
+	*pPlayer {|symbol, canon, instruments, repeat = 1, osc, meta = (())|
 		var sym = symbol ? UniqueID.next.asSymbol;
 
 		var oscParam = if(osc != nil,
@@ -35,7 +34,7 @@
 		.collect(
 			pBindVoicePlayer.(
 				instruments,
-				amp: 1,
+				amp: meta.amp ? 1,
 				repeat: repeat
 			)
 		);

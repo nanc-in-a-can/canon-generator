@@ -1,5 +1,5 @@
 +Can {
-	*converge {|symbol, melody, cp, voices, instruments, player, repeat = 1, osc|
+	*converge {|symbol, melody, cp, voices, instruments, player, repeat = 1, osc, meta|
 
     var
 	    makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
@@ -53,7 +53,7 @@
 
 		instruments_ = this.getInstruments(instruments),
 
-		player_ = this.getPlayer(symbol, player, canon, instruments_, repeat, osc),
+		player_ = this.getPlayer(symbol, player, canon, instruments_, repeat, osc, meta),
 
 		data = (
 			symbol: symbol,
