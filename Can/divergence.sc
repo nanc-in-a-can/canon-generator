@@ -1,6 +1,6 @@
 +Can {
 	*prDiverge{
-		|symbol, melody, voices, tempos, baseTempo = 60, instruments, player, repeat|
+		|symbol, melody, voices, tempos, baseTempo = 60, instruments, player, repeat, convergeOnLast = false|
         var data = (
 			symbol: symbol,
             melody: melody,
@@ -142,7 +142,13 @@
         };
 
     	//initAndLast :: [a] -> (init:[a], last: a)
-    	var initAndLast = {|arr| (init: arr[..arr.size -2], last: arr[arr.size - 1])};
+    	var initAndLast = {|arr|
+			if(convergeOnLast,
+				{(init: arr[..arr.size -2], last: arr[arr.size - 1])},
+				{(init: arr, last: 0)}
+			)
+
+		};
     	var durations_ = initAndLast.(data.melody.collect(_.dur));//we do this so that the last note of each voice will fall in unison with the rest
     	var notes = data.melody.collect(_.note);
         var convertTemposToPropotions = {|tempos|
@@ -159,7 +165,7 @@
     	var canon = durations.collect({|voiceDurs, i|
     		(
     			notes: data.voices[i].transp+notes,
-    			durs: voiceDurs++[durations_.last],
+				durs: if(convergeOnLast, {voiceDurs++[durations_.last]}, {voiceDurs}),
     			onset: 0,
     			bcp: 0,
     			amp: data.voices[i].amp,
