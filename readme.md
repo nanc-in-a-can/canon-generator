@@ -68,7 +68,7 @@ Can.converge(\pachelbel
 (
 Can.diverge(\pachelbel,
 	repeat: inf,
-	instruments: [\grain],
+	instruments: [\pianola],
 	melody: Can.melody(
 		durs: (1/3!4)++(1/8!4),
 		notes: ([62, 57, 59, 54, 55, 50, 55, 57]!2).flatten.rotate(1)
