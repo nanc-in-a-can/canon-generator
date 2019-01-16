@@ -191,10 +191,10 @@
 	}
 
 	*diverge{
-		|symbol, melody, voices, tempos, baseTempo = 60, instruments, player, repeat = 1, osc|
+		|symbol, melody, voices, tempos, baseTempo = 60, instruments, player, repeat = 1, osc, convergeOnLast|
 		^if(voices.size != tempos.size,
 			{"Can.divergence requires that arguments \"voices\" and \"tempos\" should be arrays of the same size.".throw},
-			{this.prDiverge(symbol, melody, voices, tempos, baseTempo, instruments, player, repeat, osc)}
+			{this.prDiverge(symbol, melody, voices, tempos, baseTempo, instruments, player, repeat, osc, convergeOnLast)}
 		)
 	}
 }
