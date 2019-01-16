@@ -12,10 +12,15 @@ Can {
 		)
 	}
 
-	*getPlayer {|symbol, player, canon, instruments, repeat|
+	*init {
+		Can.registerDefaultSynthDefs;
+		Can.defaultServerConfig;
+	}
+
+	*getPlayer {|symbol, player, canon, instruments, repeat, osc, meta|
 		^if(player != nil,
-			{player.(symbol, canon, instruments, repeat)},
-			{this.pPlayer(symbol, canon, instruments, repeat)}
+			{player.(symbol, canon, instruments, repeat, osc, meta)},
+			{this.pPlayer(symbol, canon, instruments, repeat, osc, meta)}
 		)
 	}
 }

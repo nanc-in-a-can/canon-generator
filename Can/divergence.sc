@@ -1,6 +1,7 @@
 +Can {
 	*prDiverge{
-		|symbol, melody, voices, tempos, baseTempo = 60, instruments, player, repeat, convergeOnLast = false|
+		|symbol, melody, voices, tempos, baseTempo = 60, instruments, player, repeat, osc, convergeOnLast = false|
+
         var data = (
 			symbol: symbol,
             melody: melody,
@@ -175,7 +176,7 @@
     	});
 
 		instruments = this.getInstruments(data.instruments.postln);
-		player = this.getPlayer(symbol, data.player, canon, instruments, repeat);
+		player = this.getPlayer(symbol, data.player, canon, instruments, repeat, osc);
 
 		^Canon(
 			canon: canon,
@@ -183,16 +184,17 @@
 			// play: {player_.play},
 			data: (
 				repeat: repeat,
-				voices: data.tempos
+				voices: data.tempos,
+				osc: osc
 			)
 		);
 	}
 
 	*diverge{
-		|symbol, melody, voices, tempos, baseTempo = 60, instruments, player, repeat = 1|
+		|symbol, melody, voices, tempos, baseTempo = 60, instruments, player, repeat = 1, osc|
 		^if(voices.size != tempos.size,
 			{"Can.divergence requires that arguments \"voices\" and \"tempos\" should be arrays of the same size.".throw},
-			{this.prDiverge(symbol, melody, voices, tempos, baseTempo, instruments, player, repeat)}
+			{this.prDiverge(symbol, melody, voices, tempos, baseTempo, instruments, player, repeat, osc)}
 		)
 	}
 }

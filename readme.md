@@ -22,10 +22,10 @@ Sound Only:
 
 ```supercollider
 (
-  Can.defaultServerConfig
-  Can.registerDefaultSynthDefs
-  s.boot
-  ThePresetCan.pyramidCanon.play
+  Can.defaultServerConfig;
+  Can.registerDefaultSynthDefs;
+  s.boot;
+  ThePresetCan.pyramidCanon.play;
 )
 
 ```
@@ -34,10 +34,10 @@ Sound and Visualization:
 
 ```supercollider
 (
-  Can.defaultServerConfig
-  Can.registerDefaultSynthDefs
-  s.boot
-  ThePresetCan.pyramidCanon.visualize(s)
+  Can.defaultServerConfig;
+  Can.registerDefaultSynthDefs;
+  s.boot;
+  ThePresetCan.pyramidCanon.visualize(s);
 )
 ```
 
@@ -47,7 +47,7 @@ Sound and Visualization:
 
 ```supercollider
 (
-Can.converge(\pachelbel
+Can.converge(\pachelbel,
 	melody: Can.melody(
 		durs: (1/4!8),
 		notes: [62, 57, 59, 54, 55, 50, 55, 57]
@@ -68,17 +68,17 @@ Can.converge(\pachelbel
 (
 Can.diverge(\pachelbel,
 	repeat: inf,
-	instruments: [\pianola],
+	instruments: [\grain],
 	melody: Can.melody(
-		durs: (1/3!4)++(1/8!4),
-		notes: ([62, 57, 59, 54, 55, 50, 55, 57]!2).flatten.rotate(1)
+		durs: (1/3!4)++(1/18!4)++(1/9!4),
+		notes: ([62, 57, 59, 54, 55, 50, 55, 57]!3).flatten.rotate(4)
 	),
 	voices: Can.divoices(
-		transps: [0, 0, 5, 7]
+		transps: [0, 0, 5, 7, 10]
 	),
 	tempos: Can.divtempos(
-		tempos: [2, 1, 3, 5],
-		percentageForTempo: [2, 3, 5, 5],
+		tempos: [2, 1, 3, 5, 1],
+		percentageForTempo: [2, 3, 5, 5, 1],
 		normalize: true
 	),
 	baseTempo: 120
@@ -102,5 +102,48 @@ Can.converge(\pachelbel,
     ),
     repeat: inf
 ).visualize(s);
+)
+```
+
+## OSC
+
+Default OSC behviour has been implemented for the default player.
+
+```
+s.boot
+Can.defaultServerConfig
+Can.registerDefaultSynthDefs
+o = OSCFunc(_.postln, \canosc, recvPort: 7777);
+~osc  = (net: NetAddr("localhost", 7777), send: [\dur, \midinote]);
+(
+Can.converge(\can,
+  melody: Can.melody(
+    durs: [1, 1/5],
+    notes: [56, 58]
+  ),
+  cp: 2,
+  voices: Can.convoices(
+    tempos: [90, 120],
+    transps: [0, 1]
+  ),
+  osc: ~osc
+).play
+)
+
+(
+Can.diverge(\divergre,
+  melody: Can.melody(
+    durs: [1, 1/5, 5],
+    notes: [56, 58, 70]
+  ),
+  voices: Can.divoices(
+    transps: [1,2]
+  ),
+  tempos: Can.divtempos(
+    tempos: [60, 70],
+    percentageForTempo: [40, 60]
+  ),
+  osc: ~osc
+).play
 )
 ```

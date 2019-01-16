@@ -1,17 +1,32 @@
 +Can {
+	*pPlayer {|symbol, canon, instruments, repeat = 1, osc, meta = (())|
+		var sym = symbol ? UniqueID.next.asSymbol;
 
-	*pPlayer {|symbol, canon, instruments, repeat = 1|
+		var oscParam = if(osc != nil,
+			{
+				[
+					\osc,
+					Pfunc({|event|
+						osc.net.sendMsg(
+							*([osc.path ? \canosc] ++
+								osc.send.collect(event[_])).flatten
+						)
+					})
+				]
+			},
+			{[]}
+		);
 
 		var pBindVoicePlayer = {|instrument, amp=1, pan=0, out=0, repeat=1|
 			{|voice, index|
-				Pbind(
+				Pbind(*[
 					\instrument, instrument.wrapAt(index),
 					\dur, Pseq([voice.onset] ++ voice.durs ++ [voice.remainder], repeat),
-					\midinote, Pseq([\rest]++voice.notes ++ [\rest], inf),
+					\midinote, Pseq([\rest] ++ voice.notes ++ [\rest], inf),
 					\out, out,
 					\amp, amp * (voice.amp ? 1),
 					\pan, pan,
-				)
+				]++oscParam)
 			}
 		};
 
@@ -19,11 +34,12 @@
 		.collect(
 			pBindVoicePlayer.(
 				instruments,
-				amp: 1,
+				amp: meta.amp ? 1,
 				repeat: repeat
 			)
 		);
 
-		^Pdef(symbol ? UniqueID.next.asSymbol, Ppar(result), repeat);
+
+		^Pdef(sym, Ppar(result), repeat);
 	}
 }
