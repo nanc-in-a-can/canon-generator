@@ -175,7 +175,7 @@
     		)
     	});
 
-		instruments = this.getInstruments(data.instruments.postln);
+		instruments = this.getInstruments(data.instruments);
 		player = this.getPlayer(symbol, data.player, canon, instruments, repeat, osc);
 
 		^Canon(
