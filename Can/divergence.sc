@@ -181,7 +181,6 @@
 		^Canon(
 			canon: canon,
 			player: player,
-			// play: {player_.play},
 			data: (
 				repeat: repeat,
 				voices: data.tempos,
