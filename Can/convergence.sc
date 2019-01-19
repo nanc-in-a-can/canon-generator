@@ -22,7 +22,7 @@
         ),
 
 
-        //sorted voices from shortes to longest
+        //sorted voices from longest to shortes
     	//[(durs: [Float], notes: [midiNote], bcp: [Float])]
         sortedBySpeed = (voices1.collect({|voice, i| (
             durs: voice.melody.collect(_.dur),
@@ -30,20 +30,20 @@
             bcp: voice.bcp.sum,
 		    amp: voices1[i].amp
         )})
-            .sort({|voice1, voice2| voice1.durs.sum < voice2.durs.sum })
+            .sort({|voice1, voice2| voice1.durs.sum > voice2.durs.sum })
         ),
 
         //voice onset times
         onsets = sortedBySpeed.reverse.inject([], {|acc, elem|
-            acc ++ [(sortedBySpeed.reverse[0].bcp - elem.bcp).abs];
+            acc ++ [(sortedBySpeed[0].bcp - elem.bcp).abs];
         }),
 
     	canon = sortedBySpeed.collect({|voice, i|
-		    var onset = (sortedBySpeed[sortedBySpeed.size - 1].bcp - voice.bcp).abs;
+		    var onset = (sortedBySpeed[0].bcp - voice.bcp).abs;
     		(
     			durs: voice.durs,
     			notes: voice.notes,
-			    remainder: sortedBySpeed[sortedBySpeed.size - 1].durs.sum - (onset + voice.durs.sum),
+			    remainder: sortedBySpeed[0].durs.sum - (onset + voice.durs.sum),
     			bcp: voice.bcp,
     			onset: onset,
 			    amp: voice.amp,
