@@ -33,10 +33,9 @@
 	*mergeCanons {|a, b|
 		var canon = a.canon ++ b.canon;
 		var player = this.getPlayer(a.data.player, canon, a.data.instruments);
-		^(
+		^Canon(
 			canon: canon,
 			player: player,
-			play: {player.play},
 			data: (
 				voices: a.data.voices ++ b.data.voices,
 				cp: [a.data.cp, b.data.cp].minItem,//for now we keep only the first cp, for the visualizer purposes, it does not affect the cp in the canons that will sound
