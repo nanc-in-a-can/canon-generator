@@ -2,31 +2,38 @@
 	*pPlayer {|symbol, canon, instruments, repeat = 1, osc, meta = (())|
 		var sym = symbol ? UniqueID.next.asSymbol;
 
-		var oscParam = if(osc != nil,
-			{
-				[
-					\osc,
-					Pfunc({|event|
-						osc.net.sendMsg(
-							*([osc.path ? \canosc] ++
-								osc.send.collect(event[_])).flatten
-						)
-					})
-				]
-			},
-			{[]}
-		);
+		var oscParam = {|voiceIndex, cp|
+			if(osc != nil,
+				{
+					[
+						\osc,
+						Pfunc({|event|
+							osc.net.sendMsg(
+								*([osc.path ? \canosc, rrand(0,34), cp] ++
+									osc.send.collect(event[_])).flatten
+							)
+						})
+					]
+				},
+				{[]}
+			)
+		};
+
+
 
 		var pBindVoicePlayer = {|instrument, amp=1, pan=0, out=0, repeat=1|
 			{|voice, index|
-				Pbind(*[
+				var pairs = [
 					\instrument, instrument.wrapAt(index),
 					\dur, Pseq([voice.onset] ++ voice.durs ++ [voice.remainder], repeat),
 					\midinote, Pseq([\rest] ++ voice.notes ++ [\rest], inf),
 					\out, out,
-					\amp, amp * (voice.amp ? 1),
+					\amp, (amp * (voice.amp ? 1)),
 					\pan, pan,
-				]++oscParam)
+				]
+				++oscParam.(index, voice.cp)
+				++(meta.pbind ? []);
+				Pbind(*pairs)
 			}
 		};
 
@@ -35,7 +42,8 @@
 			pBindVoicePlayer.(
 				instruments,
 				amp: meta.amp ? 1,
-				repeat: repeat
+				repeat: repeat,
+				out: meta.out ? 0
 			)
 		);
 
