@@ -191,9 +191,13 @@
 
 	*diverge{
 		|symbol, melody, voices, tempos, baseTempo = 60, instruments, player, repeat = 1, osc, meta, convergeOnLast = false|
-		^if(voices.size != tempos.size,
-			{"Can.divergence requires that arguments \"voices\" and \"tempos\" should be arrays of the same size.".throw},
-			{this.prDiverge(symbol, melody, voices, tempos, baseTempo, instruments, player, repeat, osc, meta, convergeOnLast)}
-		)
+		^try
+		{
+			if(voices.size != tempos.size,
+				{"Can.divergence requires that arguments \"voices\" and \"tempos\" to be arrays of the same size.".throw},
+				{this.prDiverge(symbol, melody, voices, tempos, baseTempo, instruments, player, repeat, osc, meta, convergeOnLast)}
+			)
+		}
+		{_.error;}
 	}
 }
