@@ -11,7 +11,7 @@
         //creates voices [(melody: [(note, dur)], bcp)]
         voices1 = (voices
             .collect({|voice|
-				var voiceNotes = voice[\transp].isFunction.if(
+                var voiceNotes = voice[\transp].isFunction.if(
                     {voice[\transp].(notes)}
                 );
                 //for each melody set the correct durations and transposition
