@@ -2,6 +2,8 @@
 	*converge {|symbol, melody, cp, voices, instruments, player, repeat = 1, osc, meta|
 
     var
+        cp_ = cp.isFunction.if({cp.(melody)}, {cp}),
+
 	    makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
 
         makeTempo = {|speed| 60/(speed/4)},
@@ -16,7 +18,7 @@
             })
             //get the durations of all notes Before the Convergence Point
             .collect({|voice|
-                var bcp = makeBcp.(cp, voice.collect(_.dur));
+                var bcp = makeBcp.(cp_, voice.collect(_.dur));
 			    (melody: voice, bcp: bcp)
             })
         ),
@@ -47,7 +49,7 @@
     			bcp: voice.bcp,
     			onset: onset,
 			    amp: voice.amp,
-    			cp: cp
+    			cp: cp_
     		)
     	}),
 
@@ -58,7 +60,7 @@
 		data = (
 			symbol: symbol,
 			melody: melody,
-			cp: cp,
+			cp: cp_,
 			voices: voices,
 			instruments: instruments_,
 			player: {player}, //we put the player function inside a function, because otherwise the Event object will excute it, we want to keep it as metadata, and for the Event object to return it
