@@ -1,16 +1,16 @@
 +Can {
-	*converge {|symbol, melody, cp, voices, instruments, player, cycle, repeat = 1, osc, meta|
+	*converge {|symbol, melody, cp, voices, instruments, cycle, player, repeat = 1, osc, meta|
 
     var
 	    makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
 
         makeTempo = {|speed| 60/(speed/4)},
 
-		slowestTempo = voices.collect(_.tempo).minItem.postm("slowestTempo"),
+		slowestTempo = voices.collect(_.tempo).minItem,
 
-		canonLength = melody.collect(_.dur).sum*makeTempo.(slowestTempo),
+		totalDur = melody.collect(_.dur).sum*makeTempo.(slowestTempo),
 
-		scalingFactor = cycle.isNil.if({1}, {cycle/canonLength}),
+		scalingFactor = cycle.isNil.if({1}, {cycle/totalDur}),
 
         //creates voices [(melody: [(note, dur)], bcp)]
         voices1 = (voices
