@@ -6,6 +6,13 @@
 		})
 	}
 
+	*isomelody {|durs, notes, len|
+		var len_ = len ? max(durs.size, notes.size);
+		^len_.collect({|i|
+			(dur: durs.wrapAt(i), note: notes.wrapAt(i))
+		});
+	}
+
 	//convvoices :: ([Float], [Float], [Float]) -> [(tempo, transp, amp)]
 	*convoices { | tempos, transps, amps = ([])|
 		^[tempos.size, transps.size].minItem.collect({|i|
