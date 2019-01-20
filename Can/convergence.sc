@@ -12,36 +12,36 @@
         voices1 = (voices
             .collect({|voice|
 				var voiceNotes = voice[\transp].isFunction.if(
-					{voice[\transp].(notes)}
-				);
+                    {voice[\transp].(notes)}
+                );
                 //for each melody set the correct durations and transposition
                 melody.collect({|event, i|
-					var note = voice[\transp].isFunction.if(
-						{voiceNotes[i]},
-						{event.note+voice.transp}
-					);
+                    var note = voice[\transp].isFunction.if(
+                        {voiceNotes[i]},
+                        {event.note+voice.transp}
+                    );
                     (
-						dur: event.dur*makeTempo.(voice.tempo),
-						note: note
-					)
+                        dur: event.dur*makeTempo.(voice.tempo),
+                        note: note
+                    )
                 })
-            })
+			})
             //get the durations of all notes Before the Convergence Point
             .collect({|voice|
                 var bcp = makeBcp.(cp, voice.collect(_.dur));
-			    (melody: voice, bcp: bcp)
+                (melody: voice, bcp: bcp)
             })
-        ),
+		),
 
 
         //sorted voices from longest to shortes
-    	//[(durs: [Float], notes: [midiNote], bcp: [Float])]
-        sortedBySpeed = (voices1.collect({|voice, i| (
-            durs: voice.melody.collect(_.dur),
-            notes: voice.melody.collect(_.note),
-            bcp: voice.bcp.sum,
+		//[(durs: [Float], notes: [midiNote], bcp: [Float])]
+		sortedBySpeed = (voices1.collect({|voice, i| (
+			durs: voice.melody.collect(_.dur),
+			notes: voice.melody.collect(_.note),
+			bcp: voice.bcp.sum,
 		    amp: voices1[i].amp
-        )})
+		)})
             .sort({|voice1, voice2| voice1.durs.sum > voice2.durs.sum })
         ),
 
