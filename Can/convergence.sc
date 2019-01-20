@@ -1,17 +1,23 @@
 +Can {
-	*converge {|symbol, melody, cp, voices, instruments, player, repeat = 1, osc, meta|
+	*converge {|symbol, melody, cp, voices, instruments, player, cycle, repeat = 1, osc, meta|
 
     var
 	    makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
 
         makeTempo = {|speed| 60/(speed/4)},
 
+		slowestTempo = voices.collect(_.tempo).minItem.postm("slowestTempo"),
+
+		canonLength = melody.collect(_.dur).sum*makeTempo.(slowestTempo),
+
+		scalingFactor = cycle.isNil.if({1}, {cycle/canonLength}),
+
         //creates voices [(melody: [(note, dur)], bcp)]
         voices1 = (voices
             .collect({|voice|
                 //for each melody set the correct durations and transposition
                 melody.collect({|event|
-                    (dur: event.dur*makeTempo.(voice.tempo), note: event.note+voice.transp)
+                    (dur: event.dur*makeTempo.(voice.tempo)*scalingFactor, note: event.note+voice.transp)
                 })
             })
             //get the durations of all notes Before the Convergence Point
