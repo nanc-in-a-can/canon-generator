@@ -6,12 +6,24 @@
 
         makeTempo = {|speed| 60/(speed/4)},
 
+		notes = melody.collect(_.note),// used on transposition when voice.transp.isFunction, not the most efficient implementation, because we go back to what Can.melody takes as input, but may do for now
+
         //creates voices [(melody: [(note, dur)], bcp)]
         voices1 = (voices
             .collect({|voice|
+				var voiceNotes = voice[\transp].isFunction.if(
+					{voice[\transp].(notes)}
+				);
                 //for each melody set the correct durations and transposition
-                melody.collect({|event|
-                    (dur: event.dur*makeTempo.(voice.tempo), note: event.note+voice.transp)
+                melody.collect({|event, i|
+					var note = voice[\transp].isFunction.if(
+						{voiceNotes[i]},
+						{event.note+voice.transp}
+					);
+                    (
+						dur: event.dur*makeTempo.(voice.tempo),
+						note: note
+					)
                 })
             })
             //get the durations of all notes Before the Convergence Point
