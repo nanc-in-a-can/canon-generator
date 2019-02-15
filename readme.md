@@ -22,9 +22,11 @@ Sound Only:
 
 ```supercollider
 (
-  Can.defaultServerConfig;
-  Can.registerDefaultSynthDefs;
+  Can.init;
   s.boot;
+)
+
+(
   ThePresetCan.pyramidCanon.play;
 )
 
@@ -34,9 +36,11 @@ Sound and Visualization:
 
 ```supercollider
 (
-  Can.defaultServerConfig;
-  Can.registerDefaultSynthDefs;
+  Can.init;
   s.boot;
+)
+
+(
   ThePresetCan.pyramidCanon.visualize(s);
 )
 ```
@@ -49,7 +53,7 @@ Sound and Visualization:
 (
 Can.converge(\pachelbel,
 	melody: Can.melody(
-		durs: (1/4!8),
+		durs: [1/4, 1/4, 1/4, 1/4, 1/4, 1/4, 1/4, 1/4],
 		notes: [62, 57, 59, 54, 55, 50, 55, 57]
 	),
 	cp: 6,
@@ -105,11 +109,33 @@ Can.converge(\pachelbel,
 )
 ```
 
-## OSC
-
-Default OSC behviour has been implemented for the default player.
+## Nicer examples
 
 ```
+(
+Can.converge(
+	melody: Can.melody(
+		(1!100), // this canon may last ca. 18 minutes, change 1 to 1/2, 1/3 etc. your suit your needs, multiple simultaneous canons at different speeds also work well
+		//longer durations of a canon help on percieving the "echoic distance" of the voices as they approach or distance themselves from the convergence point
+		((40..90).scramble.mirror*rrand(0.6, 1.2))+10
+	),
+	repeat: 1,
+	cp: rrand(0, 100),
+	voices: Can.convoices(
+		tempos: (Array.series(50, 30, 5)*rrand(0.5, 1)),
+		transps: (Array.series(50, -20, 1))*rrand(0.5, 0.7)
+	),
+	instruments: [\sin],
+	meta: (amp: 0.2),
+).play;
+)
+```
+
+## OSC
+
+Default OSC behavior has been implemented for the default player.
+
+```supercollider
 s.boot
 Can.defaultServerConfig
 Can.registerDefaultSynthDefs
