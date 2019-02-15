@@ -1,5 +1,5 @@
 +Can {
-	*converge {|symbol, melody, cp, voices, instruments, cycle, player, repeat = 1, osc, meta|
+	*converge {|symbol, melody, cp, voices, instruments, period, player, repeat = 1, osc, meta|
 
     var
         cp_ = cp.isFunction.if({cp.(melody)}, {cp}),
@@ -12,32 +12,43 @@
 
 		totalDur = melody.collect(_.dur).sum*makeTempo.(slowestTempo),
 
-		scalingFactor = cycle.isNil.if({1}, {cycle/totalDur}),
+		scalingFactor = period.isNil.if({1}, {period/totalDur}),
+		notes = melody.collect(_.note),// used on transposition when voice.transp.isFunction, not the most efficient implementation, because we go back to what Can.melody takes as input, but may do for now
 
         //creates voices [(melody: [(note, dur)], bcp)]
         voices1 = (voices
             .collect({|voice|
+                var voiceNotes = voice[\transp].isFunction.if(
+                    {voice[\transp].(notes)}
+                );
                 //for each melody set the correct durations and transposition
-                melody.collect({|event|
-                    (dur: event.dur*makeTempo.(voice.tempo)*scalingFactor, note: event.note+voice.transp)
+                melody.collect({|event, i|
+                    var note = voice[\transp].isFunction.if(
+                        {voiceNotes[i]},
+                        {event.note+voice.transp}
+                    );
+                    (
+                        dur: event.dur*makeTempo.(voice.tempo)*scalingFactor,
+                        note: note
+                    )
                 })
-            })
+			})
             //get the durations of all notes Before the Convergence Point
             .collect({|voice|
                 var bcp = makeBcp.(cp_, voice.collect(_.dur));
 			    (melody: voice, bcp: bcp)
             })
-        ),
+		),
 
 
         //sorted voices from longest to shortes
-    	//[(durs: [Float], notes: [midiNote], bcp: [Float])]
-        sortedBySpeed = (voices1.collect({|voice, i| (
-            durs: voice.melody.collect(_.dur),
-            notes: voice.melody.collect(_.note),
-            bcp: voice.bcp.sum,
+		//[(durs: [Float], notes: [midiNote], bcp: [Float])]
+		sortedBySpeed = (voices1.collect({|voice, i| (
+			durs: voice.melody.collect(_.dur),
+			notes: voice.melody.collect(_.note),
+			bcp: voice.bcp.sum,
 		    amp: voices1[i].amp
-        )})
+		)})
             .sort({|voice1, voice2| voice1.durs.sum > voice2.durs.sum })
         ),
 
