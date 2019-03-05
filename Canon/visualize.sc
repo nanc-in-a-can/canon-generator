@@ -1,5 +1,5 @@
 +Canon {
-	visualize {|server, autoScroll=true|
+	visualize {|server, autoScroll=true, instrument=\pianola|
 
 	//--window setup
 	var width= 940, height= 580;
@@ -128,7 +128,7 @@
 
 	var patterns = canon.collect({|line, index|
 		Pbind(
-			\instrument, \pianola,
+			\instrument, instrument,
 			\dur, Pseq([line.onset] ++ line.durs, 1),
 			\midinote, Pseq([\rest]++line.notes,inf),
 			\out, [0, /*~reverbBus.index*/],
