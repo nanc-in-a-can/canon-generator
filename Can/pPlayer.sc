@@ -47,7 +47,7 @@
 		);
 
 		pdef = Pdef(sym, Ppar(result), repeat);
-		pdef.quant = meta.quant ? 0;
+		pdef.quant = meta.quant ? 1;
 		^pdef;
 	}
 }
