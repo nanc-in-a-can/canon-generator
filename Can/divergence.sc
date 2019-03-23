@@ -1,6 +1,6 @@
 +Can {
 	*prDiverge{
-		|symbol, melody, voices, tempos, baseTempo = 60, instruments, cycle, player, repeat, osc, meta, convergeOnLast = false|
+		|symbol, melody, voices, tempos, baseTempo = 60, instruments, period, player, repeat, osc, meta, convergeOnLast = false|
 
         var data = (
 			symbol: symbol,
@@ -165,7 +165,7 @@
 		.collect(_.collect(toSeconds.(data.baseTempo, _)))
 		.inject((scalingFactor: nil, durs: List []), {|acc, durs|
 			acc.scalingFactor = acc.scalingFactor.isNil.if(
-				cycle.isNil.if({1}, {cycle/durs.sum}),
+				period.isNil.if({1}, {period/durs.sum}),
 				{acc.scalingFactor}
 			);
 			acc.durs.add(durs*acc.scalingFactor);
@@ -201,12 +201,12 @@
 	}
 
 	*diverge{
-		|symbol, melody, voices, tempos, baseTempo = 60, instruments, cycle, player, repeat = 1, osc, meta, convergeOnLast = false|
+		|symbol, melody, voices, tempos, baseTempo = 60, instruments, period, player, repeat = 1, osc, meta, convergeOnLast = false|
 		^try
 		{
 			if(voices.size != tempos.size,
 				{"Can.divergence requires that arguments \"voices\" and \"tempos\" to be arrays of the same size.".throw},
-				{this.prDiverge(symbol, melody, voices, tempos, baseTempo, instruments, cycle, player, repeat, osc, meta, convergeOnLast)}
+				{this.prDiverge(symbol, melody, voices, tempos, baseTempo, instruments, period, player, repeat, osc, meta, convergeOnLast)}
 			)
 		}
 		{_.error;}

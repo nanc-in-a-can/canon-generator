@@ -13,6 +13,7 @@
 		totalDur = melody.collect(_.dur).sum*makeTempo.(slowestTempo),
 
 		scalingFactor = period.isNil.if({1}, {period/totalDur}),
+
 		notes = melody.collect(_.note),// used on transposition when voice.transp.isFunction, not the most efficient implementation, because we go back to what Can.melody takes as input, but may do for now
 
         //creates voices [(melody: [(note, dur)], bcp)]
