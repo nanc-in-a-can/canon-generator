@@ -1,5 +1,5 @@
 +Can {
-	*converge {|symbol, melody, cp, voices, instruments, cycle, player, repeat = 1, osc, meta|
+	*converge {|symbol, melody, cp, voices, instruments, period, player, repeat = 1, osc, meta|
 
     var
 	    makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
@@ -10,7 +10,7 @@
 
 		totalDur = melody.collect(_.dur).sum*makeTempo.(slowestTempo),
 
-		scalingFactor = cycle.isNil.if({1}, {cycle/totalDur}),
+		scalingFactor = period.isNil.if({1}, {period/totalDur}),
 
         //creates voices [(melody: [(note, dur)], bcp)]
         voices1 = (voices
