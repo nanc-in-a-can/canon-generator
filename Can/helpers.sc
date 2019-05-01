@@ -1,9 +1,16 @@
 +Can {
-	//melody ::[Float] -> [Float] -> [(dur, note)]
+	//melody :: ([Float], [Float]) -> [(dur, note)]
 	*melody {|durs, notes|
 		^[durs.size, notes.size].minItem.collect({|i|
 			(dur: durs[i], note: notes[i])
 		})
+	}
+	//isomelody ::([Float], [Float], Int) -> [(dur, note)]
+	*isomelody {|durs, notes, len|
+		var len_ = len ? max(durs.size, notes.size);
+		^len_.collect({|i|
+			(dur: durs.wrapAt(i), note: notes.wrapAt(i))
+		});
 	}
 
 	//convvoices :: ([Float], [Float], [Float]) -> [(tempo, transp, amp)]

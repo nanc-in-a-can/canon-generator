@@ -1,5 +1,6 @@
 +Can {
 	*pPlayer {|symbol, canon, instruments, repeat = 1, osc, meta = (())|
+		var pdef;
 		var sym = symbol ? UniqueID.next.asSymbol;
 
 		var oscParam = {|voiceIndex, cp|
@@ -19,8 +20,6 @@
 			)
 		};
 
-
-
 		var pBindVoicePlayer = {|instrument, amp=1, pan=0, out=0, repeat=1|
 			{|voice, index|
 				var pairs = [
@@ -29,7 +28,7 @@
 					\midinote, Pseq([\rest] ++ voice.notes ++ [\rest], inf),
 					\out, out,
 					\amp, (amp * (voice.amp ? 1)),
-					\pan, pan,
+					\pan, pan
 				]
 				++oscParam.(index, voice.cp)
 				++(meta.pbind ? []);
@@ -47,7 +46,8 @@
 			)
 		);
 
-
-		^Pdef(sym, Ppar(result), repeat);
+		pdef = Pdef(sym, Ppar(result), repeat);
+		pdef.quant = meta.quant ? 1;
+		^pdef;
 	}
 }
