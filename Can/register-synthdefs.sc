@@ -36,8 +36,12 @@
 			gate=1
 			|
 			var sig = {
-				SinOsc.ar(Lag.kr(freq, portamento), 0, Lag.kr(portamento_amp, portamento_amp_speed)) * EnvGen.kr(Env.asr(0.1, amp, 1.3), gate, doneAction:2)
-			} ;
+				SinOsc.ar(
+                    Lag.kr(freq, portamento),
+                    0,
+                    Lag.kr(portamento_amp, portamento_amp_speed))
+                * EnvGen.kr(Env.asr(0.1, amp, 1.3), gate, doneAction:2)
+            } ;
 			Out.ar(0, sig ! 2);
 		}).add;
 
@@ -51,22 +55,20 @@
             out = 0
             |
             var sig = {
-                SinOsc.ar(
+                var sig = SinOsc.ar(
                     Lag.kr(freq, portamento),
                     0,
                     Lag.kr(portamento_amp, portamento_amp_speed)
-		)
-                .pipe(
-                    BHiShelf.ar(_, freq: 800, rs: 0.3, db: -10),
-                    _* EnvGen.kr(
-                        Env.asr(0.1, amp, 1.3),
-                        gate,
-                        doneAction:2
-                    ),
-                    _*0.1,
-                    Limiter.ar(_, level: 0.5, dur: 0.03)
-                )
-            } ;
+                );
+                sig = BHiShelf.ar(sig, freq: 800, rs: 0.3, db: -10);
+                sig = sig * EnvGen.kr(
+                    Env.asr(0.1, amp, 1.3),
+                    gate,
+                    doneAction:2
+                );
+                sig = sig*0.1;
+                Limiter.ar(sig, level: 0.5, dur: 0.03);
+            };
             Out.ar(out, sig ! 2);
         }).add;
 
@@ -82,20 +84,18 @@
             rel=0.2
             |
             var sig = {
-                SinOsc.ar(
+                var sig = SinOsc.ar(
                     Lag.kr(freq, portamento),
                     0,
                     Lag.kr(portamento_amp, portamento_amp_speed)
-                )
-                .pipe(
-                    BHiShelf.ar(_, freq: 800, rs: 0.3, db: -10),
-                    _* EnvGen.kr(
-                        Env.adsr(0.01, amp, 0, rel),
-                        gate,
-                        doneAction:2
-                    ),
-                    _*0.1,
-                )
+                );
+                sig = BHiShelf.ar(sig, freq: 800, rs: 0.3, db: -10);
+                sig = sig * EnvGen.kr(
+                    Env.adsr(0.01, amp, 0, rel),
+                    gate,
+                    doneAction:2
+                );
+                sig = sig*0.1;
             } ;
             Out.ar(out, sig ! 2);
         }).add;
@@ -111,20 +111,18 @@
             out=0
             |
             var sig = {
-                SinOsc.ar(
+                var sig = SinOsc.ar(
                     Lag.kr([1, 8/7, 15/7, 22/7]*freq, portamento),
                     0,
                     Lag.kr([1, 0.3, 0.7, 0.2]*portamento_amp, portamento_amp_speed)
-                )
-                .pipe(
-                    _*WhiteNoise.kr(0.2, 1),
-                    _* EnvGen.kr(
-                        Env.adsr(0.01, amp, 0.3, 0.8),
-                        gate,
-                        doneAction:2
-                    ),
-                    _*0.1,
-                )
+                );
+                sig = sig*WhiteNoise.kr(0.2, 1);
+                sig = sig* EnvGen.kr(
+                    Env.adsr(0.01, amp, 0.3, 0.8),
+                    gate,
+                    doneAction:2
+                );
+                sig = sig*0.1;
             } ;
             Out.ar(out, sig ! 2);
         }).add;
