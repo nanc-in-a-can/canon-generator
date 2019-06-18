@@ -173,7 +173,10 @@
 		}).durs;
     	var canon = durations.collect({|voiceDurs, i|
     		(
-    			notes: data.voices[i].transp+notes,
+				notes: data.voices[i][\transp].isFunction.if(
+					{data.voices[i][\transp].(notes)},
+					{data.voices[i].transp+notes}
+				),
 				durs: if(convergeOnLast, {voiceDurs++[durations_.last]}, {voiceDurs}),
     			onset: 0,
     			bcp: 0,

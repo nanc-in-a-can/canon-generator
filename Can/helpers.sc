@@ -28,10 +28,12 @@
 	}
 
 	//divtempos :: ([Float], [Float], Boolean) ->[(tempo: Float, percentage: Float)]
-	*divtempos { | tempos, percentageForTempo, normalize= false|
-		var percentages = if(normalize, {percentageForTempo.normalizeSum*100}, {percentageForTempo});
+	*divtempos { | tempos, percentageForTempo, normalize= true|
+        var min = [tempos.size, percentageForTempo.size].minItem;
 
-		^[tempos.size, percentageForTempo.size].minItem.collect({|i|
+        var percentages = if(normalize, {percentageForTempo[0..min - 1].normalizeSum*100}, {percentageForTempo[0..min - 1]});
+
+		^min.postln.collect({|i|
 			(tempo: tempos[i], percentage: percentages[i])
 		});
 	}
@@ -51,3 +53,5 @@
 		)
 	}
 }
+
+
