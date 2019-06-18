@@ -1,7 +1,7 @@
 +Can {
 	*registerDefaultSynthDefs {
 		SynthDef(\pianola,
-			{ |freq=1.0, decayTime=0.5, amp=0.75, temp=100, out=0, done=2, pan=0, att=0.001, sus=0.1, rel=0.1, object=0.005, which=0|
+			{ |freq=1.0, decayTime=0.5, amp=0.75, temp=100, out=0, done=2, pan=0, att=0.001, sus=0.1, rel=0.1, object=0.005, chooseObject=0|
 				var sig, env, strike, envAttack, noise, delayTime, deTune;
 
 
@@ -19,7 +19,7 @@
 
 				}));
 				sig= sig;
-				sig= SelectX.ar(which,[sig, CombC.ar(sig, 1, object, 0.3, 1)]);
+				sig= SelectX.ar(chooseObject,[sig, CombC.ar(sig, 1, object, 0.3, 1)]);
 
 				env= EnvGen.kr(Env([0,1,1,0],[att,sus,rel]),doneAction: done);
 

@@ -16,13 +16,22 @@ Ths will clone the proyect into `<your-current-path>/nanc-in-a-can`
 
 [Click here](https://github.com/nanc-in-a-can/canon-generator/archive/master.zip) and save the zip file wherever you want.
 
+## Nanc-In-A-Can Canon Generator
+
+This program aims to provide the user with a robust, explicit and clear api that allows for an easy under-standing and manipulation of the parameters of different temporal canons. With a minimum knowledge of SCLang it is possible to design melodies and express them as canons of convergence or divergence. On the one hand this offers compositional or pedagogical tools for musicians and teachers, on the other, the novel ability to create sets of live coding with tempo canons (a new addition to the enormous arsenal of resourcesthat have been created for these practices).
+
+### Temporal Canons
+Temporal canons are defined when the information of a voice in a contrapuntal work is usually reproduced simultaneously in another voice with a different temporal proportion, and transposition values. This strategy that allows musicians to explore polytemporality was deviced by the Mexican socialist artist Conlon Nancarrow. 
+
 ## Preset examples
+
+The PresetCan contains some examples of compositions made with this library.
 
 Sound Only:
 
 ```supercollider
 (
-  Can.init;
+  Can.init; 
   s.boot;
 )
 
@@ -46,6 +55,8 @@ Sound and Visualization:
 ```
 
 ## Basic examples
+
+The basic components of a canon are the melodic information in itself divided in notes (pitch information) and durs (rhythmic information) and the voice information that defines the transposition and the tempo-related information of the already defined melodic material. 
 
 ### Convergence Canon
 
@@ -129,6 +140,69 @@ Can.converge(
 	meta: (amp: 0.2),
 ).play;
 )
+```
+
+## Symbol, Period and Meta
+
+A symbol can be added as a first argument to a canon (or with the key symbol: \myCanonName) to identify it to later control de player as it is suggested in this example.
+
+The period is a absolute duration for the canon. In the example below the total duration of the canon will be 5 seconds given that the default TempoClock is 1.
+
+Meta allows you to control the overall access to arguments of the instrument or pattern definition in the player that are unrelated to the canonic data defined in the keys melody, voices, cp, osc, instrument, etc.
+
+```supercollider
+// TempoClock.default.tempo = 1;
+
+(
+Can.converge(\myCanon,
+	melody: Can.melody([1,1,1,1],[60,67,72,74]),
+	voices: Can.convoices([60,75],[0,12]),
+
+	cp: 3,
+	period: 5,
+
+	repeat: inf,
+	instruments: [\pianola],
+	meta: (chooseObject: 1, object: 0.005), // "prepared piano sound" from pianola, choose between 0 and 1
+                                          // object works as karlplus-strong synthesis, between 0.1 and 0.0001
+);
+)
+
+Pdef(\myCanon).play;
+Pdef(\myCanon).pause;
+Pdef(\myCanon).resume;
+Pdef(\myCanon).stop;
+
+```
+
+## Isomelody and Functions as arguments
+
+The method isomelody allows to fix the size of the melody by providing a length, an integer that is the number of events per melody. The sequence of durs and notes will cycle until 8 events are provided. In this case the events of durs and notes will be: ``[(1,60),(0.5,72),(0.75,84),(1,65),(0.5,60),(0.75,72),(1,84),(0.5,65)]``
+
+Tempo, Transpose and cp can be a function as exemplified below.
+
+
+```supercollider
+
+(
+Can.converge(\myCan2,
+	melody: Can.isomelody( durs: [1,0.5,0.75], notes: [[60,72,84,65]], len: 8 ),
+	
+	cp: {|melody| [1,2,3,4, melody.size].choose}, 
+	voices: Can.convoices( 
+		tempos: [3/2, 5, 9/7, 10*2],
+		transps: [ 0, _.choose, _[0], -12, -24, _.choose, {|item| item*2}] 
+	),		
+	
+	instruments: [\pianola], 
+	period: 5, 
+	meta: (amp: 1),
+	repeat: inf
+); 
+)
+
+Pdef(\myCan2).play
+
 ```
 
 ## OSC
