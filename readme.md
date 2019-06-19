@@ -1,20 +1,51 @@
-# Nanc-in-a-can Canon Generator
+# Nanc-in-a-can Canon Generator <!-- omit in toc -->
 
 <p align="center">
    <img width="100%" src="nanc-in-a-can.jpg">
 </p>
 
+- [Installation](#Installation)
+	- [Manual download](#Manual-download)
+	- [Updating the library](#Updating-the-library)
+- [Nanc-In-A-Can Canon Generator](#Nanc-In-A-Can-Canon-Generator)
+	- [Temporal Canons](#Temporal-Canons)
+- [Preset examples](#Preset-examples)
+- [Basic examples](#Basic-examples)
+	- [Convergence Canon](#Convergence-Canon)
+	- [Divergence Canon](#Divergence-Canon)
+	- [Visualization](#Visualization)
+- [Nicer examples](#Nicer-examples)
+- [Symbol, Period and Meta](#Symbol-Period-and-Meta)
+- [Isomelody and Functions as arguments](#Isomelody-and-Functions-as-arguments)
+- [OSC](#OSC)
+
+
 ## Installation
 
-### Using git
+`Nanc-in-a-Can` provides a set of classes, and thus the need to be installed in specific folder to be available.
 
-`git clone https://github.com/nanc-in-a-can/canon-generator.git nanc-in-a-can`
+If you have `git` installed (highly recommended, https://git-scm.com/downloads), the easiest way to install this software is by compiling this line in the SuperCollider IDE:
 
-Ths will clone the proyect into `<your-current-path>/nanc-in-a-can`
+```
+Quarks.install("https://github.com/nanc-in-a-can/canon-generator.git");
+```
+
+Then you need to recompile the class library. In the menu bar: `Language > Recompile Class Library`
+
 
 ### Manual download
+Otherwise you can follow this guide to find the paths in which you may install this software: http://doc.sccode.org/Guides/UsingExtensions.html
 
+For that you will need to download this repository.
 [Click here](https://github.com/nanc-in-a-can/canon-generator/archive/master.zip) and save the zip file wherever you want.
+
+
+### Updating the library
+With git it is as simple as 
+```
+Quarks.update("https://github.com/nanc-in-a-can/canon-generator.git");
+```
+
 
 ## Nanc-In-A-Can Canon Generator
 
