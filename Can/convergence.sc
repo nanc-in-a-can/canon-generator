@@ -1,7 +1,7 @@
 +Can {
 	*converge {|symbol, melody, cp, voices, instruments, period, player, repeat = 1, osc, meta|
 
-	var
+		var
 		cp_ = cp.isFunction.if({cp.(melody)}, {cp}),
 
 		makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
@@ -51,7 +51,7 @@
 			amps: voice.melody.collect(_.amp),
 			bcp: voice.bcp.sum,
 		)})
-			.sort({|voice1, voice2| voice1.durs.sum > voice2.durs.sum })
+		.sort({|voice1, voice2| voice1.durs.sum > voice2.durs.sum })
 		),
 
 		//voice onset times

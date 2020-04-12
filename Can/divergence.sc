@@ -19,7 +19,7 @@
 		Adds an "until" field to tempo, which determines the moment in which the voice should switch to the next tempo. i.e.
 
 		[(percentage:50), (percentage:25), (percentage:25)] ->
-		   [(percentage:50, until: 50), (percentage:25, until: 75), (percentage:25, until: 100)]
+		[(percentage:50, until: 50), (percentage:25, until: 75), (percentage:25, until: 100)]
 
 		The user is responsible for the percentage that will add up in the end. It might be above 100 or below it depending on the sum of the "perc"s passed in.
 
@@ -52,9 +52,9 @@
 
 		Generates the various "permutations" for the tempos for each voice i.e.:
 		[(t: 1), (t: 2), (t: 3)] -> [
-			[(t: 3), (t: 1), (t: 2)],
-			[(t: 2), (t: 3), (t: 1)],
-			[(t: 1), (t: 2), (t: 3)]
+		[(t: 3), (t: 1), (t: 2)],
+		[(t: 2), (t: 3), (t: 1)],
+		[(t: 1), (t: 2), (t: 3)]
 		]
 
 		Notice how tempos are distributed veritcally and horizontally, as a Sudoku, this allows for an easy combination of tempos.
@@ -63,8 +63,8 @@
 		*/
 		var rotate = {|arr|
 			(0..arr.size - 1)
-			  .inject(List [], {|acc, i|
-				 if(i=== 0 ,
+			.inject(List [], {|acc, i|
+				if(i=== 0 ,
 					{acc.add(arr.rotate)},
 					{acc.add(acc[i-1].rotate)}
 				)

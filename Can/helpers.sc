@@ -35,9 +35,9 @@
 
 	//divtempos :: ([Float], [Float], Boolean) ->[(tempo: Float, percentage: Float)]
 	*divtempos { | tempos, percentageForTempo, normalize= true|
-        var min = [tempos.size, percentageForTempo.size].minItem;
+		var min = [tempos.size, percentageForTempo.size].minItem;
 
-        var percentages = if(normalize, {percentageForTempo[0..min - 1].normalizeSum*100}, {percentageForTempo[0..min - 1]});
+		var percentages = if(normalize, {percentageForTempo[0..min - 1].normalizeSum*100}, {percentageForTempo[0..min - 1]});
 
 		^min.collect({|i|
 			(tempo: tempos[i], percentage: percentages[i])
