@@ -1,8 +1,14 @@
 +Can {
+	*prGetAmp {|amps, i|
+		^if(
+			amps.isArray && amps.size > 0,
+			{amps.wrapAt(i)},
+			{1})
+	}
 	//melody :: ([Float], [Float]) -> [(dur, note)]
-	*melody {|durs, notes|
+	*melody {|durs, notes, amps = ([1])|
 		^[durs.size, notes.size].minItem.collect({|i|
-			(dur: durs[i], note: notes[i])
+			(dur: durs[i], note: notes[i], amp: Can.prGetAmp(amps, i))
 		})
 	}
 	//isomelody ::([Float], [Float], Int) -> [(dur, note)]
@@ -14,9 +20,9 @@
 	}
 
 	//convvoices :: ([Float], [Float], [Float]) -> [(tempo, transp, amp)]
-	*convoices { | tempos, transps, amps = ([])|
+	*convoices { | tempos, transps, amps = ([1])|
 		^[tempos.size, transps.size].minItem.collect({|i|
-			(tempo: tempos[i], transp: transps[i], amp: amps[i] ? 1)
+			(tempo: tempos[i], transp: transps[i], amp: Can.prGetAmp(amps, i))
 		})
 	}
 
@@ -33,7 +39,7 @@
 
         var percentages = if(normalize, {percentageForTempo[0..min - 1].normalizeSum*100}, {percentageForTempo[0..min - 1]});
 
-		^min.postln.collect({|i|
+		^min.collect({|i|
 			(tempo: tempos[i], percentage: percentages[i])
 		});
 	}
@@ -53,5 +59,3 @@
 		)
 	}
 }
-
-

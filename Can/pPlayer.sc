@@ -10,7 +10,7 @@
 						\osc,
 						Pfunc({|event|
 							osc.net.sendMsg(
-								*([osc.path ? \canosc, rrand(0,34), cp] ++
+								*([osc.path ? \canosc, voiceIndex, cp] ++
 									osc.send.collect(event[_])).flatten
 							)
 						})
@@ -20,14 +20,14 @@
 			)
 		};
 
-		var pBindVoicePlayer = {|instrument, amp=1, pan=0, out=0, repeat=1|
+		var pBindVoicePlayer = {|instrument, gain=1, pan=0, out=0, repeat=1|
 			{|voice, index|
 				var pairs = [
 					\instrument, instrument.wrapAt(index),
 					\dur, Pseq([voice.onset] ++ voice.durs ++ [voice.remainder], repeat),
 					\midinote, Pseq([\rest] ++ voice.notes ++ [\rest], inf),
 					\out, out,
-					\amp, (amp * (voice.amp ? 1)),
+					\amp, Pseq(gain * ([0]++voice.amps++[0])),
 					\pan, pan
 				]
 				++oscParam.(index, voice.cp)
@@ -40,7 +40,7 @@
 		.collect(
 			pBindVoicePlayer.(
 				instruments,
-				amp: meta.amp ? 1,
+				gain: meta.gain ? 1,
 				repeat: repeat,
 				out: meta.out ? 0
 			)
