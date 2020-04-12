@@ -5,17 +5,17 @@
 			{amps.wrapAt(i)},
 			{1})
 	}
-	//melody :: ([Float], [Float]) -> [(dur, note)]
+	//melody :: ([Float], [Float], [Float]) -> [(dur, note, amp)]
 	*melody {|durs, notes, amps = ([1])|
 		^[durs.size, notes.size].minItem.collect({|i|
 			(dur: durs[i], note: notes[i], amp: Can.prGetAmp(amps, i))
 		})
 	}
-	//isomelody ::([Float], [Float], Int) -> [(dur, note)]
-	*isomelody {|durs, notes, len|
+	//isomelody ::([Float], [Float], [Float], Int) -> [(dur, note, amp)]
+	*isomelody {|durs, notes, amps = ([1]), len|
 		var len_ = len ? max(durs.size, notes.size);
 		^len_.collect({|i|
-			(dur: durs.wrapAt(i), note: notes.wrapAt(i))
+			(dur: durs.wrapAt(i), note: notes.wrapAt(i), amp: Can.prGetAmp(amps, i))
 		});
 	}
 
@@ -27,9 +27,9 @@
 	}
 
 	//divoices :: ([Float], [Float]) ->[(transp: Float, amp: Float)]
-	*divoices { |transps, amps = ([])|
+	*divoices { |transps, amps = ([1])|
 		^transps.collect({|transp, i|
-			(transp: transp, amp: amps[i] ? 1)
+			(transp: transp, amp: Can.prGetAmp(amps, i))
 		})
 	}
 

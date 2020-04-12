@@ -61,7 +61,6 @@
 
         Notice also that fo clairty we are ommiting the "perc" property in the example above.
         */
-
     	var rotate = {|arr|
         	(0..arr.size - 1)
         	  .inject(List [], {|acc, i|
@@ -178,6 +177,7 @@
 					{data.voices[i].transp+notes}
 				),
 				durs: if(convergeOnLast, {voiceDurs++[durations_.last]}, {voiceDurs}),
+				amps: data.melody.collect(_.amp) * data.voices[i].amp,
     			onset: 0,
     			bcp: 0,
     			amp: data.voices[i].amp,
