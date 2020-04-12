@@ -24,13 +24,13 @@ Can {
 		)
 	}
 
-    // Can.dur :: Canon -> Float
-    *dur {|canon| //duration in seconds
-        ^canon.canon[0].durs.sum
-    }
+	// Can.dur :: Canon -> Float
+	*dur {|canon| //duration in seconds
+		^canon.canon[0].durs.sum
+	}
 
-    // Can.durm :: Canon -> Float
-    *durm {|canon| // duration in minutes
-        ^Can.dur(canon)/60
-    }
+	// Can.durm :: Canon -> Float
+	*durm {|canon| // duration in minutes
+		^Can.dur(canon)/60
+	}
 }
