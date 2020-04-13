@@ -65,7 +65,7 @@
 				remainder: sortedBySpeed[0].durs.sum - (onset + voice.durs.sum),
 				bcp: voice.bcp,
 				onset: onset,
-				cp: cp_
+				cp: voice.cp
 			)
 		}),
 
