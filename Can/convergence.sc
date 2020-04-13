@@ -4,7 +4,7 @@
 		var
 		cp_ = cp.isFunction.if({cp.(melody)}, {cp}),
 
-		makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
+		makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger).sum},
 
 		makeTempo = {|speed| 60/(speed/4)},
 
@@ -50,7 +50,7 @@
 			durs: voice.melody.collect(_.dur),
 			notes: voice.melody.collect(_.note),
 			amps: voice.melody.collect(_.amp),
-			bcp: voice.bcp.sum,
+			bcp: voice.bcp,
 			cp: voice.cp
 		)})
 		.sort({|voice1, voice2| voice1.durs.sum > voice2.durs.sum })
