@@ -1,4 +1,6 @@
 Can.init
+
+(10..20).do{|e, i| e.postln}
 s.boot
 (
 c = Can.converge(
@@ -127,7 +129,9 @@ p = CanPlayer.prCalculateNewState(c.canon, d.canon, 3000, 2000);
 	~controls = (tempoScale: 1, hamp: 1, vdensity: 1);
 ~eventPlayer = Ref()
 )
-p = CanPlayer(\def, c.canon).play;
+p = CanPlayer(\def, d.canon).play;
+CanPlayer.get(\def).stop
+p.speed(2);
 (
 p.onEvent({|event|
 	(

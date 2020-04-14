@@ -2,86 +2,8 @@ CanPlayer {
 	classvar <>players;
 	var <>def, <>currentCanon, <>globalNextSoundAt, <>elapsed, <>numVoices, <>voicesState, <>newCanon, <>player, <>prEventPlayer, <>prSpeed = 1;
 
-	*prMakeNextStateForNewCanon {|newCanon, nextAt|
-		^newCanon.inject(
-			List [],
-			{|acc, voice, voiceIndex|
-				var res = voice.durs.inject(
-					(nextSoundAt: 0, nextIndex: 0),
-				{|result, dur, i|
-					if(result.nextSoundAt >= nextAt,
-						{result},
-						{(
-							nextSoundAt: result.nextSoundAt+dur,
-							nextIndex: i + 1,
-							data: voice,
-							voiceIndex: voiceIndex
-						)}
-					)
-				});
-				acc.add(res);
-			}
-		)
-	}
-
-	*prCalculateNewState {|oldCanon, newCanon, nextAt/*in ms*/, elapsed /*in ms*/|
-		var oldCanDur = oldCanon[0].durs.sum.postln;
-		var newCanDur = newCanon[0].durs.sum.postln;
-		var nextAtPercentage = (nextAt/1000)/oldCanDur;
-		var elapsedPercentage = (elapsed/1000)/oldCanDur;
-		var nextEventForNewCanon = newCanDur*nextAtPercentage;
-		var elapsedForNewCanon = newCanDur*elapsedPercentage*1000;
-		var newState = CanPlayer.prMakeNextStateForNewCanon(newCanon, nextEventForNewCanon);
-		^(
-			elapsed: elapsedForNewCanon,
-			numVoices: newCanon.size,
-			voicesState: newState
-		);
-
-	}
-
-	*prInitVoicesState {|canon|
-		^canon.inject(List [], {|acc, voice, i|
-			acc.add((
-				voiceIndex: i,
-				data: voice,
-				nextIndex: 0,
-				nextSoundAt: voice.onset*1000, // in ms
-			))
-		});
-	}
-
-	*prDefaultEventPlayer {|event|
-		(
-		  instrument: \sin,
-		  freq: event.note.midicps,
-		  dur: event.dur,
-		  amp: event.amp
-		).play
-	}
-
-	*new {|def, canon, eventPlayer = ({|event| CanPlayer.prDefaultEventPlayer(event)})|
+	*new {|def, canon, eventPlayer = ({|event| 	CanPlayer.prDefaultEventPlayer(event)})|
 		^super.new.init(def, canon, eventPlayer);
-	}
-
-	*prChangeCanon {|canon|
-		this.newCanon = canon;
-		this.currentCanon = canon;
-	}
-
-	*prUpdateState {|newState|
-		"uuuuuuuuuuuuuuuuuuuuupp".postln;
-		this.numVoices.postln;
-		this.newState.numVoices.postln;
-		this.newCanon = nil;
-		this.elapsed = newState.elapsed;
-		this.numVoices = newState.numVoices;
-		this.voicesState = newState.voicesState;
-		"done".postln;
-	}
-
-	*get{|def|
-		^CanPlayer.players.at(def);
 	}
 
 	*initClass {
@@ -157,6 +79,11 @@ CanPlayer {
 		CanPlayer.players.put(def, this)
 	}
 
+	// getters and setters
+	*get{|def|
+		^CanPlayer.players.at(def);
+	}
+
 	onEvent {|eventPlayer|
 		this.prEventPlayer = eventPlayer;
 	}
@@ -195,4 +122,79 @@ CanPlayer {
 	pause {
 		this.player.pause;
 	}
+
+	//private and pure methods
+	*prMakeNextStateForNewCanon {|newCanon, nextAt|
+		^newCanon.inject(
+			List [],
+			{|acc, voice, voiceIndex|
+				var res = voice.durs.inject(
+					(nextSoundAt: 0, nextIndex: 0),
+				{|result, dur, i|
+					if(result.nextSoundAt >= nextAt,
+						{result},
+						{(
+							nextSoundAt: result.nextSoundAt+dur,
+							nextIndex: i + 1,
+							data: voice,
+							voiceIndex: voiceIndex
+						)}
+					)
+				});
+				acc.add(res);
+			}
+		)
+	}
+
+	*prCalculateNewState {|oldCanon, newCanon, nextAt/*in ms*/, elapsed /*in ms*/|
+		var oldCanDur = oldCanon[0].durs.sum.postln;
+		var newCanDur = newCanon[0].durs.sum.postln;
+		var nextAtPercentage = (nextAt/1000)/oldCanDur;
+		var elapsedPercentage = (elapsed/1000)/oldCanDur;
+		var nextEventForNewCanon = newCanDur*nextAtPercentage;
+		var elapsedForNewCanon = newCanDur*elapsedPercentage*1000;
+		var newState = CanPlayer.prMakeNextStateForNewCanon(newCanon, nextEventForNewCanon);
+		^(
+			elapsed: elapsedForNewCanon,
+			numVoices: newCanon.size,
+			voicesState: newState
+		);
+
+	}
+
+	*prInitVoicesState {|canon|
+		^canon.inject(List [], {|acc, voice, i|
+			acc.add((
+				voiceIndex: i,
+				data: voice,
+				nextIndex: 0,
+				nextSoundAt: voice.onset*1000, // in ms
+			))
+		});
+	}
+
+	*prDefaultEventPlayer {|event|
+		(
+		  instrument: \sin,
+		  freq: event.note.midicps,
+		  dur: event.dur,
+		  amp: event.amp
+		).play
+	}
+
+	// private impure
+	*prChangeCanon {|canon|
+		this.newCanon = canon;
+		this.currentCanon = canon;
+	}
+
+	*prUpdateState {|newState|
+		this.newState.numVoices.postln;
+		this.newCanon = nil;
+		this.elapsed = newState.elapsed;
+		this.numVoices = newState.numVoices;
+		this.voicesState = newState.voicesState;
+	}
+
+
 }
