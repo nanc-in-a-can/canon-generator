@@ -95,7 +95,7 @@ CanPlayer {
 				if(iterateVoices, { // basic optimization to avoid iteration of voicesState every 1ms
 					var nextSoundsAt = List [];
 					// elapsed.postln;
-					voicesState.do({|voice|
+					voicesState.do({|voice, voiceIndex|
 						nextSoundsAt.add(voice.nextSoundAt); // build a list of the nextSoundAt to get the next value for globalNextSoundAt
 
 						if(voice.nextSoundAt <= elapsed, { // check if `voice` shouldPlay it's next sound
@@ -106,7 +106,9 @@ CanPlayer {
 							var event = (
 								dur: if(dur === inf, {0}, {dur}),
 								note: note,
-								amp: amp
+								amp: amp,
+								voiceIndex: voiceIndex,
+								eventIndex: currentIndex
 							);
 							event.postln;
 							// update voice state
