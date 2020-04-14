@@ -17,12 +17,8 @@ c = Can.converge(
 		[0.7, 0.3, 0.5]
 	)
 );
-Can.dur(c)
-)
-c.play;
-c.pause;
+Can.dur(c);
 
-(
 d = Can.converge(
 	instruments: [\sin],
 	meta: (gain: 1),
@@ -41,6 +37,7 @@ d = Can.converge(
 );
 Can.dur(d)
 )
+
 
 (
 ~makeNextStateForNewCanon = {|newCanon, nextAt|
@@ -65,7 +62,7 @@ Can.dur(d)
 	)
 };
 
-~makeNextStateForNewCanon.(d.canon, 3)
+CanPlayer.prMakeNextStateForNewCanon(d.canon, 3)
 )
 
 d.canon[4].durs[0..2].sum
@@ -86,27 +83,64 @@ d.canon[1].durs.sum
 	);
 
 };
-p = ~calculateNewState.(c.canon, d.canon, 3000, 2000);
+p = CanPlayer.prCalculateNewState(c.canon, d.canon, 3000, 2000);
 )
 
-p[1][0].data.durs[0..2].sum
-
-c.play;
-c.stop
-(instrument: \sin, freq: 400, dur: 1, amp: 1).play
-
 (
+
+	c = Can.converge(
+		instruments: [\sin],
+		meta: (gain: 1),
+		repeat: inf,
+	    cp: [2],
+		melody: Can.isomelody(
+			durs: [1,1,2,1]/5,
+			notes: (60..63).scramble,
+			amps: [0.4, 0.2, 1]
+		),
+		voices: Can.convoices(
+			(60..65),
+			(0..4),
+			[0.7, 0.3, 0.5]
+		)
+	);
+	Can.dur(c);
+
+	d = Can.converge(
+		instruments: [\sin],
+		meta: (gain: 1),
+		repeat: inf,
+	    cp: [2],
+		melody: Can.isomelody(
+			durs: [1,1,2,1]/5,
+			notes: ((60..63)+20).scramble,
+			amps: [0.4, 0.2, 1]
+		),
+		voices: Can.convoices(
+			(60..65),
+			(0..2),
+			[0.7, 0.3, 0.5]
+		)
+	);
+	Can.dur(d);
+
 	~controls = (tempoScale: 1, hamp: 1, vdensity: 1);
-~eventPlayer = Ref({|dur, note, amp|
+~eventPlayer = Ref()
+)
+p = CanPlayer(\def, c.canon).play;
+(
+p.onEvent({|event|
 	(
 	instrument: \sin,
-	freq: (note + 20).midicps,
-	dur: if(dur === inf, {0}, {dur}),
-	amp: amp*4
+	freq: event.note.midicps,
+	dur: event.dur,
+	amp: event.amp*0.1
 	).play
-;})
+;});
 )
+p.stop;
 (
+
 	~controls.tempoScale = 1;
 	~controls.hamp = 0.2;
 	~controls.vdensity = 1;
