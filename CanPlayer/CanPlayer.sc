@@ -1,5 +1,6 @@
 CanPlayer {
-	var <>currentCanon, <>globalNextSoundAt, <>elapsed, <>numVoices, <>voicesState, <>newCanon, <>player, <>prEventPlayer;
+	classvar <>players;
+	var <>def, <>currentCanon, <>globalNextSoundAt, <>elapsed, <>numVoices, <>voicesState, <>newCanon, <>player, <>prEventPlayer, <>prSpeed = 1;
 
 	*prMakeNextStateForNewCanon {|newCanon, nextAt|
 		^newCanon.inject(
@@ -40,13 +41,13 @@ CanPlayer {
 	}
 
 	*prInitVoicesState {|canon|
-		^(0..canon.size - 1).inject(List [], {|acc, i|
+		^canon.inject(List [], {|acc, voice, i|
 			acc.add((
-				voiceIndex: (i - (canon.size -1)).abs,
-				data: canon[i],
+				voiceIndex: i,
+				data: voice,
 				nextIndex: 0,
-				nextSoundAt: canon[i].onset*1000, // in ms
-				))
+				nextSoundAt: voice.onset*1000, // in ms
+			))
 		});
 	}
 
@@ -79,7 +80,16 @@ CanPlayer {
 		"done".postln;
 	}
 
+	*get{|def|
+		^CanPlayer.players.at(def);
+	}
+
+	*initClass {
+        players = Dictionary.new;
+    }
+
 	init {|def, canon, eventPlayer|
+		this.def = def;
 		this.currentCanon = canon;
 		this.globalNextSoundAt = 0;
 		this.elapsed = 0;
@@ -128,7 +138,7 @@ CanPlayer {
 					;
 				});
 
-				this.elapsed = elapsed+1; // update elapsed time, ~tempoScale changes the value by which `elapsed` is updated, by this, the "interal time of the canon" go faster or slower.  If ~tempoScale is > 1 it goes faster than it's original tempo, if < 1 it goes slower.
+				this.elapsed = elapsed+(1*this.prSpeed); // update elapsed time, ~tempoScale changes the value by which `elapsed` is updated, by this, the "interal time of the canon" go faster or slower.  If ~tempoScale is > 1 it goes faster than it's original tempo, if < 1 it goes slower.
 				if(this.newCanon.isNil.not,
 					{
 						"updating".postln;
@@ -144,10 +154,21 @@ CanPlayer {
 				0.001.wait; // iterate every 1ms
 			})
 		});
+		CanPlayer.players.put(def, this)
 	}
 
 	onEvent {|eventPlayer|
 		this.prEventPlayer = eventPlayer;
+	}
+
+	speed {|speed|
+		^if(speed.isNil,
+			 {this.prSpeed},
+			 {
+				 this.prSpeed = speed;
+				 this
+			 }
+		)
 	}
 
 	// player (Task) methods
