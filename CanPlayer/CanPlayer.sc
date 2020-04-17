@@ -90,11 +90,8 @@ CanPlayer {
 					this.finishedVoices = finishedVoices;
 				});
 
-				this.elapsed = elapsed+(1*this.prSpeed);
-				if(this.newCanon.isNil.not,
-					{
-						this.prUpdateState(CanPlayer.prCalculateNewState(this.currentCanon, this.newCanon, this.globalNextSoundAt, this.elapsed));
-					});
+				this.elapsed = (elapsed+(1*this.prSpeed));
+				if(this.newCanon.isNil.not, {this.prUpdateState});
 				if(this.finishedVoices >= this.numVoices, {
 					this.repeat = this.repeat - 1;
 					if(this.repeat > 0,
@@ -136,6 +133,7 @@ CanPlayer {
 	// player (Task) methods
 	play {
 		if(this.isFinished == true, {this.reset});
+		if(this.player.isPlaying.not, {this.prUpdateState});
 		this.player.play;
 	}
 
@@ -168,11 +166,12 @@ CanPlayer {
 
 	//private and pure methods
 	*prMakeNextStateForNewCanon {|newCanon, nextAt|
+		nextAt.postm("================================");
 		^newCanon.inject(
 			List [],
 			{|acc, voice, voiceIndex|
 				var res = voice.durs.inject(
-					(nextSoundAt: 0, nextIndex: 0, data: voice, voiceIndex: voiceIndex),
+					(isFinished: false, nextSoundAt: 0, nextIndex: 0, data: voice, voiceIndex: voiceIndex),
 				{|result, dur, i|
 					if(result.nextSoundAt >= nextAt,
 						{result},
@@ -246,7 +245,8 @@ CanPlayer {
 		this.currentCanon = canon;
 	}
 
-	prUpdateState {|newState|
+	prUpdateState {
+		var newState = CanPlayer.prCalculateNewState(this.currentCanon, this.newCanon, this.globalNextSoundAt, this.elapsed).postln;
 		this.newCanon = nil;
 		this.elapsed = newState.elapsed;
 		this.numVoices = newState.numVoices;
