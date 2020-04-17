@@ -17,6 +17,21 @@ CanPlayer {
 		^super.new.init(def, canon, repeat, onEvent, instruments, osc, meta);
 	}
 
+	init {|def, canon, repeat, onEvent, instruments, osc, meta|
+		var player = CanPlayer.get(def);
+		^if(player.isNil,
+			{this.prInit(def, canon, repeat, onEvent, instruments, osc, meta)},
+			{
+				player.changeCanon(canon);
+				if(player.isFinished == true, {
+					player.repeat = repeat;
+					player.reset;
+				});
+				player;
+			}
+		);
+	}
+
 	prInit {|def, canon, repeat, onEvent, instruments, osc, meta|
 		this.def = def;
 		this.currentCanon = canon;
@@ -34,10 +49,10 @@ CanPlayer {
 		this.player = Tdef(def, {
 			inf.do({|i|
 				var iterateVoices = globalNextSoundAt <= elapsed;
+				var finishedVoices = 0;
 
 				if(iterateVoices, { // basic optimization to avoid iteration of voicesState every 1ms
 					var nextSoundsAt = List [];
-					var finishedVoices = 0;
 					voicesState.do({|voice, voiceIndex|
 						// build a list of the nextSoundAt to get the next value for globalNextSoundAt
 						if(voice.isFinished.not,
@@ -75,9 +90,11 @@ CanPlayer {
 					this.finishedVoices = finishedVoices;
 				});
 
-				this.elapsed = elapsed+(1*this.prSpeed); // update elapsed time, ~tempoScale changes the value by which `elapsed` is updated, by this, the "interal time of the canon" go faster or slower.  If ~tempoScale is > 1 it goes faster than it's original tempo, if < 1 it goes slower.
+				this.elapsed = elapsed+(1*this.prSpeed);
 				if(this.newCanon.isNil.not,
-					{this.prUpdateState(CanPlayer.prCalculateNewState(this.currentCanon, this.newCanon, this.globalNextSoundAt, this.elapsed));});
+					{
+						this.prUpdateState(CanPlayer.prCalculateNewState(this.currentCanon, this.newCanon, this.globalNextSoundAt, this.elapsed));
+					});
 				if(this.finishedVoices >= this.numVoices, {
 					this.repeat = this.repeat - 1;
 					if(this.repeat > 0,
@@ -95,20 +112,6 @@ CanPlayer {
 			})
 		});
 		CanPlayer.players.put(def, this)
-	}
-
-	init {|def, canon, repeat, onEvent, instruments, osc, meta|
-		var player = CanPlayer.get(def);
-		^if(player.isNil,
-			{this.prInit(def, canon, repeat, onEvent, instruments, osc, meta)},
-			{
-				player.changeCanon(canon);
-				if(player.isFinished == true, {
-					player.repeat = repeat;
-					player.reset;
-				});
-				player;
-			});
 	}
 
 	// getters and setters
@@ -132,6 +135,7 @@ CanPlayer {
 
 	// player (Task) methods
 	play {
+		if(this.isFinished == true, {this.reset});
 		this.player.play;
 	}
 
@@ -175,7 +179,7 @@ CanPlayer {
 						{
 							var nextIndex = i + 1;
 							(
-								isFinished: nextIndex < voice.size,
+								isFinished: nextIndex >= voice.size,
 								nextSoundAt: result.nextSoundAt+dur,
 								nextIndex: nextIndex,
 								data: voice,
@@ -217,12 +221,16 @@ CanPlayer {
 		});
 	}
 
-	*prSetupInCan {|def, canon, instruments, repeat, osc, meta|
+	*setupInCan {|def, canon, instruments, repeat, osc, meta|
 		var onEvent = if(meta.onEvent.isFunction,
 			{meta.onEvent},
-			{{|event| CanPlayer.prDefaultEventPlayer(event)}});
-			CanPlayer(def, canon, repeat, onEvent, instruments, osc, meta)
+			{{|event| CanPlayer.prDefaultEventPlayer(event)}}
+		);
+		var def_ = def ? UniqueID.next.asSymbol;
+
+		^CanPlayer(def_, canon, repeat, onEvent, instruments, osc, meta)
 	}
+
 	// impure
 	*prDefaultEventPlayer {|event|
 		(
