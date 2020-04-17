@@ -1,82 +1,114 @@
 CanPlayer {
 	classvar <>players;
-	var <>def, <>currentCanon, <>globalNextSoundAt, <>elapsed, <>numVoices, <>voicesState, <>newCanon, <>player, <>prEventPlayer, <>prSpeed = 1;
-
-	*new {|def, canon, eventPlayer = ({|event| 	CanPlayer.prDefaultEventPlayer(event)})|
-		^super.new.init(def, canon, eventPlayer);
-	}
+	var <>def, <>currentCanon, <>globalNextSoundAt, <>elapsed, <>numVoices, <>finishedVoices, <>isFinished, <>voicesState, <>newCanon, <>player, <>prOnEvent, <>prSpeed = 1, <>repeat, <>instruments, <>osc, <>meta;
 
 	*initClass {
-        players = Dictionary.new;
-    }
+		players = Dictionary.new;
+	}
 
-	init {|def, canon, eventPlayer|
+	*new {|
+		def,
+		canon,
+		repeat = 1,
+		onEvent =({|event| 	CanPlayer.prDefaultEventPlayer(event)}),
+		instruments = ([\sin]),
+		osc = nil,
+		meta = (Event.new)|
+		^super.new.init(def, canon, repeat, onEvent, instruments, osc, meta);
+	}
+
+	prInit {|def, canon, repeat, onEvent, instruments, osc, meta|
 		this.def = def;
 		this.currentCanon = canon;
+		this.newCanon = nil;
+		this.repeat = repeat;
+		this.prOnEvent = onEvent;
+		this.instruments = instruments;
+		this.osc = osc;
+		this.meta = meta;
 		this.globalNextSoundAt = 0;
 		this.elapsed = 0;
 		this.numVoices = canon.size;
 		this.voicesState = CanPlayer.prInitVoicesState(canon);
-		this.newCanon = nil;
-		this.prEventPlayer = eventPlayer;
+		this.finishedVoices = 0;
 		this.player = Tdef(def, {
-			var finishedCanons = 0; //TODO make this more robust
 			inf.do({|i|
 				var iterateVoices = globalNextSoundAt <= elapsed;
 
 				if(iterateVoices, { // basic optimization to avoid iteration of voicesState every 1ms
 					var nextSoundsAt = List [];
-					// elapsed.postln;
+					var finishedVoices = 0;
 					voicesState.do({|voice, voiceIndex|
-						nextSoundsAt.add(voice.nextSoundAt); // build a list of the nextSoundAt to get the next value for globalNextSoundAt
-
-						if(voice.nextSoundAt <= elapsed, { // check if `voice` shouldPlay it's next sound
+						// build a list of the nextSoundAt to get the next value for globalNextSoundAt
+						if(voice.isFinished.not,
+							{nextSoundsAt.add(voice.nextSoundAt)},
+							{finishedVoices = finishedVoices + 1}
+						);
+						if(voice.isFinished.not && (voice.nextSoundAt <= elapsed), { // check if `voice` shouldPlay it's next sound
 							var currentIndex = voice.nextIndex;
 							var dur = voice.data.durs[currentIndex] ? inf;
 							var note = voice.data.notes[currentIndex];
-							var amp = voice.data.amps[currentIndex].postm("AMP");
+							var amp = voice.data.amps[currentIndex];
 							var event = (
 								dur: if(dur === inf, {0}, {dur}),
 								note: note,
 								amp: amp,
 								voiceIndex: voiceIndex,
-								eventIndex: currentIndex
+								eventIndex: currentIndex,
+								canon: this.currentCanon,
+								instruments: this.instruments,
+								osc: this.osc,
+								meta: this.meta
 							);
-							event.postln;
 							// update voice state
 							voice.nextIndex = voice.nextIndex + 1;
 							voice.nextSoundAt = elapsed + (dur * 1000);
 
-							if(dur == inf,
-								{finishedCanons = finishedCanons + 1},
-								{this.prEventPlayer.(event)}
-							);
+							if(dur != inf,
+								{this.prOnEvent.(event)},
+								{voice.isFinished = true});
 						});
 					});
 
-					//update globalNextSoundAt
-					this.globalNextSoundAt = nextSoundsAt.minItem
-					//.postm("nextAt")
-					;
+					//update globalNextSoundAt and finishedVoices
+					this.globalNextSoundAt = nextSoundsAt.minItem;
+					this.finishedVoices = finishedVoices;
 				});
 
 				this.elapsed = elapsed+(1*this.prSpeed); // update elapsed time, ~tempoScale changes the value by which `elapsed` is updated, by this, the "interal time of the canon" go faster or slower.  If ~tempoScale is > 1 it goes faster than it's original tempo, if < 1 it goes slower.
 				if(this.newCanon.isNil.not,
-					{
-						"updating".postln;
-						this.prUpdateState(CanPlayer.calculateNewState(this.canon, this.newCanon, this.globalNextSoundAt, this.elapsed));
-						"updated".postln;});
-				if(finishedCanons >= this.numVoices, {
-					this.elapsed = 0;
-					this.voicesState = CanPlayer.prInitVoicesState(this.currentCanon);
-					this.numVoices = this.currentCanon.size;
-					finishedCanons = 0;
-					this.globalNextSoundAt = 0;
+					{this.prUpdateState(CanPlayer.prCalculateNewState(this.currentCanon, this.newCanon, this.globalNextSoundAt, this.elapsed));});
+				if(this.finishedVoices >= this.numVoices, {
+					this.repeat = this.repeat - 1;
+					if(this.repeat > 0,
+						{
+							this.elapsed = 0;
+							this.voicesState = CanPlayer.prInitVoicesState(this.currentCanon);
+							this.numVoices = this.currentCanon.size;
+							this.finishedVoices = 0;
+							this.globalNextSoundAt = 0;
+						},
+						{this.stop; this.isFinished = true;})
+
 				});
 				0.001.wait; // iterate every 1ms
 			})
 		});
 		CanPlayer.players.put(def, this)
+	}
+
+	init {|def, canon, repeat, onEvent, instruments, osc, meta|
+		var player = CanPlayer.get(def);
+		^if(player.isNil,
+			{this.prInit(def, canon, repeat, onEvent, instruments, osc, meta)},
+			{
+				player.changeCanon(canon);
+				if(player.isFinished == true, {
+					player.repeat = repeat;
+					player.reset;
+				});
+				player;
+			});
 	}
 
 	// getters and setters
@@ -85,7 +117,7 @@ CanPlayer {
 	}
 
 	onEvent {|eventPlayer|
-		this.prEventPlayer = eventPlayer;
+		this.prOnEvent = eventPlayer;
 	}
 
 	speed {|speed|
@@ -108,6 +140,13 @@ CanPlayer {
 	}
 
 	reset {
+		this.elapsed = 0;
+		this.voicesState = CanPlayer.prInitVoicesState(this.currentCanon);
+		this.numVoices = this.currentCanon.size;
+		this.finishedVoices = 0;
+		this.globalNextSoundAt = 0;
+		this.newCanon = nil;
+		this.isFinished = false;
 		this.player.reset;
 	}
 
@@ -129,16 +168,20 @@ CanPlayer {
 			List [],
 			{|acc, voice, voiceIndex|
 				var res = voice.durs.inject(
-					(nextSoundAt: 0, nextIndex: 0),
+					(nextSoundAt: 0, nextIndex: 0, data: voice, voiceIndex: voiceIndex),
 				{|result, dur, i|
 					if(result.nextSoundAt >= nextAt,
 						{result},
-						{(
-							nextSoundAt: result.nextSoundAt+dur,
-							nextIndex: i + 1,
-							data: voice,
-							voiceIndex: voiceIndex
-						)}
+						{
+							var nextIndex = i + 1;
+							(
+								isFinished: nextIndex < voice.size,
+								nextSoundAt: result.nextSoundAt+dur,
+								nextIndex: nextIndex,
+								data: voice,
+								voiceIndex: voiceIndex
+							);
+						}
 					)
 				});
 				acc.add(res);
@@ -147,8 +190,8 @@ CanPlayer {
 	}
 
 	*prCalculateNewState {|oldCanon, newCanon, nextAt/*in ms*/, elapsed /*in ms*/|
-		var oldCanDur = oldCanon[0].durs.sum.postln;
-		var newCanDur = newCanon[0].durs.sum.postln;
+		var oldCanDur = oldCanon[0].durs.sum;
+		var newCanDur = newCanon[0].durs.sum;
 		var nextAtPercentage = (nextAt/1000)/oldCanDur;
 		var elapsedPercentage = (elapsed/1000)/oldCanDur;
 		var nextEventForNewCanon = newCanDur*nextAtPercentage;
@@ -165,6 +208,7 @@ CanPlayer {
 	*prInitVoicesState {|canon|
 		^canon.inject(List [], {|acc, voice, i|
 			acc.add((
+				isFinished: false,
 				voiceIndex: i,
 				data: voice,
 				nextIndex: 0,
@@ -173,28 +217,32 @@ CanPlayer {
 		});
 	}
 
+	*prSetupInCan {|def, canon, instruments, repeat, osc, meta|
+		var onEvent = if(meta.onEvent.isFunction,
+			{meta.onEvent},
+			{{|event| CanPlayer.prDefaultEventPlayer(event)}});
+			CanPlayer(def, canon, repeat, onEvent, instruments, osc, meta)
+	}
+	// impure
 	*prDefaultEventPlayer {|event|
 		(
-		  instrument: \sin,
-		  freq: event.note.midicps,
-		  dur: event.dur,
-		  amp: event.amp
+			instrument: \sin,
+			freq: event.note.midicps,
+			dur: event.dur,
+			amp: event.amp
 		).play
 	}
 
-	// private impure
-	*prChangeCanon {|canon|
+	changeCanon {|canon|
 		this.newCanon = canon;
 		this.currentCanon = canon;
 	}
 
-	*prUpdateState {|newState|
-		this.newState.numVoices.postln;
+	prUpdateState {|newState|
 		this.newCanon = nil;
 		this.elapsed = newState.elapsed;
 		this.numVoices = newState.numVoices;
 		this.voicesState = newState.voicesState;
 	}
-
 
 }
