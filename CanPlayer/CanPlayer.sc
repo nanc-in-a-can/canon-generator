@@ -166,7 +166,6 @@ CanPlayer {
 
 	//private and pure methods
 	*prMakeNextStateForNewCanon {|newCanon, nextAt|
-		nextAt.postm("================================");
 		^newCanon.inject(
 			List [],
 			{|acc, voice, voiceIndex|
@@ -233,7 +232,7 @@ CanPlayer {
 	// impure
 	*prDefaultEventPlayer {|event|
 		(
-			instrument: \sin,
+			instrument: event.instruments.wrapAt(event.voiceIndex),
 			freq: event.note.midicps,
 			dur: event.dur,
 			amp: event.amp
@@ -246,7 +245,7 @@ CanPlayer {
 	}
 
 	prUpdateState {
-		var newState = CanPlayer.prCalculateNewState(this.currentCanon, this.newCanon, this.globalNextSoundAt, this.elapsed).postln;
+		var newState = CanPlayer.prCalculateNewState(this.currentCanon, this.newCanon, this.globalNextSoundAt, this.elapsed);
 		this.newCanon = nil;
 		this.elapsed = newState.elapsed;
 		this.numVoices = newState.numVoices;

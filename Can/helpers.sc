@@ -1,5 +1,5 @@
 +Can {
-	*prGetAmp {|amps, i|
+	*prGetAmp {|amps = ([1]), i|
 		^if(
 			amps.isArray && amps.size > 0,
 			{amps.wrapAt(i)},

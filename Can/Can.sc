@@ -2,7 +2,7 @@ Can {
 	classvar <defaultInstruments;
 
 	*initClass {|self|
-		defaultInstruments = [\pianola];
+		defaultInstruments = [\sin];
 	}
 
 	*getInstruments {|instruments|
