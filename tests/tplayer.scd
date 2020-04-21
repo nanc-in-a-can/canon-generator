@@ -63,12 +63,15 @@ p.onEvent({|event|
 	).play
 ;});
 )
-
+Can.init
+s.boot
 (
+	~osc = (net: NetAddr("localhost", 57101));
 e = Can.converge(
 	symbol: \def,
 	instruments: [\sin],
 	meta: (gain: 1),
+	osc: ~osc,
 	repeat: inf,
 	cp: [1],
 	melody: Can.isomelody(
@@ -82,6 +85,6 @@ e = Can.converge(
 		[0.7, 0.3, 0.5]
 	)
 );
-)
 e.reset.play
+)
 e.stop

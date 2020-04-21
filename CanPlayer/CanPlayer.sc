@@ -23,6 +23,7 @@ CanPlayer {
 			{this.prInit(def, canon, repeat, onEvent, instruments, osc, meta)},
 			{
 				player.changeCanon(canon);
+				player.osc= osc;
 				if(player.isFinished == true, {
 					player.repeat = repeat;
 					player.reset;
@@ -68,6 +69,7 @@ CanPlayer {
 								dur: if(dur === inf, {0}, {dur}),
 								note: note,
 								amp: amp,
+								cp: voice.cp,
 								voiceIndex: voiceIndex,
 								eventIndex: currentIndex,
 								canon: this.currentCanon,
@@ -219,6 +221,41 @@ CanPlayer {
 		});
 	}
 
+	*getNestedValue {|keys, event|
+		^keys.inject(event, {|value, key, i|
+			if((value.respondsTo(\at)), {
+				if(value.at(key) !== nil, {value.at(key)});
+			})
+		});
+	}
+
+	*makeOSC {|event|
+		var doNothing = {};
+		var osc = CanPlayer.getNestedValue([\osc], event);
+		var net = CanPlayer.getNestedValue([\net], osc);
+		^if((net.class == NetAddr),
+			{
+				var path = CanPlayer.getNestedValue([\path], osc);
+				var send = CanPlayer.getNestedValue([\send], osc);
+				var requiredFields =
+					if(send.isArray,
+						{send.collect(event[_])},
+						{
+							var e = event.copy;
+							e.removeAt(\canon);
+							e.removeAt(\osc);
+							e.removeAt(\instruments);
+							e.asPairs;
+						}
+					);
+				var msg = ([path ? \canosc]++ requiredFields).flatten;
+				{event.osc.net.sendMsg(*msg)};
+			},
+			{doNothing}
+		);
+	}
+
+	// impure
 	*setupInCan {|def, canon, instruments, repeat, osc, meta|
 		var onEvent = if(meta.onEvent.isFunction,
 			{meta.onEvent},
@@ -229,14 +266,14 @@ CanPlayer {
 		^CanPlayer(def_, canon, repeat, onEvent, instruments, osc, meta)
 	}
 
-	// impure
 	*prDefaultEventPlayer {|event|
+		CanPlayer.makeOSC(event).(); // if osc is nil, it will do nothing
 		(
 			instrument: event.instruments.wrapAt(event.voiceIndex),
 			freq: event.note.midicps,
 			dur: event.dur,
 			amp: event.amp
-		).play
+		).play;
 	}
 
 	changeCanon {|canon|
