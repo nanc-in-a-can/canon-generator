@@ -22,8 +22,6 @@ s.boot
 			[0.7, 0.3, 0.5]
 		)
 	);
-)
-(
 	d = Can.converge(
 		symbol: \def,
 		instruments: [\sin],
@@ -55,6 +53,8 @@ p.speed(2);
 
 (// lower amp
 p.onEvent({|event|
+	"corre".postln;
+	//1.at(1).postln; // uncomment to try and test setting onEvent functions that fail
 	(
 	instrument: \sin,
 	freq: event.note.midicps,

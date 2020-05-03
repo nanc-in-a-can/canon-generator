@@ -1,6 +1,6 @@
 CanPlayer {
 	classvar <>players;
-	var <>def, <>currentCanon, <>globalNextSoundAt, <>elapsed, <>numVoices, <>finishedVoices, <>isFinished, <>voicesState, <>newCanon, <>player, <>prOnEvent, <>prSpeed = 1, <>repeat, <>instruments, <>osc, <>meta;
+	var <>def, <>currentCanon, <>globalNextSoundAt, <>elapsed, <>numVoices, <>finishedVoices, <>isFinished, <>voicesState, <>newCanon, <>player, <>prOnEvent, <>previousOnEvent, <>prSpeed = 1, <>repeat, <>instruments, <>osc, <>meta;
 
 	*initClass {
 		players = Dictionary.new;
@@ -119,7 +119,24 @@ CanPlayer {
 	}
 
 	onEvent {|eventPlayer|
-		this.prOnEvent = eventPlayer;
+		if(this.previousOnEvent.isNil,
+			{this.previousOnEvent = {|event| CanPlayer.prDefaultEventPlayer(event)}});
+
+		this.prOnEvent = {|event|
+			try {// the new eventPlayer function might fail so we try
+				eventPlayer.(event);
+				// if the function suceeds we asume that it will
+				// keep succeding so we set it as the previousOnEvent
+				if(this.previousOnEvent != eventPlayer,
+					{this.previousOnEvent = eventPlayer});
+			}
+			{|error|
+				// If there's an error, rather than keep trying the
+				// on event function, we go back to the previous one
+				error.errorString.postln;
+				"Continuing with the previous onEvent function".postln;
+				this.onEvent(this.previousOnEvent);
+			}}
 	}
 
 	speed {|speed|
@@ -245,6 +262,7 @@ CanPlayer {
 							e.removeAt(\canon);
 							e.removeAt(\osc);
 							e.removeAt(\instruments);
+							e.removeAt(\meta);
 							e.asPairs;
 						}
 					);
