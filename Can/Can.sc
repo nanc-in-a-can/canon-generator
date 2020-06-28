@@ -17,7 +17,7 @@ Can {
 		Can.defaultServerConfig;
 	}
 
-	*getPlayer {|symbol, player, canon, instruments, repeat, osc, meta|
+	*getPlayer {|symbol, player, canon, instruments, repeat, osc, meta = (())|
 		^if(player != nil,
 			{player.(symbol, canon, instruments, repeat, osc, meta)},
 			{CanPlayer.setupInCan(symbol, canon, instruments, repeat, osc, meta)}
