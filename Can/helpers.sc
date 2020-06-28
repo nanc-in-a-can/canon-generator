@@ -47,7 +47,7 @@
 	//mergeCanons :: Canon -> Canon -> Canon
 	*mergeCanons {|a, b|
 		var canon = a.canon ++ b.canon;
-		var player = this.getPlayer(a.data.player, canon, a.data.instruments);
+		var player = Can.getPlayer(canon: canon, instruments: a.data.instruments, repeat: a.data[\repeat]);
 		^Canon(
 			canon: canon,
 			player: player,
