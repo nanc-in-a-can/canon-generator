@@ -6,7 +6,7 @@ Canon {
     }
 
 	rebuildPlayer {
-		this.player = Can.getPlayer(data.symbol, data.player, canon, data.instruments, data.repeat, data.osc, data.meta);
+		this.player = Can.getPlayer(data.symbol, data.player, canon, data.instruments, data[\repeat], data.osc, data.meta);
 	}
 
 	play {

@@ -36,7 +36,7 @@ CanPlayer {
 	prInit {|def, canon, repeat, onEvent, instruments, osc, meta|
 		this.def = def;
 		this.currentCanon = canon;
-		this.newCanon = nil;
+		this.newCanon = canon;
 		this.repeat = repeat;
 		this.prOnEvent = onEvent;
 		this.instruments = instruments;
@@ -211,8 +211,8 @@ CanPlayer {
 	}
 
 	*prCalculateNewState {|oldCanon, newCanon, nextAt/*in ms*/, elapsed /*in ms*/|
-		var oldCanDur = oldCanon[0].durs.sum;
-		var newCanDur = newCanon[0].durs.sum;
+		var oldCanDur = oldCanon.postln[0].durs.sum;
+		var newCanDur = newCanon.postln[0].durs.sum;
 		var nextAtPercentage = (nextAt/1000)/oldCanDur;
 		var elapsedPercentage = (elapsed/1000)/oldCanDur;
 		var nextEventForNewCanon = newCanDur*nextAtPercentage;
