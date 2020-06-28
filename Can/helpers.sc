@@ -1,5 +1,5 @@
 +Can {
-	*prGetAmp {|amps, i|
+	*prGetAmp {|amps = ([1]), i|
 		^if(
 			amps.isArray && amps.size > 0,
 			{amps.wrapAt(i)},
@@ -12,7 +12,7 @@
 		})
 	}
 	//isomelody ::([Float], [Float], [Float], Int) -> [(dur, note, amp)]
-	*isomelody {|durs, notes, amps = ([1]), len|
+	*isomelody {|durs, notes, amps, len|
 		var len_ = len ? max(durs.size, notes.size);
 		^len_.collect({|i|
 			(dur: durs.wrapAt(i), note: notes.wrapAt(i), amp: Can.prGetAmp(amps, i))

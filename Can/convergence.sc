@@ -4,7 +4,7 @@
 		var
 		cp_ = cp.isFunction.if({cp.(melody)}, {cp}),
 
-		makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger)},
+		makeBcp = {|cp, line| line.copyRange(0, (cp - 2).asInteger).sum},
 
 		makeTempo = {|speed| 60/(speed/4)},
 
@@ -37,8 +37,9 @@
 			})
 			//get the durations of all notes Before the Convergence Point
 			.collect({|voice, i|
-				var bcp = makeBcp.(cp_, voice.collect(_.dur));
-				(melody: voice, bcp: bcp)
+				var cp = if(cp_.isArray, {cp_.wrapAt(i)}, {cp_});
+				var bcp = makeBcp.(cp, voice.collect(_.dur));
+				(melody: voice, bcp: bcp, cp: cp)
 			})
 		),
 
@@ -49,18 +50,14 @@
 			durs: voice.melody.collect(_.dur),
 			notes: voice.melody.collect(_.note),
 			amps: voice.melody.collect(_.amp),
-			bcp: voice.bcp.sum,
+			bcp: voice.bcp,
+			cp: voice.cp
 		)})
 		.sort({|voice1, voice2| voice1.durs.sum > voice2.durs.sum })
 		),
 
-		//voice onset times
-		onsets = sortedBySpeed.reverse.inject([], {|acc, elem|
-			acc ++ [(sortedBySpeed[0].bcp - elem.bcp).abs];
-		}),
-
 		canon = sortedBySpeed.collect({|voice, i|
-			var onset = (sortedBySpeed[0].bcp - voice.bcp).abs;
+			var onset = (sortedBySpeed[0].durs.copyRange(0, voice.cp -2 ).sum - voice.bcp).abs;
 			(
 				durs: voice.durs,
 				notes: voice.notes,
@@ -68,7 +65,7 @@
 				remainder: sortedBySpeed[0].durs.sum - (onset + voice.durs.sum),
 				bcp: voice.bcp,
 				onset: onset,
-				cp: cp_
+				cp: voice.cp
 			)
 		}),
 
@@ -84,7 +81,8 @@
 			instruments: instruments_,
 			player: {player}, //we put the player function inside a function, because otherwise the Event object will excute it, we want to keep it as metadata, and for the Event object to return it
 			repeat: repeat,
-			osc: osc
+			osc: osc,
+			meta: meta
 		);
 
 		^Canon(

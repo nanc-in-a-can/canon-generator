@@ -25,9 +25,9 @@
 				var pairs = [
 					\instrument, instrument.wrapAt(index),
 					\dur, Pseq([voice.onset] ++ voice.durs ++ [voice.remainder], repeat),
-					\midinote, Pseq([\rest] ++ voice.notes ++ [\rest], inf),
+					\midinote, Pseq([\rest] ++ voice.notes ++ [\rest], repeat),
 					\out, out,
-					\amp, Pseq(gain * ([0]++voice.amps++[0])),
+					\amp, Pseq(gain * ([0]++voice.amps++[0]), repeat),
 					\pan, pan
 				]
 				++oscParam.(index, voice.cp)
