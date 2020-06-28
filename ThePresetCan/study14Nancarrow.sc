@@ -390,21 +390,23 @@
 		]);
 
 
-		var canonConfig = {|cp, tempo, melody|
+		var canonConfig = {|tempo, cp, melody|
 			Can.converge(
 				melody: melody,
 				cp: cp,
 				voices: [
 					(tempo: tempo, transp: 0),
 					(tempo: tempo*5/4, transp: 17),
-				]
+				].collect({|voice| voice.amp = 1; voice})
 			)
 		};
 
 		var tempo = 120;
 
 		var canon = Can.mergeCanons(
-			canonConfig.(tempo, 94, upperStaff).postln, canonConfig.(tempo, 90, lowerStaff)//converge points are different for each canon only in the algorithm, this is because voices are independent and each one has a different number of events
+			//converge points are different for each canon only in the algorithm, this is because voices are independent and each one has a different number of events
+			canonConfig.(tempo, 94, upperStaff).postln,
+			canonConfig.(tempo, 90, lowerStaff)
 			// .collect(canonConfig.(110, _))
 			//	.collect(Can.converge)
 		).postln;
