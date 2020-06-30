@@ -24,6 +24,9 @@ CanPlayer {
 			{
 				player.changeCanon(canon);
 				player.osc= osc;
+				player.repeat = repeat;
+				player.instruments = instruments;
+				player.meta = meta;
 				if(player.isFinished == true, {
 					player.repeat = repeat;
 					player.reset;
