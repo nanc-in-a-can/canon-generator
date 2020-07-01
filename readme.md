@@ -4,21 +4,20 @@
    <img width="100%" src="nanc-in-a-can.jpg">
 </p>
 
-- [Installation](#Installation)
-	- [Manual download](#Manual-download)
-	- [Updating the library](#Updating-the-library)
-- [Nanc-In-A-Can Canon Generator](#Nanc-In-A-Can-Canon-Generator)
-	- [Temporal Canons](#Temporal-Canons)
-- [Preset examples](#Preset-examples)
-- [Basic examples](#Basic-examples)
-	- [Convergence Canon](#Convergence-Canon)
-	- [Divergence Canon](#Divergence-Canon)
-	- [Visualization](#Visualization)
-- [Nicer examples](#Nicer-examples)
-- [Symbol, Period and Meta](#Symbol-Period-and-Meta)
-- [Isomelody, Functions as arguments and multiple Convergence Points](#Isomelody-and-Functions-as-arguments)
-- [CanPlayer](#CanPlayer)
-- [OSC](#OSC)
+- [Installation](#installation)
+	- [Manual download](#manual-download)
+	- [Updating the library](#updating-the-library)
+- [Nanc-In-A-Can Canon Generator](#nanc-in-a-can-canon-generator)
+	- [Temporal Canons](#temporal-canons)
+- [Preset examples](#preset-examples)
+- [Basic examples](#basic-examples)
+	- [Convergence Canon](#convergence-canon)
+	- [Divergence Canon](#divergence-canon)
+	- [Visualization](#visualization)
+- [Nicer examples](#nicer-examples)
+- [Symbol, Period and Meta](#symbol-period-and-meta)
+- [Isomelody, Functions as arguments and multiple Convergence Points](#isomelody-functions-as-arguments-and-multiple-convergence-points)
+- [Can Player, onEvent and OSC](#can-player-onevent-and-osc)
 
 
 ## Installation
@@ -178,9 +177,9 @@ Can.converge(
 
 ## Symbol, Period and Meta
 
-A symbol can be added as a first argument to a canon (or with the key symbol: \myCanonName) to identify it to later control de player as it is suggested in this example.
+A symbol can be added as a first argument to a canon (or with the key `symbol: \myCanonName`) to identify it to later control de player as it is suggested in this example.
 
-The period is a absolute duration for the canon. In the example below the total duration of the canon will be 5 seconds given that the default TempoClock is 1.
+The `period` is an absolute duration for the canon. In the example below the total duration of the canon will be 5 seconds given that the default TempoClock is 1.
 
 Meta allows you to control the overall access to arguments of the instrument or pattern definition in the player that are unrelated to the canonic data defined in the keys melody, voices, cp, osc, instrument, etc.
 
@@ -211,7 +210,7 @@ CanPlayer.get(\myCanon).stop
 
 ## Isomelody, Functions as arguments and multiple Convergence Points
 
-The method isomelody allows to fix the size of the melody by providing a length, an integer that is the number of events per melody. The sequence of durs and notes will cycle until 8 events are provided. In this case the events of durs and notes will be: ``[(1,60),(0.5,72),(0.75,84),(1,65),(0.5,60),(0.75,72),(1,84),(0.5,65)]``
+The method isomelody allows to fix the size of the melody by providing a length, an integer that is the number of events per melody. The sequence of durs and notes will cycle until 8 events are provided. In this case the events of durs and notes will be: `[(1,60),(0.5,72),(0.75,84),(1,65),(0.5,60),(0.75,72),(1,84),(0.5,65)]`
 
 Tempo, Transpose and cp can be a function as exemplified below.
 
@@ -219,13 +218,13 @@ Tempo, Transpose and cp can be a function as exemplified below.
 ```supercollider
 
 (
-Can.converge(\myCan2,
+c = Can.converge(\myCan2,
 	melody: Can.isomelody( durs: [1,0.5,0.75], notes: [[60,72,84,65]], len: 8 ),
 	
 	cp: {|melody| [1,2,3,4, melody.size].choose}, 
 	voices: Can.convoices( 
 		tempos: [3/2, 5, 9/7, 10*2],
-		transps: [ 0, _.choose, _[0], -12, -24, _.choose, {|item| item*2}] 
+		transps: [ 0, _-[0, 12], _+[4, 7], _.collect(_.choose)] 
 	),		
 	
 	instruments: [\pianola], 
@@ -235,15 +234,14 @@ Can.converge(\myCan2,
 ); 
 )
 
-CanPlayer.get(\myCan2).play
-
+c.play
 ```
 
 If the convergence point is an array it will produce multiple convergence points depending on the voice index. For the moment, the first voice will become a pivoting voice to which all others are arranged in relationship with. Voice 1 (tempo: 100, transp: -12, cp: 1) will converge with the pivoting voice at the fifth event. The voice 2 (tempo: 150, transp: 24, cp: 5) will converge with the pivoting voice at the first event.
 
 ```supercollider
 (
-Can.converge(\myCan3,
+c = Can.converge(\myCan3,
   melody: Can.melody(
     durs: (1/4!8),
     notes: [60, 67, 69, 71, 72, 70, 68, 67]
@@ -257,7 +255,7 @@ Can.converge(\myCan3,
 );
 )
 
-CanPlayer.get(\myCan3).play
+c.play
 
 ```
 
@@ -267,13 +265,12 @@ Using Tdef as a base, Canon generator can produce a player that would create sea
 
 ```supercollider
 // alternating between these two canons should be seamless
-(
 
+(
 	c = Can.converge(
 		symbol: \def,
 		instruments: [\sin],
 		meta: (gain: 1),
-	//	player: {|symbol, canon, instruments, repeat, osc, meta| CanPlayer.setupInCan(symbol, canon, instruments, repeat, osc, meta)},
 		repeat: inf,
 	    cp: [2],
 		melody: Can.isomelody(
@@ -287,7 +284,9 @@ Using Tdef as a base, Canon generator can produce a player that would create sea
 			[0.7, 0.3, 0.5]
 		)
 	);
-	d = Can.converge(
+)
+(
+	Can.converge(
 		symbol: \def,
 		instruments: [\sin],
 		meta: (gain: 1),
@@ -305,37 +304,52 @@ Using Tdef as a base, Canon generator can produce a player that would create sea
 		)
 	);
 )
-p = c.rebuildPlayer.player.play;
-p.stop; // play, stop resume and pause can be called to canplayer
+// Notice both have the same def, so one will substitute the other when ever it is compiled.
+// Try compiling each of the above blocks to hear the change.
 
-// alternating between these two canons should be seamless as well
-p.changeCanon(c.canon);
-p.changeCanon(d.canon);
-
-// can change the speed of the player
-p.speed(2);
-
-// 
-CanPlayer.get(\def).play
-CanPlayer.get(\def).stop
+c.play;
+p = CanPlay.get(\def).play;
+q = c.player.play;
+// these lines above all do the same, however the second and third lines give us access to the underlying player instance, which allows us to do some nifty things as you'll see next. 
+Anyways, for this example you just need to compile either, just once.
 
 ```
 
-The method onEvent will allow the user to change the next event after evaluation. The following code will change the amp of the event that comes after evaluating this line of code.
+The method `onEvent` will allow the user to run a custom function for each event of the canon. The following code will change the amp of the event that comes after evaluating this line of code.
 
 ```supercollider
-(// lower amp
+(
+c = Can.converge(\myCan3,
+  melody: Can.melody(
+    durs: (1/4!8),
+    notes: [60, 67, 69, 71, 72, 70, 68, 67]
+  ),
+	cp: [5,1],
+    voices: Can.convoices(
+      tempos: [50, 100,150],
+      transps: [0,-12,24]
+    ),
+    repeat: inf
+);
+)
+
+p = c.player;
+p.play;
+
+(// lower amp by half
 p.onEvent({|event|
-	//"corre".postln;
-	//1.at(1).postln; // uncomment to try and test setting onEvent functions that fail
+	event.keys.postln; // list available keys
+	["voice", event.voiceIndex, "event", event.eventIndex].postln;
+	//event.postln;
 	(
 	instrument: \sin,
 	freq: event.note.midicps,
 	dur: event.dur,
-	amp: event.amp*0.5
+	amp: event.amp/2
 	).play
 ;});
 )
+
 ```
 The following code sends the data of each event as OSC messages.
 
