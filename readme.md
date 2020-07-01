@@ -16,7 +16,8 @@
 	- [Visualization](#Visualization)
 - [Nicer examples](#Nicer-examples)
 - [Symbol, Period and Meta](#Symbol-Period-and-Meta)
-- [Isomelody and Functions as arguments](#Isomelody-and-Functions-as-arguments)
+- [Isomelody, Functions as arguments and multiple Convergence Points](#Isomelody-and-Functions-as-arguments)
+- [CanPlayer](#CanPlayer)
 - [OSC](#OSC)
 
 
@@ -96,12 +97,14 @@ The basic components of a canon are the melodic information in itself divided in
 Can.converge(\pachelbel,
 	melody: Can.melody(
 		durs: [1/4, 1/4, 1/4, 1/4, 1/4, 1/4, 1/4, 1/4],
-		notes: [62, 57, 59, 54, 55, 50, 55, 57]
+		notes: [62, 57, 59, 54, 55, 50, 55, 57],
+		amps: [0.8,0.7,0.8,0.5,0.9,0.9,0.99,0.6]
 	),
 	cp: 6,
 	voices: Can.convoices(
 		tempos: [50, 50*3/2, 50*4/3, 50*5/4],
-		transps: [0, -12, 12, 7]
+		transps: [0, -12, 12, 7],
+		amps: [0, (-3), (-9), (-0.3)].dbamp
 	),
 	repeat: inf
 ).play;
@@ -199,14 +202,14 @@ Can.converge(\myCanon,
 );
 )
 
-Pdef(\myCanon).play;
-Pdef(\myCanon).pause;
-Pdef(\myCanon).resume;
-Pdef(\myCanon).stop;
+CanPlayer.get(\myCanon).play
+CanPlayer.get(\myCanon).pause
+CanPlayer.get(\myCanon).resume
+CanPlayer.get(\myCanon).stop
 
 ```
 
-## Isomelody and Functions as arguments
+## Isomelody, Functions as arguments and multiple Convergence Points
 
 The method isomelody allows to fix the size of the melody by providing a length, an integer that is the number of events per melody. The sequence of durs and notes will cycle until 8 events are provided. In this case the events of durs and notes will be: ``[(1,60),(0.5,72),(0.75,84),(1,65),(0.5,60),(0.75,72),(1,84),(0.5,65)]``
 
@@ -232,49 +235,132 @@ Can.converge(\myCan2,
 ); 
 )
 
-Pdef(\myCan2).play
+CanPlayer.get(\myCan2).play
 
 ```
 
-## OSC
-
-Default OSC behavior has been implemented for the default player.
+If the convergence point is an array it will produce multiple convergence points depending on the voice index. For the moment, the first voice will become a pivoting voice to which all others are arranged in relationship with. Voice 1 (tempo: 100, transp: -12, cp: 1) will converge with the pivoting voice at the fifth event. The voice 2 (tempo: 150, transp: 24, cp: 5) will converge with the pivoting voice at the first event.
 
 ```supercollider
-s.boot
-Can.defaultServerConfig
-Can.registerDefaultSynthDefs
-o = OSCFunc(_.postln, \canosc, recvPort: 7777);
-~osc  = (net: NetAddr("localhost", 7777), send: [\dur, \midinote]);
 (
-Can.converge(\can,
+Can.converge(\myCan3,
   melody: Can.melody(
-    durs: [1, 1/5],
-    notes: [56, 58]
+    durs: (1/4!8),
+    notes: [60, 67, 69, 71, 72, 70, 68, 67]
   ),
-  cp: 2,
-  voices: Can.convoices(
-    tempos: [90, 120],
-    transps: [0, 1]
-  ),
-  osc: ~osc
-).play
+	cp: [5,1],
+    voices: Can.convoices(
+      tempos: [50, 100,150],
+      transps: [0,-12,24]
+    ),
+    repeat: inf
+);
 )
 
+CanPlayer.get(\myCan3).play
+
+```
+
+## Can Player, onEvent and OSC
+
+Using Tdef as a base, Canon generator can produce a player that would create seamless alternation between different instances of a same canon or different canonic structures. This is provided by keeping track of the indexed singular events of a base voice. 
+
+```supercollider
+// alternating between these two canons should be seamless
 (
-Can.diverge(\divergre,
-  melody: Can.melody(
-    durs: [1, 1/5, 5],
-    notes: [56, 58, 70]
-  ),
-  voices: Can.divoices(
-    transps: [1,2]
-  ),
-  tempos: Can.divtempos(
-    tempos: [60, 70],
-    percentageForTempo: [40, 60]
-  ),
-  osc: ~osc
-).play
+
+	c = Can.converge(
+		symbol: \def,
+		instruments: [\sin],
+		meta: (gain: 1),
+	//	player: {|symbol, canon, instruments, repeat, osc, meta| CanPlayer.setupInCan(symbol, canon, instruments, repeat, osc, meta)},
+		repeat: inf,
+	    cp: [2],
+		melody: Can.isomelody(
+			durs: [1,1,1, 1]/5,
+			notes: [60],
+			amps: [0.4, 0.2, 1]
+		),
+		voices: Can.convoices(
+			[50],
+			(0..4),
+			[0.7, 0.3, 0.5]
+		)
+	);
+	d = Can.converge(
+		symbol: \def,
+		instruments: [\sin],
+		meta: (gain: 1),
+		repeat: inf,
+	    cp: [2],
+		melody: Can.isomelody(
+			durs: [1,1,1,1]/5,
+			notes: [70],
+			amps: [0.4, 0.2, 1]
+		),
+		voices: Can.convoices(
+			[50],
+			(0..2),
+			[0.7, 0.3, 0.5]
+		)
+	);
 )
+p = c.rebuildPlayer.player.play;
+p.stop; // play, stop resume and pause can be called to canplayer
+
+// alternating between these two canons should be seamless as well
+p.changeCanon(c.canon);
+p.changeCanon(d.canon);
+
+// can change the speed of the player
+p.speed(2);
+
+// 
+CanPlayer.get(\def).play
+CanPlayer.get(\def).stop
+
+```
+
+The method onEvent will allow the user to change the next event after evaluation. The following code will change the amp of the event that comes after evaluating this line of code.
+
+```supercollider
+(// lower amp
+p.onEvent({|event|
+	//"corre".postln;
+	//1.at(1).postln; // uncomment to try and test setting onEvent functions that fail
+	(
+	instrument: \sin,
+	freq: event.note.midicps,
+	dur: event.dur,
+	amp: event.amp*0.5
+	).play
+;});
+)
+```
+The following code sends the data of each event as OSC messages.
+
+```supercollider
+(
+	~osc = (net: NetAddr("localhost", 57101));
+e = Can.converge(
+	symbol: \def,
+	instruments: [\sin],
+	meta: (gain: 1),
+	osc: ~osc,
+	repeat: inf,
+	cp: [1],
+	melody: Can.isomelody(
+		durs: [1,1,1,1]/5,
+		notes: [70, 77, 60, 50],
+		amps: [0.4, 0.2, 1]
+	),
+	voices: Can.convoices(
+		[50, 70],
+		(0..2),
+		[0.7, 0.3, 0.5]
+	)
+);
+e.reset.play
+)
+e.stop
 ```
