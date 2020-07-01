@@ -74,7 +74,7 @@
 				(tempo: 140*75/64, transp: 6.4),
 				(tempo: 140*93/75, transp: 7.5),
 				(tempo: 140*107/93, transp: 9.3),
-			]
+			].collect({|voice| voice.amp = 1; voice})
 		);
 
 	}

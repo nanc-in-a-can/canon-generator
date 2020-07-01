@@ -18,7 +18,7 @@
                 (tempo: 120*17/12, transp: 3),
         		(tempo: 120*19/12, transp: 4),
         	    (tempo: 120*23/12, transp: 5)
-        	]
+        	].collect({|voice| voice.amp = 1; voice})
         )
 
 
