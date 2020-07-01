@@ -37,7 +37,7 @@
 			})
 			//get the durations of all notes Before the Convergence Point
 			.collect({|voice, i|
-				var cp = if(cp_.isArray, {cp_.wrapAt(i)}, {cp_});
+				var cp = if(cp_.isArray, {cp_.wrapAt(i-1)}, {cp_});
 				var bcp = makeBcp.(cp, voice.collect(_.dur));
 				(melody: voice, bcp: bcp, cp: cp)
 			})

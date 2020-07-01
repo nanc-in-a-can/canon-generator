@@ -185,13 +185,14 @@
 				remainder: 0
 			)
 		});
-
+		var player_;
 		instruments = this.getInstruments(data.instruments);
-		player = this.getPlayer(symbol, data.player, canon, instruments, repeat, osc, meta);
+		player_ = this.getPlayer(symbol, player, canon, instruments, repeat, osc, meta);
+
 
 		^Canon(
 			canon: canon,
-			player: player,
+			player: player_,
 			data: (
 				repeat: repeat,
 				voices: data.tempos,
