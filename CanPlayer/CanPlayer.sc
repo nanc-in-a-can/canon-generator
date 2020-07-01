@@ -24,6 +24,9 @@ CanPlayer {
 			{
 				player.changeCanon(canon);
 				player.osc= osc;
+				player.repeat = repeat;
+				player.instruments = instruments;
+				player.meta = meta;
 				if(player.isFinished == true, {
 					player.repeat = repeat;
 					player.reset;
@@ -36,7 +39,7 @@ CanPlayer {
 	prInit {|def, canon, repeat, onEvent, instruments, osc, meta|
 		this.def = def;
 		this.currentCanon = canon;
-		this.newCanon = nil;
+		this.newCanon = canon;
 		this.repeat = repeat;
 		this.prOnEvent = onEvent;
 		this.instruments = instruments;
