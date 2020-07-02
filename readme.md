@@ -311,7 +311,7 @@ c.play;
 p = CanPlay.get(\def).play;
 q = c.player.play;
 // these lines above all do the same, however the second and third lines give us access to the underlying player instance, which allows us to do some nifty things as you'll see next. 
-Anyways, for this example you just need to compile either, just once.
+// Anyways, for this example you just need to compile any of them just once.
 
 ```
 
